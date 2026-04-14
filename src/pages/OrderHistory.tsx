@@ -108,12 +108,17 @@ function OrderCard({
       <div className="flex items-start justify-between gap-2 mb-[var(--spacing-2)]">
         <div className="flex items-center gap-2">
           <CopyPill text={order.order_number} />
+          <StatusBadge status={order.status} />
         </div>
-        <StatusBadge status={order.status} />
+        {order.project_name && (
+          <span className="inline-flex h-[28px] items-center gap-1 rounded-[4px] bg-[#F6F8FB] px-[8px] font-[var(--font-body)] text-[12px] leading-[16px] font-[var(--font-weight-semibold)] text-[#525252]">
+            {order.project_name}
+          </span>
+        )}
       </div>
 
       <div className="flex flex-wrap items-center gap-x-2 gap-y-1 font-[var(--font-body)] text-[12px] leading-[16px] text-[#525252] mb-[var(--spacing-2)]">
-        <span>{formatDate(order.order_date, "dd/MM/yyyy")}</span>
+        <span>{t("orders.orderDate")}: {formatDate(order.order_date, "dd/MM/yyyy")}</span>
         <span className="text-[#E0E4EB]">|</span>
         <span className="font-[var(--font-weight-semibold)] text-[#161616]">{formatCurrency(order.total_amount)}</span>
         {order.expected_delivery && (
@@ -134,14 +139,6 @@ function OrderCard({
           </>
         )}
       </div>
-
-      {order.project_name && (
-        <div className="mb-[var(--spacing-2)]">
-          <span className="inline-flex h-[28px] items-center gap-1 rounded-[4px] bg-[#F6F8FB] px-[8px] font-[var(--font-body)] text-[12px] leading-[16px] font-[var(--font-weight-semibold)] text-[#525252]">
-            {order.project_name}
-          </span>
-        </div>
-      )}
 
       {/* Product images + reorder button aligned right */}
       <div className="flex items-center justify-between">
