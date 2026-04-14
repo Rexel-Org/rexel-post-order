@@ -105,23 +105,22 @@ function OrderCard({
     <div
       onClick={onClick}
       className={cn(
-        "group cursor-pointer rounded-[var(--border-radius-sm)] border p-4 transition-all hover:shadow-[var(--shadow-2)]",
-        "border-[var(--color-border-subtle)] bg-[var(--color-bg-layer-02)]",
-        warning && "border-l-4 border-l-[var(--color-alert-error-border)]"
+        "group cursor-pointer rounded-[var(--border-radius-sm)] border border-[#E0E4EB] bg-white p-[var(--spacing-3)] transition-all hover:shadow-[var(--shadow-2)]",
+        warning && "relative before:absolute before:left-0 before:top-[8px] before:bottom-[8px] before:w-[4px] before:rounded-[2px] before:bg-[var(--color-error)]"
       )}
     >
-      <div className="flex items-start justify-between gap-2 mb-2">
+      <div className="flex items-start justify-between gap-2 mb-[var(--spacing-2)]">
         <div className="flex items-center gap-2">
           <CopyPill text={order.order_number} />
         </div>
         <StatusBadge status={order.status} />
       </div>
 
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-[var(--color-text-secondary)] mb-2">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 font-[var(--font-body)] text-[12px] leading-[16px] text-[#525252] mb-[var(--spacing-2)]">
         <span>{formatDate(order.order_date, "dd/MM/yyyy")}</span>
-        <span className="font-semibold text-[var(--color-text-primary)]">{formatCurrency(order.total_amount)}</span>
+        <span className="font-[var(--font-weight-semibold)] text-[#161616]">{formatCurrency(order.total_amount)}</span>
         {order.expected_delivery && (
-          <span className="font-semibold text-[var(--color-primary)]">
+          <span className="font-[var(--font-weight-semibold)] text-[#003399]">
             <Truck className="inline h-3 w-3 mr-0.5" />
             {t("orders.expLabel")} {formatDate(order.expected_delivery, "dd/MM/yyyy")}
           </span>
@@ -133,14 +132,14 @@ function OrderCard({
         )}
       </div>
 
-      <div className="flex items-center gap-3 text-[12px] text-[var(--color-text-helper)] mb-3">
+      <div className="flex items-center gap-3 font-[var(--font-body)] text-[12px] leading-[16px] text-[#525252] mb-[var(--spacing-2)]">
         {order.po_number && (
           <span>
             {t("common.po")}: {order.po_number}
           </span>
         )}
         {order.project_name && (
-          <span className="inline-flex h-8 items-center gap-1 rounded-full bg-[var(--color-bg-layer-01)] px-3 text-[12px] font-semibold text-[var(--color-text-secondary)]">
+          <span className="inline-flex h-[28px] items-center gap-1 rounded-[4px] bg-[#F6F8FB] px-[8px] font-[var(--font-body)] text-[12px] leading-[16px] font-[var(--font-weight-semibold)] text-[#525252]">
             {order.project_name}
           </span>
         )}
@@ -154,11 +153,11 @@ function OrderCard({
               key={li.id}
               src={productImageUrl(li.product_reference)}
               alt={li.product_name}
-              className="h-8 w-8 rounded border border-[var(--color-border-subtle)] object-cover"
+              className="h-8 w-8 rounded-[4px] border border-[#E0E4EB] object-cover"
             />
           ))}
           {moreCount > 0 && (
-            <span className="text-[12px] text-[var(--color-text-secondary)]">
+            <span className="font-[var(--font-body)] text-[12px] leading-[16px] text-[#525252]">
               +{moreCount} {t("orders.more")}
             </span>
           )}
@@ -166,7 +165,7 @@ function OrderCard({
         {onReorder && (
           <button
             onClick={(e) => { e.stopPropagation(); onReorder(); }}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-[var(--border-radius-sm)] border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-rexel-primary-10)] transition-colors"
+            className="inline-flex h-[32px] w-[32px] items-center justify-center rounded-[var(--border-radius-sm)] border border-[#003399] bg-white text-[#003399] hover:bg-[#EEF2FF] transition-colors"
             title={t("orders.reorderAllTitle")}
           >
             <ShoppingCart className="h-4 w-4" />
@@ -175,17 +174,19 @@ function OrderCard({
       </div>
 
       {order.status === "delayed" && order.previous_expected_delivery && (
-        <div className="mt-3 rounded border border-[var(--color-alert-error-border)] bg-[var(--color-alert-error-bg)] p-2 text-[12px] text-[var(--color-alert-error-text)]">
-          <AlertTriangle className="inline h-3 w-3 mr-1" />
-          {t("orders.newDeliveryDate")}: {formatDate(order.expected_delivery, "dd/MM/yyyy")} {t("orders.insteadOf")}{" "}
-          <span className="line-through">{formatDate(order.previous_expected_delivery, "dd/MM/yyyy")}</span>
-          {" — "}
-          {t("orders.delayedByCarrier")}
+        <div className="mt-[var(--spacing-2)] flex items-center gap-[8px] rounded-[var(--border-radius-sm)] border border-[var(--color-alert-error-border)] bg-[var(--color-alert-error-bg)] px-[var(--spacing-2)] py-[var(--spacing-1)] font-[var(--font-body)] text-[12px] leading-[16px] text-[var(--color-alert-error-text)]">
+          <AlertTriangle className="h-3 w-3 shrink-0" />
+          <span>
+            {t("orders.newDeliveryDate")}: {formatDate(order.expected_delivery, "dd/MM/yyyy")} {t("orders.insteadOf")}{" "}
+            <span className="line-through">{formatDate(order.previous_expected_delivery, "dd/MM/yyyy")}</span>
+            {" — "}
+            {t("orders.delayedByCarrier")}
+          </span>
         </div>
       )}
 
       {order.status === "partially_delivered" && (
-        <div className="mt-3 text-[12px] text-[var(--color-text-secondary)]">
+        <div className="mt-[var(--spacing-2)] font-[var(--font-body)] text-[12px] leading-[16px] text-[#525252]">
           {order.items_remaining} {t("orders.itemsRemaining")} | {t("orders.nextExpected")}:{" "}
           {formatDate(order.expected_delivery, "dd/MM/yyyy")}
         </div>
