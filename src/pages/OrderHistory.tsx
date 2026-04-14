@@ -617,7 +617,7 @@ export default function OrderHistory() {
                             className={cn(
                               "group transition-colors cursor-pointer",
                               sidePanelOrder === order.order_number
-                                ? "bg-[var(--color-rexel-primary-10)] border-l-2 border-l-[var(--color-primary)]"
+                                ? "bg-[var(--color-rexel-primary-10)]"
                                 : "hover:bg-[var(--color-bg-layer-01)]"
                             )}
                             onClick={() => setSidePanelOrder(order.order_number)}
@@ -704,7 +704,7 @@ export default function OrderHistory() {
                       {displayRows.map((order) => (
                         <tr key={order.id}
                           className={cn("group transition-colors cursor-pointer",
-                            sidePanelOrder === order.order_number ? "bg-[var(--color-rexel-primary-10)] border-l-2 border-l-[var(--color-primary)]"
+                            sidePanelOrder === order.order_number ? "bg-[var(--color-rexel-primary-10)]"
                               : "hover:bg-[var(--color-bg-layer-01)]"
                           )}
                           onClick={() => setSidePanelOrder(order.order_number)}
