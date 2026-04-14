@@ -19,12 +19,8 @@ import {
 } from "@/components/ui/select";
 
 
-// --- Product image helper (picsum for reliable loading) ---
-function productImageUrl(ref: string) {
-  const hash = Array.from(ref).reduce((a, c) => a + c.charCodeAt(0), 0);
-  const id = (hash % 200) + 10;
-  return `https://picsum.photos/seed/${id}/64/64`;
-}
+
+
 
 // --- Status config (labels via i18n) ---
 const statusVisual: Record<string, { icon: typeof CheckCircle; colorClass: string; bgClass: string }> = {
@@ -132,29 +128,25 @@ function OrderCard({
         )}
       </div>
 
-      <div className="flex items-center gap-3 font-[var(--font-body)] text-[12px] leading-[16px] text-[#525252] mb-[var(--spacing-2)]">
-        {order.po_number && (
-          <span>
-            {t("common.po")}: {order.po_number}
-          </span>
-        )}
-        {order.project_name && (
+      {order.project_name && (
+        <div className="mb-[var(--spacing-2)]">
           <span className="inline-flex h-[28px] items-center gap-1 rounded-[4px] bg-[#F6F8FB] px-[8px] font-[var(--font-body)] text-[12px] leading-[16px] font-[var(--font-weight-semibold)] text-[#525252]">
             {order.project_name}
           </span>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Product images + reorder button aligned right */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           {displayItems.map((li) => (
-            <img
+            <div
               key={li.id}
-              src={productImageUrl(li.product_reference)}
-              alt={li.product_name}
-              className="h-8 w-8 rounded-[4px] border border-[#E0E4EB] object-cover"
-            />
+              className="h-12 w-12 shrink-0 rounded-[var(--border-radius-sm)] bg-[#F6F8FB] border border-[#E0E4EB] flex items-center justify-center"
+              title={li.product_name}
+            >
+              <Package className="h-5 w-5 text-[#a8a8a8]" />
+            </div>
           ))}
           {moreCount > 0 && (
             <span className="font-[var(--font-body)] text-[12px] leading-[16px] text-[#525252]">
