@@ -22,14 +22,14 @@ const shipmentStatusVisual: Record<string, { icon: typeof Truck; colorClass: str
 
 function KpiCard({ label, value, icon: Icon, color }: { label: string; value: number; icon: typeof Truck; color: string }) {
   return (
-    <div className="rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-layer-02)] p-4">
+    <div className="rounded-[var(--border-radius-sm)] border border-[#E0E4EB] bg-white p-[var(--spacing-3)]">
       <div className="flex items-center gap-3">
         <div className={cn("flex h-10 w-10 items-center justify-center rounded-full", color)}>
           <Icon className="h-5 w-5" />
         </div>
         <div>
-          <p className="text-2xl font-bold font-[var(--font-heading)] text-[var(--color-text-primary)]">{value}</p>
-          <p className="text-xs text-[var(--color-text-secondary)]">{label}</p>
+          <p className="font-[var(--font-heading)] text-[20px] leading-[28px] font-bold text-[#161616]">{value}</p>
+          <p className="font-[var(--font-body)] text-[12px] leading-[16px] text-[#525252]">{label}</p>
         </div>
       </div>
     </div>
@@ -51,42 +51,42 @@ function ShipmentCard({
   return (
     <div
       onClick={() => navigate(`/orders/${order.order_number}`)}
-      className="cursor-pointer rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-layer-02)] p-4 hover:shadow-[var(--shadow-2)] transition-all"
+      className="cursor-pointer rounded-[var(--border-radius-sm)] border border-[#E0E4EB] bg-white p-[var(--spacing-3)] hover:shadow-[var(--shadow-2)] transition-all"
     >
-      <div className="flex items-start justify-between mb-3">
+      <div className="flex items-start justify-between mb-[var(--spacing-2)]">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="font-semibold text-[var(--color-text-primary)]">{order.order_number}</span>
-            <span className="text-xs text-[var(--color-text-secondary)]">
+            <span className="font-[var(--font-body)] text-[14px] leading-[20px] font-[var(--font-weight-semibold)] text-[#161616]">{order.order_number}</span>
+            <span className="font-[var(--font-body)] text-[12px] leading-[16px] text-[#525252]">
               · {t("delivery.shipmentN")} {shipment.shipment_index}
             </span>
           </div>
-          <p className="text-xs text-[var(--color-text-secondary)]">
+          <p className="font-[var(--font-body)] text-[12px] leading-[16px] text-[#525252]">
             {shipment.carrier && <span>{shipment.carrier} · </span>}
             {order.project_name && <span>{order.project_name}</span>}
           </p>
         </div>
-        <span className={cn("inline-flex h-8 items-center gap-1 rounded-full border px-3 text-[12px] font-semibold", meta.bgClass, meta.colorClass)}>
+        <span className={cn("inline-flex h-8 items-center gap-1 rounded-full border px-3 font-[var(--font-body)] text-[12px] leading-[16px] font-[var(--font-weight-semibold)]", meta.bgClass, meta.colorClass)}>
           <Icon className="h-3 w-3 shrink-0" />
           {statusLabel}
         </span>
       </div>
 
       {items.length > 0 && (
-        <div className="space-y-1.5 mb-3">
+        <div className="space-y-1.5 mb-[var(--spacing-2)]">
           {items.slice(0, 3).map((item) => (
-            <div key={item.id} className="flex items-center justify-between text-sm">
+            <div key={item.id} className="flex items-center justify-between font-[var(--font-body)] text-[14px] leading-[20px]">
               <div className="flex items-center gap-2 min-w-0">
-                <div className="h-7 w-7 shrink-0 rounded bg-[var(--color-bg-layer-01)] flex items-center justify-center text-[10px] font-bold text-[var(--color-text-secondary)]">
+                <div className="h-7 w-7 shrink-0 rounded-[4px] bg-[#F6F8FB] flex items-center justify-center font-[var(--font-body)] text-[10px] font-bold text-[#525252]">
                   {item.supplier.slice(0, 2).toUpperCase()}
                 </div>
-                <span className="truncate text-[var(--color-text-primary)]">{item.product_name}</span>
+                <span className="truncate text-[#161616]">{item.product_name}</span>
               </div>
-              <span className="text-xs text-[var(--color-text-secondary)] shrink-0 ml-2">×{item.quantity}</span>
+              <span className="font-[var(--font-body)] text-[12px] leading-[16px] text-[#525252] shrink-0 ml-2">×{item.quantity}</span>
             </div>
           ))}
           {items.length > 3 && (
-            <p className="text-xs text-[var(--color-text-helper)]">
+            <p className="font-[var(--font-body)] text-[12px] leading-[16px] text-[#a8a8a8]">
               +{items.length - 3} {t("delivery.moreItems")}
             </p>
           )}
@@ -94,7 +94,7 @@ function ShipmentCard({
       )}
 
       {shipment.delivered_at && shipment.delivered_signed_by && (
-        <p className="text-xs text-[var(--color-success)]">
+        <p className="font-[var(--font-body)] text-[12px] leading-[16px] text-[var(--color-success)]">
           ✓ {t("delivery.signedBy")} {shipment.delivered_signed_by}
         </p>
       )}
