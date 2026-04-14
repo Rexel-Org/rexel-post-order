@@ -223,10 +223,10 @@ export default function DeliveryToday() {
       </div>
 
       {kpis.total > 0 && (
-        <div className="rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-layer-02)] p-4">
+        <div className="rounded-[var(--border-radius-sm)] border border-[#E0E4EB] bg-white p-[var(--spacing-3)]">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-[var(--color-text-primary)]">{t("delivery.receptionProgress")}</span>
-            <span className="text-sm text-[var(--color-text-secondary)]">
+            <span className="font-[var(--font-body)] text-[14px] leading-[20px] font-[var(--font-weight-semibold)] text-[#161616]">{t("delivery.receptionProgress")}</span>
+            <span className="font-[var(--font-body)] text-[12px] leading-[16px] text-[#525252]">
               {kpis.delivered}/{kpis.total} {t("delivery.receivedOf")}
             </span>
           </div>
@@ -235,10 +235,10 @@ export default function DeliveryToday() {
       )}
 
       {todayShipments.length === 0 ? (
-        <div className="rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-layer-02)] p-12 text-center">
-          <Truck className="h-10 w-10 text-[var(--color-text-placeholder)] mx-auto mb-3" />
-          <p className="text-[var(--color-text-secondary)] font-medium">{t("delivery.emptyTitle")}</p>
-          <p className="text-xs text-[var(--color-text-helper)] mt-1">{t("delivery.emptyHint")}</p>
+        <div className="rounded-[var(--border-radius-sm)] border border-[#E0E4EB] bg-white p-12 text-center">
+          <Truck className="h-10 w-10 text-[#a8a8a8] mx-auto mb-3" />
+          <p className="font-[var(--font-body)] text-[14px] leading-[20px] font-[var(--font-weight-semibold)] text-[#525252]">{t("delivery.emptyTitle")}</p>
+          <p className="font-[var(--font-body)] text-[12px] leading-[16px] text-[#a8a8a8] mt-1">{t("delivery.emptyHint")}</p>
         </div>
       ) : (
         Object.entries(groupedByCarrier).map(([carrier, carrierShipments]) => (
