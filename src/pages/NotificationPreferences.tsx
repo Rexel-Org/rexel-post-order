@@ -60,10 +60,10 @@ export default function NotificationPreferences() {
 
   const updateMutation = useMutation({
     mutationFn: async ({ id, field, value }: { id: string; field: ChannelKey; value: boolean }) => {
-      const update: Partial<Pick<NotifPref, "email" | "push" | "daily_digest">> = { [field]: value };
+      const update: Pick<NotifPref, "email" | "push" | "daily_digest"> = { email: false, push: false, daily_digest: false, [field]: value };
       const { error } = await supabase
         .from("notification_preferences")
-        .update(update as Record<string, boolean>)
+        .update(update)
         .eq("id", id);
       if (error) throw error;
     },
