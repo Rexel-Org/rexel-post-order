@@ -15,6 +15,7 @@ export function MaterialIcon({ name, className, size = 20, filled = false, style
       style={{
         fontSize: size,
         fontVariationSettings: `'FILL' ${filled ? 1 : 0}, 'wght' 400, 'GRAD' 0, 'opsz' ${size}`,
+        ...style,
       }}
     >
       {name}
