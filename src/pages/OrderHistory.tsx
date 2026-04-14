@@ -90,7 +90,63 @@ function isOngoing(s: string) { return ONGOING_STATUSES.includes(s); }
 function isCompleted(s: string) { return s === "completed"; }
 function needsAttention(s: string) { return NEEDS_ATTENTION_STATUSES.includes(s); }
 
-// --- Order Card (list view) ---
+// --- Ref badge (like Cart & Checkout) ---
+function RefBadge({ label, value }: { label: string; value: string }) {
+  return (
+    <button
+      type="button"
+      onClick={(e) => { e.stopPropagation(); navigator.clipboard.writeText(value); toast.success(`${label} copié`); }}
+      className="inline-flex items-center gap-[4px] whitespace-nowrap rounded-full border border-[#E0E4EB] bg-white px-[10px] py-[3px] hover:bg-[#F6F8FB] transition-colors"
+    >
+      <span className="font-[var(--font-body)] text-[12px] leading-[16px] text-[#525252]">{label} :</span>
+      <span className="font-[var(--font-body)] text-[12px] leading-[16px] font-[var(--font-weight-bold)] text-[#161616]">{value}</span>
+      <Copy className="h-3 w-3 text-[#003399]" />
+    </button>
+  );
+}
+
+// --- Order Line Item row (CartLineItem-style) ---
+function OrderLineRow({ item, formatCurrency }: { item: LineItemRow; formatCurrency: (v: number) => string }) {
+  const subtotal = item.unit_price * item.quantity;
+  return (
+    <div className="flex gap-[16px] border-b border-[#E0E4EB] py-[16px] pl-[16px] last:border-b-0">
+      {/* Placeholder image */}
+      <div className="flex h-[64px] w-[64px] shrink-0 items-center justify-center rounded-[4px] bg-[#F6F8FB]">
+        <Package className="h-7 w-7 text-[#c0c0c0]" />
+      </div>
+
+      {/* Product info */}
+      <div className="flex min-w-0 flex-1 flex-col gap-[4px]">
+        <span className="font-[var(--font-body)] text-[12px] leading-[16px] font-[var(--font-weight-bold)] text-[#161616] tracking-[0.02em]">
+          {item.supplier}
+        </span>
+        <p className="font-[var(--font-body)] text-[14px] leading-[20px] font-[var(--font-weight-semibold)] text-[#003399]">
+          {item.product_name}
+        </p>
+        <div className="flex flex-wrap items-center gap-[6px] pt-[2px]">
+          <RefBadge label="Ref" value={item.product_reference} />
+        </div>
+      </div>
+
+      {/* Price + qty */}
+      <div className="flex shrink-0 flex-col items-end gap-[8px]">
+        <div className="flex flex-col items-end gap-[2px]">
+          <span className="font-[var(--font-body)] text-[12px] leading-[16px] text-[#525252]">
+            {formatCurrency(item.unit_price)} / u
+          </span>
+          <span className="font-[var(--font-heading)] text-[14px] leading-[20px] font-bold text-[#161616]">
+            {formatCurrency(subtotal)}
+          </span>
+        </div>
+        <div className="flex h-[32px] min-w-[56px] items-center justify-center rounded-[4px] border border-[#E0E4EB] bg-[#F6F8FB] font-[var(--font-body)] text-[14px] leading-[20px] font-[var(--font-weight-semibold)] text-[#525252]">
+          ×{item.quantity}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// --- Order Card (list view — CartLineItem skeleton) ---
 function OrderCard({
   order, lineItems, onClick, warning, onReorder,
 }: {
@@ -105,60 +161,69 @@ function OrderCard({
     <div
       onClick={onClick}
       className={cn(
-        "group cursor-pointer rounded-[var(--border-radius-sm)] border border-[#E0E4EB] bg-white p-[var(--spacing-3)] transition-all hover:shadow-[var(--shadow-2)]",
+        "group cursor-pointer rounded-[var(--border-radius-sm)] border border-[#E0E4EB] bg-white transition-all hover:shadow-[var(--shadow-2)]",
         warning && "relative before:absolute before:left-0 before:top-[8px] before:bottom-[8px] before:w-[4px] before:rounded-[2px] before:bg-[var(--color-error)]"
       )}
     >
-      <div className="flex items-start justify-between gap-2 mb-[var(--spacing-2)]">
-        <div className="flex items-center gap-2">
+      {/* Card header */}
+      <div className="flex items-center justify-between gap-2 px-[var(--spacing-3)] pt-[var(--spacing-3)] pb-[var(--spacing-2)]">
+        <div className="flex items-center gap-[var(--spacing-2)]">
           <CopyPill text={order.order_number} />
-        </div>
-        <StatusBadge status={order.status} />
-      </div>
-
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 font-[var(--font-body)] text-[12px] leading-[16px] text-[#525252] mb-[var(--spacing-2)]">
-        <span>{formatDate(order.order_date, "dd/MM/yyyy")}</span>
-        <span className="font-[var(--font-weight-semibold)] text-[#161616]">{formatCurrency(order.total_amount)}</span>
-        {order.expected_delivery && (
-          <span className="font-[var(--font-weight-semibold)] text-[#003399]">
-            <Truck className="inline h-3 w-3 mr-0.5" />
-            {t("orders.expLabel")} {formatDate(order.expected_delivery, "dd/MM/yyyy")}
+          <span className="font-[var(--font-body)] text-[12px] leading-[16px] text-[#525252]">
+            {formatDate(order.order_date, "dd/MM/yyyy")}
           </span>
-        )}
-        {order.items_remaining > 0 && (
-          <span>
-            {order.items_remaining} {t("orders.itemsRemaining")}
-          </span>
-        )}
-      </div>
-
-      <div className="flex items-center gap-3 font-[var(--font-body)] text-[12px] leading-[16px] text-[#525252] mb-[var(--spacing-2)]">
-        {order.po_number && (
-          <span>
-            {t("common.po")}: {order.po_number}
-          </span>
-        )}
-        {order.project_name && (
-          <span className="inline-flex h-[28px] items-center gap-1 rounded-[4px] bg-[#F6F8FB] px-[8px] font-[var(--font-body)] text-[12px] leading-[16px] font-[var(--font-weight-semibold)] text-[#525252]">
-            {order.project_name}
-          </span>
-        )}
-      </div>
-
-      {/* Product images + reorder button aligned right */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          {displayItems.map((li) => (
-            <img
-              key={li.id}
-              src={productImageUrl(li.product_reference)}
-              alt={li.product_name}
-              className="h-8 w-8 rounded-[4px] border border-[#E0E4EB] object-cover"
-            />
-          ))}
-          {moreCount > 0 && (
+          {order.po_number && (
             <span className="font-[var(--font-body)] text-[12px] leading-[16px] text-[#525252]">
-              +{moreCount} {t("orders.more")}
+              {t("common.po")}: {order.po_number}
+            </span>
+          )}
+          {order.project_name && (
+            <span className="inline-flex h-[24px] items-center rounded-[4px] bg-[#F6F8FB] px-[8px] font-[var(--font-body)] text-[12px] leading-[16px] font-[var(--font-weight-semibold)] text-[#525252]">
+              {order.project_name}
+            </span>
+          )}
+        </div>
+        <div className="flex items-center gap-[var(--spacing-2)]">
+          <span className="font-[var(--font-heading)] text-[14px] leading-[20px] font-bold text-[#161616]">
+            {formatCurrency(order.total_amount)}
+          </span>
+          <StatusBadge status={order.status} />
+        </div>
+      </div>
+
+      {/* Alert banners */}
+      {order.status === "delayed" && order.previous_expected_delivery && (
+        <div className="mx-[var(--spacing-3)] mb-[var(--spacing-2)] flex items-center gap-[8px] rounded-[var(--border-radius-sm)] border border-[var(--color-alert-error-border)] bg-[var(--color-alert-error-bg)] px-[var(--spacing-2)] py-[var(--spacing-1)] font-[var(--font-body)] text-[12px] leading-[16px] text-[var(--color-alert-error-text)]">
+          <AlertTriangle className="h-3 w-3 shrink-0" />
+          <span>
+            {t("orders.newDeliveryDate")}: {formatDate(order.expected_delivery, "dd/MM/yyyy")} {t("orders.insteadOf")}{" "}
+            <span className="line-through">{formatDate(order.previous_expected_delivery, "dd/MM/yyyy")}</span>
+          </span>
+        </div>
+      )}
+
+      {/* Line items (CartLineItem style) */}
+      <div className="px-[var(--spacing-2)]">
+        {displayItems.map((li) => (
+          <OrderLineRow key={li.id} item={li} formatCurrency={formatCurrency} />
+        ))}
+      </div>
+
+      {/* Footer: more items + delivery info + reorder */}
+      <div className="flex items-center justify-between px-[var(--spacing-3)] py-[var(--spacing-2)] border-t border-[#E0E4EB]">
+        <div className="flex items-center gap-[var(--spacing-3)] font-[var(--font-body)] text-[12px] leading-[16px] text-[#525252]">
+          {moreCount > 0 && (
+            <span>+{moreCount} {t("orders.more")}</span>
+          )}
+          {order.expected_delivery && (
+            <span className="inline-flex items-center gap-[4px] font-[var(--font-weight-semibold)] text-[#003399]">
+              <Truck className="h-3 w-3" />
+              {t("orders.expLabel")} {formatDate(order.expected_delivery, "dd/MM/yyyy")}
+            </span>
+          )}
+          {order.status === "partially_delivered" && (
+            <span>
+              {order.items_remaining} {t("orders.itemsRemaining")}
             </span>
           )}
         </div>
@@ -172,25 +237,6 @@ function OrderCard({
           </button>
         )}
       </div>
-
-      {order.status === "delayed" && order.previous_expected_delivery && (
-        <div className="mt-[var(--spacing-2)] flex items-center gap-[8px] rounded-[var(--border-radius-sm)] border border-[var(--color-alert-error-border)] bg-[var(--color-alert-error-bg)] px-[var(--spacing-2)] py-[var(--spacing-1)] font-[var(--font-body)] text-[12px] leading-[16px] text-[var(--color-alert-error-text)]">
-          <AlertTriangle className="h-3 w-3 shrink-0" />
-          <span>
-            {t("orders.newDeliveryDate")}: {formatDate(order.expected_delivery, "dd/MM/yyyy")} {t("orders.insteadOf")}{" "}
-            <span className="line-through">{formatDate(order.previous_expected_delivery, "dd/MM/yyyy")}</span>
-            {" — "}
-            {t("orders.delayedByCarrier")}
-          </span>
-        </div>
-      )}
-
-      {order.status === "partially_delivered" && (
-        <div className="mt-[var(--spacing-2)] font-[var(--font-body)] text-[12px] leading-[16px] text-[#525252]">
-          {order.items_remaining} {t("orders.itemsRemaining")} | {t("orders.nextExpected")}:{" "}
-          {formatDate(order.expected_delivery, "dd/MM/yyyy")}
-        </div>
-      )}
     </div>
   );
 }
