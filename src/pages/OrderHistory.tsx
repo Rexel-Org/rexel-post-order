@@ -19,12 +19,8 @@ import {
 } from "@/components/ui/select";
 
 
-// --- Product image helper (picsum for reliable loading) ---
-function productImageUrl(ref: string) {
-  const hash = Array.from(ref).reduce((a, c) => a + c.charCodeAt(0), 0);
-  const id = (hash % 200) + 10;
-  return `https://picsum.photos/seed/${id}/64/64`;
-}
+
+
 
 // --- Status config (labels via i18n) ---
 const statusVisual: Record<string, { icon: typeof CheckCircle; colorClass: string; bgClass: string }> = {
