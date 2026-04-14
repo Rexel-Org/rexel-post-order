@@ -119,11 +119,11 @@ function OrderCard({
 
       <div className="flex flex-wrap items-center gap-x-2 gap-y-1 font-[var(--font-body)] text-[12px] leading-[16px] text-[#525252] mb-[var(--spacing-2)]">
         <span>{t("orders.orderDate")}: {formatDate(order.order_date, "dd/MM/yyyy")}</span>
-        <span className="text-[#E0E4EB]">|</span>
+        <span className="text-[#a8a8a8]">|</span>
         <span className="font-[var(--font-weight-semibold)] text-[#161616]">{formatCurrency(order.total_amount)}</span>
         {order.expected_delivery && (
           <>
-            <span className="text-[#E0E4EB]">|</span>
+            <span className="text-[#a8a8a8]">|</span>
             <span className="font-[var(--font-weight-semibold)] text-[#003399]">
               <Truck className="inline h-3 w-3 mr-0.5" />
               {t("orders.expLabel")} {formatDate(order.expected_delivery, "dd/MM/yyyy")}
@@ -132,7 +132,7 @@ function OrderCard({
         )}
         {order.items_remaining > 0 && (
           <>
-            <span className="text-[#E0E4EB]">|</span>
+            <span className="text-[#a8a8a8]">|</span>
             <span>
               {order.items_remaining} {t("orders.itemsRemaining")}
             </span>
