@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from "react";
 import {
   Search, X, AlertTriangle, XCircle, CheckCircle, Package,
   Truck, Copy, Download, CalendarIcon, LayoutGrid, List,
-  ArrowUpDown, ArrowUp, ArrowDown, ShoppingCart,
+  ArrowUpDown, ArrowUp, ArrowDown, ShoppingCart, Star,
   ChevronLeft, ChevronRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -158,19 +158,28 @@ function OrderCard({
             </span>
           )}
         </div>
-        {onReorder && (
+        <div className="flex items-center gap-2">
           <button
-            onClick={(e) => { e.stopPropagation(); onReorder(); }}
-            className={cn(
-              "inline-flex h-[32px] items-center justify-center gap-1.5 rounded-[var(--border-radius-sm)] bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-hover)] transition-colors",
-              "w-[32px] px-0 sm:w-auto sm:px-2"
-            )}
-            title={t("orders.reorderAllTitle")}
+            onClick={(e) => { e.stopPropagation(); toast.success("Ajouté à la joblist"); }}
+            className="inline-flex h-[32px] w-[32px] items-center justify-center rounded-[var(--border-radius-sm)] border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-rexel-primary-10)] transition-colors"
+            title="Ajouter à la joblist"
           >
-            <ShoppingCart className="h-4 w-4" />
-            <span className="hidden sm:inline text-[12px] font-semibold">{t("common.reorder")}</span>
+            <Star className="h-4 w-4" />
           </button>
-        )}
+          {onReorder && (
+            <button
+              onClick={(e) => { e.stopPropagation(); onReorder(); }}
+              className={cn(
+                "inline-flex h-[32px] items-center justify-center gap-1.5 rounded-[var(--border-radius-sm)] bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-hover)] transition-colors",
+                "w-[32px] px-0 sm:w-auto sm:px-2"
+              )}
+              title={t("orders.reorderAllTitle")}
+            >
+              <ShoppingCart className="h-4 w-4" />
+              <span className="hidden sm:inline text-[12px] font-semibold">{t("common.reorder")}</span>
+            </button>
+          )}
+        </div>
       </div>
 
       {order.status === "delayed" && order.previous_expected_delivery && (
@@ -634,13 +643,22 @@ export default function OrderHistory() {
                             <td className="px-4 py-3 text-[13px] font-semibold text-[var(--color-primary)]">{formatDate(order.expected_delivery, "dd/MM/yyyy")}</td>
                             <td className="px-4 py-3 text-[13px] text-[var(--color-text-secondary)]">{order.items_remaining}</td>
                             <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
-                              <button
-                                onClick={() => handleReorderAll(order)}
-                                className="flex h-8 w-8 items-center justify-center rounded-[var(--border-radius-sm)] border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-rexel-primary-10)] transition-colors"
-                                title={t("orders.reorderAllTitle")}
-                              >
-                                <ShoppingCart className="h-3.5 w-3.5" />
-                              </button>
+                              <div className="flex items-center gap-2">
+                                <button
+                                  onClick={() => toast.success("Ajouté à la joblist")}
+                                  className="flex h-8 w-8 items-center justify-center rounded-[var(--border-radius-sm)] border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-rexel-primary-10)] transition-colors"
+                                  title="Ajouter à la joblist"
+                                >
+                                  <Star className="h-3.5 w-3.5" />
+                                </button>
+                                <button
+                                  onClick={() => handleReorderAll(order)}
+                                  className="flex h-8 w-8 items-center justify-center rounded-[var(--border-radius-sm)] border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-rexel-primary-10)] transition-colors"
+                                  title={t("orders.reorderAllTitle")}
+                                >
+                                  <ShoppingCart className="h-3.5 w-3.5" />
+                                </button>
+                              </div>
                             </td>
                           </tr>
                         ))}
@@ -721,11 +739,18 @@ export default function OrderHistory() {
                           <td className="px-4 py-3 text-[13px] font-semibold text-[var(--color-primary)]">{formatDate(order.expected_delivery, "dd/MM/yyyy")}</td>
                           <td className="px-4 py-3 text-[13px] text-[var(--color-text-secondary)]">{order.items_remaining}</td>
                           <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
-                            <button onClick={() => handleReorderAll(order)}
-                              className="flex h-8 w-8 items-center justify-center rounded-[var(--border-radius-sm)] border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-rexel-primary-10)] transition-colors"
-                              title={t("orders.reorderAllTitle")}>
-                              <ShoppingCart className="h-3.5 w-3.5" />
-                            </button>
+                            <div className="flex items-center gap-2">
+                              <button onClick={() => toast.success("Ajouté à la joblist")}
+                                className="flex h-8 w-8 items-center justify-center rounded-[var(--border-radius-sm)] border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-rexel-primary-10)] transition-colors"
+                                title="Ajouter à la joblist">
+                                <Star className="h-3.5 w-3.5" />
+                              </button>
+                              <button onClick={() => handleReorderAll(order)}
+                                className="flex h-8 w-8 items-center justify-center rounded-[var(--border-radius-sm)] border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-rexel-primary-10)] transition-colors"
+                                title={t("orders.reorderAllTitle")}>
+                                <ShoppingCart className="h-3.5 w-3.5" />
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ))}
