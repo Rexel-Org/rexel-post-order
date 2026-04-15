@@ -324,14 +324,14 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                   )}
                 </div>
 
-                <div className="flex px-6">
+                <div className="flex px-6 border-b border-[var(--color-border-subtle)]">
                   {tabs.map((tab) => (
                     <button
                       key={tab.key}
                       type="button"
                       onClick={() => setActiveTab(tab.key)}
                       className={cn(
-                        "flex items-center gap-1.5 px-4 py-3 text-[13px] font-semibold border-b-2 -mb-px transition-colors",
+                        "flex-1 flex items-center justify-center gap-1.5 py-3 text-[13px] font-semibold border-b-2 -mb-px transition-colors",
                         activeTab === tab.key
                           ? "border-[var(--color-primary)] text-[var(--color-primary)]"
                           : "border-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
