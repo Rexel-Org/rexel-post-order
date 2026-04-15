@@ -450,12 +450,16 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                     );
                   })()}
 
-                  {data.lineItems.filter((li) => li.shipment_id).length > 0 && (
-                    <div className="space-y-3">
-                      <h3 className="text-[13px] font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider">{t("side.allItems")}</h3>
-                      {data.lineItems
-                        .filter((li) => li.shipment_id)
-                        .map((item) => (
+                  {(() => {
+                    const assigned = data.lineItems.filter((li) => li.shipment_id);
+                    if (assigned.length === 0) return null;
+                    const visible = showAllItems ? assigned : assigned.slice(0, 5);
+                    const totalItems = data.lineItems.length;
+                    const hiddenCount = totalItems - (showAllItems ? totalItems : Math.min(5, data.lineItems.filter((li) => !li.shipment_id).length) + Math.min(5, assigned.length));
+                    return (
+                      <div className="space-y-3">
+                        <h3 className="text-[13px] font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider">{t("side.allItems")}</h3>
+                        {visible.map((item) => (
                           <div key={item.id} className="flex items-center justify-between text-[13px] rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] p-3">
                             <div className="flex items-center gap-3 min-w-0">
                               <div className="h-10 w-10 shrink-0 rounded border border-[#E0E4EB] bg-[#F6F8FB] flex items-center justify-center"><Package className="h-5 w-5 text-[#a8a8a8]" /></div>
@@ -480,7 +484,27 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                             </div>
                           </div>
                         ))}
-                    </div>
+                      </div>
+                    );
+                  })()}
+
+                  {!showAllItems && data.lineItems.length > 5 && (
+                    <button
+                      type="button"
+                      onClick={() => setShowAllItems(true)}
+                      className="w-full inline-flex items-center justify-center h-10 rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] text-[13px] font-semibold text-[var(--color-primary)] hover:bg-[var(--color-bg-layer-01)] transition-colors"
+                    >
+                      {t("side.showMore")} ({data.lineItems.length - 5})
+                    </button>
+                  )}
+                  {showAllItems && data.lineItems.length > 5 && (
+                    <button
+                      type="button"
+                      onClick={() => setShowAllItems(false)}
+                      className="w-full inline-flex items-center justify-center h-10 rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] text-[13px] font-semibold text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-layer-01)] transition-colors"
+                    >
+                      {t("side.showLess")}
+                    </button>
                   )}
 
                   <div className="rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] p-4">
