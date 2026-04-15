@@ -128,7 +128,7 @@ function ShipmentMini({ shipment, lineItems }: { shipment: ShipmentRow; lineItem
             const pct = item.quantity > 0 ? Math.round((delivered / item.quantity) * 100) : 0;
             return (
               <div key={item.id} className="flex items-center gap-2 text-[12px]">
-                <img src={productImageUrl(item.product_reference)} alt={item.product_name} className="h-6 w-6 rounded border border-[var(--color-border-subtle)] object-cover shrink-0" />
+                <div className="h-6 w-6 shrink-0 rounded border border-[#E0E4EB] bg-[#F6F8FB] flex items-center justify-center"><Package className="h-3 w-3 text-[#a8a8a8]" /></div>
                 <span className="truncate text-[var(--color-text-primary)]">{item.product_name}</span>
                 <div className="flex items-center gap-1.5 shrink-0 ml-auto">
                   <Progress value={pct} className="h-1 w-10" />
@@ -417,7 +417,7 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                         {unassigned.map((item) => (
                           <div key={item.id} className="flex items-center justify-between text-[13px] rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] p-3">
                             <div className="flex items-center gap-3 min-w-0">
-                              <img src={productImageUrl(item.product_reference)} alt={item.product_name} className="h-10 w-10 rounded border border-[var(--color-border-subtle)] object-cover shrink-0" />
+                              <div className="h-10 w-10 shrink-0 rounded border border-[#E0E4EB] bg-[#F6F8FB] flex items-center justify-center"><Package className="h-5 w-5 text-[#a8a8a8]" /></div>
                               <div className="min-w-0">
                                 <p className="font-semibold text-[var(--color-text-primary)] truncate">{item.product_name}</p>
                                 <CopyPill text={item.product_reference} />
@@ -451,7 +451,7 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                         .map((item) => (
                           <div key={item.id} className="flex items-center justify-between text-[13px] rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] p-3">
                             <div className="flex items-center gap-3 min-w-0">
-                              <img src={productImageUrl(item.product_reference)} alt={item.product_name} className="h-10 w-10 rounded border border-[var(--color-border-subtle)] object-cover shrink-0" />
+                              <div className="h-10 w-10 shrink-0 rounded border border-[#E0E4EB] bg-[#F6F8FB] flex items-center justify-center"><Package className="h-5 w-5 text-[#a8a8a8]" /></div>
                               <div className="min-w-0">
                                 <p className="font-semibold text-[var(--color-text-primary)] truncate">{item.product_name}</p>
                                 <CopyPill text={item.product_reference} />
@@ -563,7 +563,7 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                         disabled={isCompletedOrder}
                       />
                       <div className="flex items-center gap-3 flex-1 min-w-0">
-                        <img src={productImageUrl(item.product_reference)} alt={item.product_name} className="h-10 w-10 rounded border border-[var(--color-border-subtle)] object-cover shrink-0" />
+                        <div className="h-10 w-10 shrink-0 rounded border border-[#E0E4EB] bg-[#F6F8FB] flex items-center justify-center"><Package className="h-5 w-5 text-[#a8a8a8]" /></div>
                         <div className="min-w-0">
                           <p
                             className={cn(
