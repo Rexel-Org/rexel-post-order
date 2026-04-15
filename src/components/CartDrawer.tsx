@@ -65,7 +65,7 @@ export const CartDrawer = () => {
                         {item.variantTitle !== "Default Title" && (
                           <p className="text-xs text-muted-foreground">{item.selectedOptions.map(o => o.value).join(' • ')}</p>
                         )}
-                        <p className="font-semibold text-sm mt-1">{parseFloat(item.price.amount).toFixed(2)} {item.price.currencyCode}</p>
+                        <p className="font-heading font-semibold text-sm mt-1">{parseFloat(item.price.amount).toFixed(2)} {item.price.currencyCode}</p>
                       </div>
                       <div className="flex flex-col items-end gap-2 flex-shrink-0">
                         <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => removeItem(item.variantId)}>
@@ -88,7 +88,7 @@ export const CartDrawer = () => {
               <div className="flex-shrink-0 space-y-4 pt-4 border-t">
                 <div className="flex justify-between items-center">
                   <span className="text-lg font-semibold">Total HT</span>
-                  <span className="text-xl font-bold">{totalPrice.toFixed(2)} {currency}</span>
+                  <span className="font-heading text-xl font-semibold">{totalPrice.toFixed(2)} {currency}</span>
                 </div>
                 <Button onClick={handleCheckout} className="w-full" size="lg" disabled={items.length === 0 || isLoading || isSyncing}>
                   {isLoading || isSyncing ? <Loader2 className="w-4 h-4 animate-spin" /> : <><ExternalLink className="w-4 h-4 mr-2" />Passer commande</>}

@@ -88,7 +88,7 @@ export default function ProductGrid() {
                 </Link>
                 <p className="text-xs text-muted-foreground mb-3 line-clamp-1">{product.node.description}</p>
                 <div className="flex items-center justify-between">
-                  <span className="font-display text-lg font-bold text-foreground">
+                  <span className="font-heading text-lg font-semibold text-foreground">
                     {parseFloat(price.amount).toFixed(2)} €
                   </span>
                   <Button size="sm" onClick={() => handleAdd(product)} disabled={isCartLoading}>

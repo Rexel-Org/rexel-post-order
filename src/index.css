@@ -369,10 +369,10 @@
   .link-m { font-family: "Open Sans", sans-serif; font-weight: 600; font-size: 14px; line-height: 18px; text-decoration: underline; }
 
   /* Prices — Open Sans SemiBold */
-  .price-xl { font-family: "Open Sans", sans-serif; font-weight: 600; font-size: 18px; line-height: 26px; }
-  .price-l  { font-family: "Open Sans", sans-serif; font-weight: 600; font-size: 16px; line-height: 24px; }
-  .price-m  { font-family: "Open Sans", sans-serif; font-weight: 600; font-size: 14px; line-height: 20px; }
-  .price-s  { font-family: "Open Sans", sans-serif; font-weight: 600; font-size: 12px; line-height: 16px; }
+  .price-xl { font-family: "Montserrat", sans-serif; font-weight: 600; font-size: 18px; line-height: 26px; }
+  .price-l  { font-family: "Montserrat", sans-serif; font-weight: 600; font-size: 16px; line-height: 24px; }
+  .price-m  { font-family: "Montserrat", sans-serif; font-weight: 600; font-size: 14px; line-height: 20px; }
+  .price-s  { font-family: "Montserrat", sans-serif; font-weight: 600; font-size: 12px; line-height: 16px; }
 
   /* Pills / Tags sizes (S, M, L) */
   .pill-s,

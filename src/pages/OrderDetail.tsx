@@ -74,13 +74,13 @@ export default function OrderDetail() {
                 <p className="font-medium text-card-foreground">{item.name}</p>
                 <p className="text-xs text-muted-foreground">Réf: {item.reference} — Qté: {item.quantity}</p>
               </div>
-              <p className="shrink-0 font-medium text-card-foreground">{(item.quantity * item.unitPrice).toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}</p>
+              <p className="shrink-0 font-heading font-semibold text-card-foreground">{(item.quantity * item.unitPrice).toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}</p>
             </div>
           ))}
         </div>
         <div className="mt-3 border-t border-border pt-3 flex justify-between font-semibold text-sm">
           <span>Total</span>
-          <span>{order.totalAmount.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}</span>
+          <span className="font-heading font-semibold">{order.totalAmount.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}</span>
         </div>
       </div>
 

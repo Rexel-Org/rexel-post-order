@@ -67,7 +67,10 @@ export default function DocumentsPage() {
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-[var(--color-text-primary)] truncate">{doc.name}</p>
                   <p className="text-xs text-[var(--color-text-secondary)]">
-                    {new Date(doc.date).toLocaleDateString("fr-FR")} — {doc.amount.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}
+                    {new Date(doc.date).toLocaleDateString("fr-FR")} —{" "}
+                    <span className="font-heading font-semibold">
+                      {doc.amount.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}
+                    </span>
                   </p>
                 </div>
                 <Button

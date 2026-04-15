@@ -327,7 +327,7 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                       {t("side.ordered")}{" "}
                       <span className="font-semibold text-[var(--color-text-primary)]">{formatDate(data.order.order_date, "dd/MM/yyyy")}</span>
                       <span className="text-[#a8a8a8] mx-2">|</span>
-                      <span className="font-semibold text-[var(--color-text-primary)] font-[var(--font-heading)]">{formatCurrency(data.order.total_amount)}</span>
+                      <span className="font-heading font-semibold text-[var(--color-text-primary)]">{formatCurrency(data.order.total_amount)}</span>
                     </p>
                     {data.order.project_name && (
                       <span className="inline-flex h-7 items-center rounded-[4px] bg-[var(--color-bg-layer-01)] px-3 text-[12px] font-semibold text-[var(--color-text-secondary)] shrink-0">
@@ -420,23 +420,27 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                           <div key={item.id} className="flex items-start justify-between text-[13px] rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] p-3">
                             <div className="flex items-start gap-3 min-w-0">
                               <div className="h-10 w-10 shrink-0 rounded border border-[#E0E4EB] bg-[#F6F8FB] flex items-center justify-center"><Package className="h-5 w-5 text-[#a8a8a8]" /></div>
-                              <div className="min-w-0 space-y-2">
+                              <div className="min-w-0 space-y-1">
                                 <p className="font-semibold text-[var(--color-text-primary)] truncate">{item.product_name}</p>
                                 <CopyPill text={item.product_reference} />
                               </div>
                             </div>
-                            <div className="flex items-start gap-3 shrink-0 ml-3">
-                              <div className="text-right space-y-2">
-                                <p className="text-[var(--color-text-primary)]">×{item.quantity}</p>
-                                <p className="text-[12px] text-[var(--color-text-secondary)] font-[var(--font-heading)]">{formatCurrency(item.unit_price)}</p>
+                            <div className="flex items-start gap-4 shrink-0 ml-3">
+                              <div className="flex flex-col items-end text-right gap-1">
+                                <p className="text-[13px] leading-[16px] text-[var(--color-text-primary)]">×{item.quantity}</p>
+                                <p className="text-[12px] leading-[16px] text-[var(--color-text-secondary)] font-heading font-semibold">{formatCurrency(item.unit_price)}</p>
                               </div>
                               <button
                                 type="button"
                                 onClick={() => handleReorderItem(item)}
-                                className="h-8 w-8 flex items-center justify-center rounded-[var(--border-radius-sm)] border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-rexel-primary-10)] transition-colors"
+                                className={cn(
+                                  "h-8 flex items-center justify-center gap-1.5 rounded-[var(--border-radius-sm)] bg-white border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-rexel-primary-10)] transition-colors",
+                                  "w-8 px-0 lg:w-auto lg:px-2"
+                                )}
                                 title={t("side.reorderItem")}
                               >
                                 <ShoppingCart className="h-3.5 w-3.5" />
+                                <span className="hidden lg:inline text-[12px] font-semibold">{t("common.reorder")}</span>
                               </button>
                             </div>
                           </div>
@@ -458,23 +462,27 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                           <div key={item.id} className="flex items-start justify-between text-[13px] rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] p-3">
                             <div className="flex items-start gap-3 min-w-0">
                               <div className="h-10 w-10 shrink-0 rounded border border-[#E0E4EB] bg-[#F6F8FB] flex items-center justify-center"><Package className="h-5 w-5 text-[#a8a8a8]" /></div>
-                              <div className="min-w-0 space-y-2">
+                              <div className="min-w-0 space-y-1">
                                 <p className="font-semibold text-[var(--color-text-primary)] truncate">{item.product_name}</p>
                                 <CopyPill text={item.product_reference} />
                               </div>
                             </div>
-                            <div className="flex items-start gap-3 shrink-0 ml-3">
-                              <div className="text-right space-y-2">
-                                <p className="text-[var(--color-text-primary)]">×{item.quantity}</p>
-                                <p className="text-[12px] text-[var(--color-text-secondary)] font-[var(--font-heading)]">{formatCurrency(item.unit_price)}</p>
+                            <div className="flex items-start gap-4 shrink-0 ml-3">
+                              <div className="flex flex-col items-end text-right gap-1">
+                                <p className="text-[13px] leading-[16px] text-[var(--color-text-primary)]">×{item.quantity}</p>
+                                <p className="text-[12px] leading-[16px] text-[var(--color-text-secondary)] font-heading font-semibold">{formatCurrency(item.unit_price)}</p>
                               </div>
                               <button
                                 type="button"
                                 onClick={() => handleReorderItem(item)}
-                                className="h-8 w-8 flex items-center justify-center rounded-[var(--border-radius-sm)] border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-rexel-primary-10)] transition-colors"
+                                className={cn(
+                                  "h-8 flex items-center justify-center gap-1.5 rounded-[var(--border-radius-sm)] bg-white border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-rexel-primary-10)] transition-colors",
+                                  "w-8 px-0 lg:w-auto lg:px-2"
+                                )}
                                 title={t("side.reorderItem")}
                               >
                                 <ShoppingCart className="h-3.5 w-3.5" />
+                                <span className="hidden lg:inline text-[12px] font-semibold">{t("common.reorder")}</span>
                               </button>
                             </div>
                           </div>

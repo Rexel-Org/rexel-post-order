@@ -120,7 +120,7 @@ function OrderCard({
       <div className="flex flex-wrap items-center gap-x-2 gap-y-1 font-[var(--font-body)] text-[12px] leading-[16px] text-[#525252] mb-[var(--spacing-2)]">
         <span>{t("orders.orderDate")}: {formatDate(order.order_date, "dd/MM/yyyy")}</span>
         <span className="text-[#a8a8a8]">|</span>
-        <span className="font-[var(--font-heading)] font-semibold text-[#161616]">{formatCurrency(order.total_amount)}</span>
+        <span className="font-heading font-semibold text-[#161616]">{formatCurrency(order.total_amount)}</span>
         {order.expected_delivery && (
           <>
             <span className="text-[#a8a8a8]">|</span>
@@ -161,10 +161,14 @@ function OrderCard({
         {onReorder && (
           <button
             onClick={(e) => { e.stopPropagation(); onReorder(); }}
-            className="inline-flex h-[32px] w-[32px] items-center justify-center rounded-[var(--border-radius-sm)] border border-[#003399] bg-white text-[#003399] hover:bg-[#EEF2FF] transition-colors"
+            className={cn(
+              "inline-flex h-[32px] items-center justify-center gap-1.5 rounded-[var(--border-radius-sm)] bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-hover)] transition-colors",
+              "w-[32px] px-0 sm:w-auto sm:px-2"
+            )}
             title={t("orders.reorderAllTitle")}
           >
             <ShoppingCart className="h-4 w-4" />
+            <span className="hidden sm:inline text-[12px] font-semibold">{t("common.reorder")}</span>
           </button>
         )}
       </div>
@@ -387,7 +391,7 @@ export default function OrderHistory() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="font-[var(--font-heading)] text-[var(--font-size-xl)] font-bold leading-[var(--line-height-xl)] text-[var(--color-text-primary)]">
+        <h1 className="font-heading text-[var(--font-size-xl)] font-semibold leading-[var(--line-height-xl)] text-[var(--color-text-primary)]">
           {t("orders.title")}
         </h1>
         <p className="mt-1 font-[var(--font-body)] text-[12px] leading-[16px] text-[var(--color-text-secondary)]">
@@ -626,7 +630,7 @@ export default function OrderHistory() {
                             <td className="px-4 py-3 text-[13px] text-[var(--color-text-secondary)]">{order.po_number ?? "—"}</td>
                             <td className="px-4 py-3 text-[13px] text-[var(--color-text-secondary)]">{formatDate(order.order_date, "dd/MM/yyyy")}</td>
                             <td className="px-4 py-3"><StatusBadge status={order.status} /></td>
-                            <td className="px-4 py-3 text-[13px] text-right font-semibold text-[var(--color-text-primary)] font-[var(--font-heading)]">{formatCurrency(order.total_amount)}</td>
+                            <td className="px-4 py-3 text-[13px] text-right font-heading font-semibold text-[var(--color-text-primary)]">{formatCurrency(order.total_amount)}</td>
                             <td className="px-4 py-3 text-[13px] font-semibold text-[var(--color-primary)]">{formatDate(order.expected_delivery, "dd/MM/yyyy")}</td>
                             <td className="px-4 py-3 text-[13px] text-[var(--color-text-secondary)]">{order.items_remaining}</td>
                             <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
@@ -713,7 +717,7 @@ export default function OrderHistory() {
                           <td className="px-4 py-3 text-[13px] text-[var(--color-text-secondary)]">{order.po_number ?? "—"}</td>
                           <td className="px-4 py-3 text-[13px] text-[var(--color-text-secondary)]">{formatDate(order.order_date, "dd/MM/yyyy")}</td>
                           <td className="px-4 py-3"><StatusBadge status={order.status} /></td>
-                          <td className="px-4 py-3 text-[13px] text-right font-semibold text-[var(--color-text-primary)] font-[var(--font-heading)]">{formatCurrency(order.total_amount)}</td>
+                          <td className="px-4 py-3 text-[13px] text-right font-heading font-semibold text-[var(--color-text-primary)]">{formatCurrency(order.total_amount)}</td>
                           <td className="px-4 py-3 text-[13px] font-semibold text-[var(--color-primary)]">{formatDate(order.expected_delivery, "dd/MM/yyyy")}</td>
                           <td className="px-4 py-3 text-[13px] text-[var(--color-text-secondary)]">{order.items_remaining}</td>
                           <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>

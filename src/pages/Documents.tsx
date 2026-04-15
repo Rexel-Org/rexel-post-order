@@ -50,7 +50,10 @@ export default function Documents() {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-card-foreground truncate">{doc.name}</p>
-                <p className="text-xs text-muted-foreground">{new Date(doc.date).toLocaleDateString("fr-FR")} — {doc.amount.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}</p>
+                <p className="text-xs text-muted-foreground">
+                  {new Date(doc.date).toLocaleDateString("fr-FR")} —{" "}
+                  <span className="font-heading font-semibold">{doc.amount.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}</span>
+                </p>
               </div>
               <button onClick={() => handleDownload(doc.name)} className="shrink-0 text-primary">
                 <Download className="h-5 w-5" />

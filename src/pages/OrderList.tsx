@@ -38,7 +38,7 @@ export default function OrderList() {
                 <p className="text-xs text-[var(--color-text-secondary)]">{new Date(order.date).toLocaleDateString("fr-FR")}</p>
               </div>
               <div className="text-right shrink-0">
-                <p className="font-semibold text-sm text-[var(--color-text-primary)]">{order.totalAmount.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}</p>
+                <p className="font-heading font-semibold text-sm text-[var(--color-text-primary)]">{order.totalAmount.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}</p>
               </div>
               <ChevronRight className="h-4 w-4 text-[var(--color-text-secondary)] shrink-0" />
             </Button>

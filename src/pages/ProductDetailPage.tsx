@@ -122,7 +122,7 @@ export default function ProductDetail() {
             )}
 
             <div className="mb-6">
-              <span className="font-display text-3xl font-bold text-foreground">
+              <span className="font-heading text-3xl font-semibold text-foreground">
                 {variant ? parseFloat(variant.price.amount).toFixed(2) : "—"} €
               </span>
               <span className="text-sm text-muted-foreground ml-2">HT</span>
