@@ -180,6 +180,7 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
 
   const [activeTab, setActiveTab] = useState<TabKey>("detail");
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
+  const [showAllItems, setShowAllItems] = useState(false);
 
   const open = !!orderNumber;
   const isCompletedOrder = data?.order.status === "completed";
