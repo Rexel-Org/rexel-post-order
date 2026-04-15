@@ -302,7 +302,7 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
         ) : (
           <>
             <div className="flex-1 overflow-y-auto">
-              <div className="sticky top-0 z-10 bg-[var(--color-bg-page)] border-b border-[var(--color-border-subtle)]">
+              <div className="sticky top-0 z-20 bg-[var(--color-bg-page)] border-b border-[var(--color-border-subtle)] shadow-sm">
                 <div className="px-6 py-5">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
