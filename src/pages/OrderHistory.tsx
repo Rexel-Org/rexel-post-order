@@ -120,7 +120,7 @@ function OrderCard({
       <div className="flex flex-wrap items-center gap-x-2 gap-y-1 font-[var(--font-body)] text-[12px] leading-[16px] text-[#525252] mb-[var(--spacing-2)]">
         <span>{t("orders.orderDate")}: {formatDate(order.order_date, "dd/MM/yyyy")}</span>
         <span className="text-[#a8a8a8]">|</span>
-        <span className="font-[var(--font-weight-semibold)] text-[#161616] font-[var(--font-body)]">{formatCurrency(order.total_amount)}</span>
+        <span className="font-[var(--font-heading)] font-semibold text-[#161616]">{formatCurrency(order.total_amount)}</span>
         {order.expected_delivery && (
           <>
             <span className="text-[#a8a8a8]">|</span>
@@ -626,7 +626,7 @@ export default function OrderHistory() {
                             <td className="px-4 py-3 text-[13px] text-[var(--color-text-secondary)]">{order.po_number ?? "—"}</td>
                             <td className="px-4 py-3 text-[13px] text-[var(--color-text-secondary)]">{formatDate(order.order_date, "dd/MM/yyyy")}</td>
                             <td className="px-4 py-3"><StatusBadge status={order.status} /></td>
-                            <td className="px-4 py-3 text-[13px] text-right font-semibold text-[var(--color-text-primary)] font-[var(--font-body)]">{formatCurrency(order.total_amount)}</td>
+                            <td className="px-4 py-3 text-[13px] text-right font-semibold text-[var(--color-text-primary)] font-[var(--font-heading)]">{formatCurrency(order.total_amount)}</td>
                             <td className="px-4 py-3 text-[13px] font-semibold text-[var(--color-primary)]">{formatDate(order.expected_delivery, "dd/MM/yyyy")}</td>
                             <td className="px-4 py-3 text-[13px] text-[var(--color-text-secondary)]">{order.items_remaining}</td>
                             <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
@@ -713,7 +713,7 @@ export default function OrderHistory() {
                           <td className="px-4 py-3 text-[13px] text-[var(--color-text-secondary)]">{order.po_number ?? "—"}</td>
                           <td className="px-4 py-3 text-[13px] text-[var(--color-text-secondary)]">{formatDate(order.order_date, "dd/MM/yyyy")}</td>
                           <td className="px-4 py-3"><StatusBadge status={order.status} /></td>
-                          <td className="px-4 py-3 text-[13px] text-right font-semibold text-[var(--color-text-primary)] font-[var(--font-body)]">{formatCurrency(order.total_amount)}</td>
+                          <td className="px-4 py-3 text-[13px] text-right font-semibold text-[var(--color-text-primary)] font-[var(--font-heading)]">{formatCurrency(order.total_amount)}</td>
                           <td className="px-4 py-3 text-[13px] font-semibold text-[var(--color-primary)]">{formatDate(order.expected_delivery, "dd/MM/yyyy")}</td>
                           <td className="px-4 py-3 text-[13px] text-[var(--color-text-secondary)]">{order.items_remaining}</td>
                           <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
