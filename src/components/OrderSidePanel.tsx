@@ -258,14 +258,16 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
     }
   };
 
+  const receptionEnabled = !!data && ["on_track", "in_transit", "partially_delivered", "completed"].includes(data.order.status);
+
   const tabs = useMemo(
     () =>
       [
-        { key: "detail" as const, label: t("side.tabDetail"), icon: Package },
-        { key: "documents" as const, label: t("side.tabDocuments"), icon: FileText },
-        { key: "reception" as const, label: t("side.tabReception"), icon: ClipboardCheck },
+        { key: "detail" as const, label: t("side.tabDetail"), icon: Package, disabled: false },
+        { key: "documents" as const, label: t("side.tabDocuments"), icon: FileText, disabled: false },
+        { key: "reception" as const, label: t("side.tabReception"), icon: ClipboardCheck, disabled: !receptionEnabled },
       ] as const,
-    [t]
+    [t, receptionEnabled]
   );
 
   const docGroups = groupDocsByType(MOCK_DOCUMENTS);
@@ -329,12 +331,15 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                     <button
                       key={tab.key}
                       type="button"
-                      onClick={() => setActiveTab(tab.key)}
+                      disabled={tab.disabled}
+                      onClick={() => !tab.disabled && setActiveTab(tab.key)}
                       className={cn(
                         "flex-1 flex items-center justify-center gap-1.5 py-3 text-[13px] font-semibold border-b-2 -mb-px transition-colors",
-                        activeTab === tab.key
-                          ? "border-[var(--color-primary)] text-[var(--color-primary)]"
-                          : "border-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
+                        tab.disabled
+                          ? "border-transparent text-[var(--color-text-placeholder)] cursor-not-allowed opacity-50"
+                          : activeTab === tab.key
+                            ? "border-[var(--color-primary)] text-[var(--color-primary)]"
+                            : "border-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
                       )}
                     >
                       <tab.icon className="h-3.5 w-3.5" />
