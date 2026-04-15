@@ -431,31 +431,33 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                                 <CopyPill text={item.product_reference} />
                               </div>
                             </div>
-                            <div className="flex items-start gap-[8px] shrink-0 ml-3">
+                            <div className="flex items-start gap-4 shrink-0 ml-3">
                               <div className="flex flex-col items-end text-right gap-1">
                                 <p className="text-[13px] leading-[16px] text-[var(--color-text-primary)]">×{item.quantity}</p>
                                 <p className="text-[12px] leading-[16px] text-[var(--color-text-secondary)] font-heading font-semibold">{formatCurrency(item.unit_price)}</p>
                               </div>
-                              <button
-                                type="button"
-                                onClick={() => toggleJoblistItem(item.id)}
-                                className="h-8 w-8 flex items-center justify-center rounded-[var(--border-radius-sm)] border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-rexel-primary-10)] transition-colors"
-                                title="Ajouter à une joblist"
-                              >
-                                <Star className="h-3.5 w-3.5" fill={joblistItems[item.id] ? "currentColor" : "none"} />
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => handleReorderItem(item)}
-                                className={cn(
-                                  "h-8 flex items-center justify-center gap-1.5 rounded-[var(--border-radius-sm)] bg-white border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-rexel-primary-10)] transition-colors",
-                                  "w-8 px-0 lg:w-auto lg:px-2"
-                                )}
-                                title={t("side.reorderItem")}
-                              >
-                                <ShoppingCart className="h-3.5 w-3.5" />
-                                <span className="hidden lg:inline text-[12px] font-semibold">{t("common.reorder")}</span>
-                              </button>
+                              <div className="flex items-start gap-[8px]">
+                                <button
+                                  type="button"
+                                  onClick={() => toggleJoblistItem(item.id)}
+                                  className="h-8 w-8 flex items-center justify-center rounded-[var(--border-radius-sm)] border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-rexel-primary-10)] transition-colors"
+                                  title="Ajouter à une joblist"
+                                >
+                                  <Star className="h-3.5 w-3.5" fill={joblistItems[item.id] ? "currentColor" : "none"} />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleReorderItem(item)}
+                                  className={cn(
+                                    "h-8 flex items-center justify-center gap-1.5 rounded-[var(--border-radius-sm)] bg-white border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-rexel-primary-10)] transition-colors",
+                                    "w-8 px-0 lg:w-auto lg:px-2"
+                                  )}
+                                  title={t("side.reorderItem")}
+                                >
+                                  <ShoppingCart className="h-3.5 w-3.5" />
+                                  <span className="hidden lg:inline text-[12px] font-semibold">{t("common.reorder")}</span>
+                                </button>
+                              </div>
                             </div>
                           </div>
                         ))}
@@ -481,31 +483,33 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                                 <CopyPill text={item.product_reference} />
                               </div>
                             </div>
-                            <div className="flex items-start gap-[8px] shrink-0 ml-3">
+                            <div className="flex items-start gap-4 shrink-0 ml-3">
                               <div className="flex flex-col items-end text-right gap-1">
                                 <p className="text-[13px] leading-[16px] text-[var(--color-text-primary)]">×{item.quantity}</p>
                                 <p className="text-[12px] leading-[16px] text-[var(--color-text-secondary)] font-heading font-semibold">{formatCurrency(item.unit_price)}</p>
                               </div>
-                              <button
-                                type="button"
-                                onClick={() => toggleJoblistItem(item.id)}
-                                className="h-8 w-8 flex items-center justify-center rounded-[var(--border-radius-sm)] border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-rexel-primary-10)] transition-colors"
-                                title="Ajouter à une joblist"
-                              >
-                                <Star className="h-3.5 w-3.5" fill={joblistItems[item.id] ? "currentColor" : "none"} />
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => handleReorderItem(item)}
-                                className={cn(
-                                  "h-8 flex items-center justify-center gap-1.5 rounded-[var(--border-radius-sm)] bg-white border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-rexel-primary-10)] transition-colors",
-                                  "w-8 px-0 lg:w-auto lg:px-2"
-                                )}
-                                title={t("side.reorderItem")}
-                              >
-                                <ShoppingCart className="h-3.5 w-3.5" />
-                                <span className="hidden lg:inline text-[12px] font-semibold">{t("common.reorder")}</span>
-                              </button>
+                              <div className="flex items-start gap-[8px]">
+                                <button
+                                  type="button"
+                                  onClick={() => toggleJoblistItem(item.id)}
+                                  className="h-8 w-8 flex items-center justify-center rounded-[var(--border-radius-sm)] border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-rexel-primary-10)] transition-colors"
+                                  title="Ajouter à une joblist"
+                                >
+                                  <Star className="h-3.5 w-3.5" fill={joblistItems[item.id] ? "currentColor" : "none"} />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleReorderItem(item)}
+                                  className={cn(
+                                    "h-8 flex items-center justify-center gap-1.5 rounded-[var(--border-radius-sm)] bg-white border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-rexel-primary-10)] transition-colors",
+                                    "w-8 px-0 lg:w-auto lg:px-2"
+                                  )}
+                                  title={t("side.reorderItem")}
+                                >
+                                  <ShoppingCart className="h-3.5 w-3.5" />
+                                  <span className="hidden lg:inline text-[12px] font-semibold">{t("common.reorder")}</span>
+                                </button>
+                              </div>
                             </div>
                           </div>
                         ))}
