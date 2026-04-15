@@ -326,6 +326,8 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                     <p className="text-[13px] text-[var(--color-text-secondary)]">
                       {t("side.ordered")}{" "}
                       <span className="font-semibold text-[var(--color-text-primary)]">{formatDate(data.order.order_date, "dd/MM/yyyy")}</span>
+                      <span className="text-[#a8a8a8] mx-2">|</span>
+                      <span className="font-semibold text-[var(--color-text-primary)]">{formatCurrency(data.order.total_amount)}</span>
                     </p>
                     {data.order.project_name && (
                       <span className="inline-flex h-7 items-center rounded-[4px] bg-[var(--color-bg-layer-01)] px-3 text-[12px] font-semibold text-[var(--color-text-secondary)] shrink-0">
@@ -360,20 +362,6 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
 
               {activeTab === "detail" && (
                 <div className="px-6 py-5 space-y-5">
-                  <div className="flex items-center gap-3 flex-wrap">
-                    <div className="flex items-center gap-2 rounded-[var(--border-radius-sm)] bg-[var(--color-bg-layer-01)] px-3 py-2">
-                      <span className="text-[14px] font-bold text-[var(--color-text-primary)]">{formatCurrency(data.order.total_amount)}</span>
-                      <span className="text-[11px] text-[var(--color-text-secondary)] uppercase">{t("side.exclTax")}</span>
-                    </div>
-                    <div className="flex items-center gap-2 rounded-[var(--border-radius-sm)] bg-[var(--color-bg-layer-01)] px-3 py-2">
-                      <span className="text-[14px] font-bold text-[var(--color-text-primary)]">{data.lineItems.length}</span>
-                      <span className="text-[11px] text-[var(--color-text-secondary)] uppercase">{t("side.items")}</span>
-                    </div>
-                    <div className="flex items-center gap-2 rounded-[var(--border-radius-sm)] bg-[var(--color-bg-layer-01)] px-3 py-2">
-                      <span className="text-[14px] font-bold text-[var(--color-text-primary)]">{data.shipments.length}</span>
-                      <span className="text-[11px] text-[var(--color-text-secondary)] uppercase">{t("side.shipments")}</span>
-                    </div>
-                  </div>
 
                   {data.order.expected_delivery && data.order.status !== "completed" && data.order.status !== "cancelled" && (() => {
                     const isDelayed = data.order.status === "delayed";
