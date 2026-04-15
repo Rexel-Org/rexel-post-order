@@ -664,7 +664,7 @@ export default function OrderHistory() {
                                 </button>
                                 <button
                                   onClick={() => handleReorderAll(order)}
-                                  className="flex h-8 w-8 items-center justify-center rounded-[var(--border-radius-sm)] border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-rexel-primary-10)] transition-colors"
+                                  className="flex h-8 w-8 items-center justify-center rounded-[var(--border-radius-sm)] bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-hover)] transition-colors"
                                   title={t("orders.reorderAllTitle")}
                                 >
                                   <ShoppingCart className="h-3.5 w-3.5" />
@@ -757,7 +757,7 @@ export default function OrderHistory() {
                                 <Star className={cn("h-3.5 w-3.5", joblistIds.has(order.id) && "fill-[var(--color-primary)]")} />
                               </button>
                               <button onClick={() => handleReorderAll(order)}
-                                className="flex h-8 w-8 items-center justify-center rounded-[var(--border-radius-sm)] border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-rexel-primary-10)] transition-colors"
+                                className="flex h-8 w-8 items-center justify-center rounded-[var(--border-radius-sm)] bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-hover)] transition-colors"
                                 title={t("orders.reorderAllTitle")}>
                                 <ShoppingCart className="h-3.5 w-3.5" />
                               </button>
