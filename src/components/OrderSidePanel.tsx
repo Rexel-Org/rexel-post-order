@@ -131,7 +131,7 @@ function ShipmentMini({ shipment, lineItems }: { shipment: ShipmentRow; lineItem
             const delivered = item.quantity - item.remaining;
             const pct = item.quantity > 0 ? Math.round((delivered / item.quantity) * 100) : 0;
             return (
-              <div key={item.id} className="flex items-center gap-2 text-[12px]">
+              <div key={item.id} className="flex items-start gap-2 text-[12px]">
                 <div className="h-6 w-6 shrink-0 rounded border border-[#E0E4EB] bg-[#F6F8FB] flex items-center justify-center"><Package className="h-3 w-3 text-[#a8a8a8]" /></div>
                 <span className="truncate text-[var(--color-text-primary)]">{item.product_name}</span>
                 <div className="flex items-center gap-1.5 shrink-0 ml-auto">
