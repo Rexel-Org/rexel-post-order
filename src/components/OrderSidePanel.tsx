@@ -666,7 +666,7 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                     onClick={() => toast.success("Ajouté à la joblist")}
                     className="inline-flex items-center justify-center gap-2 h-10 px-4 rounded-[var(--border-radius-sm)] border border-[var(--color-primary)] text-[var(--color-primary)] text-[13px] font-semibold hover:bg-[var(--color-rexel-primary-10)] transition-colors"
                   >
-                    <Star className="h-4 w-4" /> Joblist
+                    <Star className="h-4 w-4" /> Ajouter à une joblist
                   </button>
                   <button
                     type="button"
