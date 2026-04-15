@@ -426,7 +426,7 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                               </div>
                             </div>
                             <div className="flex items-start gap-3 shrink-0 ml-3">
-                              <div className="text-right">
+                              <div className="text-right space-y-2">
                                 <p className="text-[var(--color-text-primary)]">×{item.quantity}</p>
                                 <p className="text-[12px] text-[var(--color-text-secondary)]">{formatCurrency(item.unit_price)}</p>
                               </div>
