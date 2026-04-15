@@ -328,7 +328,7 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                       <span className="font-semibold text-[var(--color-text-primary)]">{formatDate(data.order.order_date, "dd/MM/yyyy")}</span>
                     </p>
                     {data.order.project_name && (
-                      <span className="inline-flex h-7 items-center rounded-full bg-[var(--color-bg-layer-01)] px-3 text-[12px] font-semibold text-[var(--color-text-secondary)]">
+                      <span className="inline-flex h-7 items-center rounded-[40px] bg-[var(--color-bg-layer-01)] px-3 text-[12px] font-semibold text-[var(--color-text-secondary)]">
                         {data.order.project_name}
                       </span>
                     )}
