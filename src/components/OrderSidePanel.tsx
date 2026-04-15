@@ -71,8 +71,12 @@ function CopyPill({ text }: { text: string }) {
 
 function ShipmentMini({ shipment, lineItems }: { shipment: ShipmentRow; lineItems: LineItemRow[] }) {
   const { t, formatDate } = useI18n();
+  const [showAll, setShowAll] = useState(false);
   const current = stepIndex(shipment.status);
   const items = lineItems.filter((li) => li.shipment_id === shipment.id);
+  const LIMIT = 5;
+  const visibleItems = showAll ? items : items.slice(0, LIMIT);
+  const hiddenCount = items.length - LIMIT;
 
   return (
     <div className="rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] p-4">
@@ -123,7 +127,7 @@ function ShipmentMini({ shipment, lineItems }: { shipment: ShipmentRow; lineItem
 
       {items.length > 0 && (
         <div className="space-y-2">
-          {items.map((item) => {
+          {visibleItems.map((item) => {
             const delivered = item.quantity - item.remaining;
             const pct = item.quantity > 0 ? Math.round((delivered / item.quantity) * 100) : 0;
             return (
@@ -139,6 +143,15 @@ function ShipmentMini({ shipment, lineItems }: { shipment: ShipmentRow; lineItem
               </div>
             );
           })}
+          {items.length > LIMIT && (
+            <button
+              type="button"
+              onClick={() => setShowAll(!showAll)}
+              className="w-full text-center text-[12px] font-semibold text-[var(--color-primary)] hover:underline pt-1"
+            >
+              {showAll ? t("side.showLess") : `${t("side.showMore")} (${hiddenCount})`}
+            </button>
+          )}
         </div>
       )}
     </div>
