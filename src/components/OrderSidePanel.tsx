@@ -244,6 +244,12 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
     });
   };
 
+  const [joblistItems, setJoblistItems] = useState<Record<string, boolean>>({});
+
+  const toggleJoblistItem = (itemId: string) => {
+    setJoblistItems((prev) => ({ ...prev, [itemId]: !prev[itemId] }));
+  };
+
   const handleReorderItem = (item: LineItemRow) => {
     toast.success(`${item.product_name} ${t("side.toastCart")}`, { description: `${t("side.toastCartDesc")} ${item.quantity}` });
   };
