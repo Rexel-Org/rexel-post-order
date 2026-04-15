@@ -302,7 +302,7 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
         ) : (
           <>
             <div className="flex-1 overflow-y-auto">
-              <div className="sticky top-0 z-10 bg-[var(--color-bg-page)] border-b border-[var(--color-border-subtle)]">
+              <div className="sticky top-0 z-20 bg-[var(--color-bg-page)] border-b border-[var(--color-border-subtle)] shadow-sm">
                 <div className="px-6 py-5">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
@@ -326,16 +326,10 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                     <p className="text-[13px] text-[var(--color-text-secondary)]">
                       {t("side.ordered")}{" "}
                       <span className="font-semibold text-[var(--color-text-primary)]">{formatDate(data.order.order_date, "dd/MM/yyyy")}</span>
-                      {data.order.po_number && (
-                        <>
-                          {" "}
-                          · {t("common.po")}: {data.order.po_number}
-                        </>
-                      )}
                     </p>
                   </div>
                   {data.order.project_name && (
-                    <span className="inline-flex h-8 items-center gap-1 mt-2 rounded-full bg-[var(--color-bg-layer-01)] px-3 text-[12px] font-semibold text-[var(--color-text-secondary)]">
+                    <span className="inline-flex h-8 items-center gap-1 mt-3 rounded-full bg-[var(--color-bg-layer-01)] px-3 text-[12px] font-semibold text-[var(--color-text-secondary)]">
                       {data.order.project_name}
                     </span>
                   )}
