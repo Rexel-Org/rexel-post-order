@@ -370,8 +370,8 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                     const textColor = isWarning ? "text-[var(--color-alert-error-text)]" : "text-[var(--color-info)]";
                     const Icon = isDelayed ? AlertTriangle : Truck;
                     return (
-                      <div className={cn("flex items-center gap-2 rounded-[var(--border-radius-sm)] border px-3 py-2 text-[13px] font-semibold", bgColor, borderColor, textColor)}>
-                        <Icon className="h-3.5 w-3.5 shrink-0" />
+                      <div className={cn("flex items-center gap-2 rounded-[var(--border-radius-sm)] border px-3 min-h-[52px] text-[14px] font-semibold", bgColor, borderColor, textColor)}>
+                        <Icon className="h-4 w-4 shrink-0" />
                         <span>
                           {isDelayed ? t("side.delayedPrefix") : `${t("side.expectedDelivery")} `}
                           {formatDate(data.order.expected_delivery, "dd/MM/yyyy")}
@@ -393,8 +393,8 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                   })()}
 
                   {data.order.status === "completed" && (
-                    <div className="flex items-center gap-2 rounded-[var(--border-radius-sm)] border border-[var(--color-success)] bg-[var(--color-alert-success-bg)] px-3 py-2 text-[13px] font-semibold text-[var(--color-success)]">
-                      <CheckCircle className="h-3.5 w-3.5 shrink-0" />
+                    <div className="flex items-center gap-2 rounded-[var(--border-radius-sm)] border border-[var(--color-success)] bg-[var(--color-alert-success-bg)] px-3 min-h-[52px] text-[14px] font-semibold text-[var(--color-success)]">
+                      <CheckCircle className="h-4 w-4 shrink-0" />
                       {t("side.deliveredCompleted")}
                     </div>
                   )}
@@ -532,7 +532,7 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
               {activeTab === "reception" && (
                 <div className="px-6 py-5 space-y-4">
                   {isCompletedOrder && (
-                    <div className="rounded-[var(--border-radius-sm)] border border-[var(--color-success)] bg-[var(--color-alert-success-bg)] p-3 text-[13px] text-[var(--color-success)] flex items-center gap-2">
+                    <div className="rounded-[var(--border-radius-sm)] border border-[var(--color-success)] bg-[var(--color-alert-success-bg)] p-3 min-h-[52px] text-[14px] text-[var(--color-success)] flex items-center gap-2">
                       <CheckCircle className="h-4 w-4 shrink-0" />
                       {t("side.receptionDone")}
                     </div>
