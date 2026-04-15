@@ -79,7 +79,7 @@ const datePresets: DatePreset[] = [
 ];
 
 // --- Helpers ---
-const ONGOING_STATUSES = ["on_track", "being_prepared", "in_transit", "partially_delivered", "delayed"];
+const ONGOING_STATUSES = ["on_track", "being_prepared", "in_transit", "delayed"];
 const NEEDS_ATTENTION_STATUSES = ["delayed", "cancelled"];
 
 function isOngoing(s: string) { return ONGOING_STATUSES.includes(s); }
@@ -240,7 +240,7 @@ export default function OrderHistory() {
   );
 
   const ongoingCount = orders.filter((o) => isOngoing(o.status)).length;
-  const backorderCount = orders.filter((o) => o.items_remaining > 0 && o.status !== "completed").length;
+  const backorderCount = orders.filter((o) => o.status === "partially_delivered").length;
   const completedCount = orders.filter((o) => isCompleted(o.status)).length;
 
   // Filtering
@@ -250,7 +250,7 @@ export default function OrderHistory() {
       .filter((o) => {
         if (activeTab === "ongoing") return isOngoing(o.status);
         if (activeTab === "completed") return isCompleted(o.status);
-        if (activeTab === "backorders") return o.items_remaining > 0 && o.status !== "completed";
+        if (activeTab === "backorders") return o.status === "partially_delivered";
         return true;
       })
       .filter((o) => {
