@@ -258,14 +258,16 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
     }
   };
 
+  const receptionEnabled = !!data && ["on_track", "in_transit", "partially_delivered", "completed"].includes(data.order.status);
+
   const tabs = useMemo(
     () =>
       [
-        { key: "detail" as const, label: t("side.tabDetail"), icon: Package },
-        { key: "documents" as const, label: t("side.tabDocuments"), icon: FileText },
-        { key: "reception" as const, label: t("side.tabReception"), icon: ClipboardCheck },
+        { key: "detail" as const, label: t("side.tabDetail"), icon: Package, disabled: false },
+        { key: "documents" as const, label: t("side.tabDocuments"), icon: FileText, disabled: false },
+        { key: "reception" as const, label: t("side.tabReception"), icon: ClipboardCheck, disabled: !receptionEnabled },
       ] as const,
-    [t]
+    [t, receptionEnabled]
   );
 
   const docGroups = groupDocsByType(MOCK_DOCUMENTS);
