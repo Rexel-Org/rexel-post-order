@@ -116,7 +116,7 @@ function ShipmentCard({ shipment, lineItems }: { shipment: ShipmentRow; lineItem
                 </div>
                 <div className="text-right shrink-0 ml-4">
                   <p className="text-[var(--color-text-primary)]">×{item.quantity}</p>
-                  <p className="text-xs text-[var(--color-text-secondary)]">{formatCurrency(item.unit_price)}</p>
+                  <p className="text-xs text-[var(--color-text-secondary)] font-[var(--font-heading)]">{formatCurrency(item.unit_price)}</p>
                 </div>
               </div>
             ))}
@@ -280,8 +280,8 @@ export default function OrderDetailPage() {
                       <span className="text-[var(--color-success)]">0</span>
                     )}
                   </td>
-                  <td className="px-5 py-3 text-sm text-right text-[var(--color-text-secondary)]">{formatCurrency(item.unit_price)}</td>
-                  <td className="px-5 py-3 text-sm text-right font-semibold text-[var(--color-text-primary)]">{formatCurrency(item.quantity * item.unit_price)}</td>
+                  <td className="px-5 py-3 text-sm text-right text-[var(--color-text-secondary)] font-[var(--font-heading)]">{formatCurrency(item.unit_price)}</td>
+                  <td className="px-5 py-3 text-sm text-right font-semibold text-[var(--color-text-primary)] font-[var(--font-heading)]">{formatCurrency(item.quantity * item.unit_price)}</td>
                 </tr>
               ))}
             </tbody>
@@ -335,8 +335,8 @@ export default function OrderDetailPage() {
                       </span>
                     </div>
                   </td>
-                  <td className="px-5 py-3 text-sm text-right text-[var(--color-text-secondary)]">{formatCurrency(item.unit_price)}</td>
-                  <td className="px-5 py-3 text-sm text-right font-semibold text-[var(--color-text-primary)]">{formatCurrency(item.quantity * item.unit_price)}</td>
+                  <td className="px-5 py-3 text-sm text-right text-[var(--color-text-secondary)] font-[var(--font-heading)]">{formatCurrency(item.unit_price)}</td>
+                  <td className="px-5 py-3 text-sm text-right font-semibold text-[var(--color-text-primary)] font-[var(--font-heading)]">{formatCurrency(item.quantity * item.unit_price)}</td>
                 </tr>
               );
             })}
