@@ -256,6 +256,7 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
       onClose();
       setActiveTab("detail");
       setCheckedItems({});
+      setShowAllItems(false);
     }
   };
 
