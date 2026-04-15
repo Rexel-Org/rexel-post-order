@@ -244,6 +244,12 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
     });
   };
 
+  const [joblistItems, setJoblistItems] = useState<Record<string, boolean>>({});
+
+  const toggleJoblistItem = (itemId: string) => {
+    setJoblistItems((prev) => ({ ...prev, [itemId]: !prev[itemId] }));
+  };
+
   const handleReorderItem = (item: LineItemRow) => {
     toast.success(`${item.product_name} ${t("side.toastCart")}`, { description: `${t("side.toastCartDesc")} ${item.quantity}` });
   };
@@ -432,6 +438,14 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                               </div>
                               <button
                                 type="button"
+                                onClick={() => toggleJoblistItem(item.id)}
+                                className="h-8 w-8 flex items-center justify-center rounded-[var(--border-radius-sm)] border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-rexel-primary-10)] transition-colors"
+                                title="Ajouter à une joblist"
+                              >
+                                <Star className="h-3.5 w-3.5" fill={joblistItems[item.id] ? "currentColor" : "none"} />
+                              </button>
+                              <button
+                                type="button"
                                 onClick={() => handleReorderItem(item)}
                                 className={cn(
                                   "h-8 flex items-center justify-center gap-1.5 rounded-[var(--border-radius-sm)] bg-white border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-rexel-primary-10)] transition-colors",
@@ -472,6 +486,14 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                                 <p className="text-[13px] leading-[16px] text-[var(--color-text-primary)]">×{item.quantity}</p>
                                 <p className="text-[12px] leading-[16px] text-[var(--color-text-secondary)] font-heading font-semibold">{formatCurrency(item.unit_price)}</p>
                               </div>
+                              <button
+                                type="button"
+                                onClick={() => toggleJoblistItem(item.id)}
+                                className="h-8 w-8 flex items-center justify-center rounded-[var(--border-radius-sm)] border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-rexel-primary-10)] transition-colors"
+                                title="Ajouter à une joblist"
+                              >
+                                <Star className="h-3.5 w-3.5" fill={joblistItems[item.id] ? "currentColor" : "none"} />
+                              </button>
                               <button
                                 type="button"
                                 onClick={() => handleReorderItem(item)}
