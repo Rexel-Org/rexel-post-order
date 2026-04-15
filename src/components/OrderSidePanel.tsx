@@ -682,7 +682,7 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                     : `${t("side.validateReception")} (${checkedCount}/${data.lineItems.length})`}
                 </button>
               ) : (
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-[8px]">
                   <button
                     type="button"
                     onClick={handleReorderAll}
