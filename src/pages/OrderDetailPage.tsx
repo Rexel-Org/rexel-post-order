@@ -196,7 +196,7 @@ export default function OrderDetailPage() {
             )}
             <span>{order.order_type}</span>
             {order.project_name && (
-              <span className="bg-[var(--color-bg-layer-01)] px-2 py-0.5 rounded-[40px] text-xs">{order.project_name}</span>
+              <span className="bg-[var(--color-bg-layer-01)] px-3 py-0.5 rounded-[4px] text-xs">{order.project_name}</span>
             )}
           </div>
         </div>
