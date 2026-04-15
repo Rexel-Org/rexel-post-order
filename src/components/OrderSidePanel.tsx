@@ -431,7 +431,7 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                                 <CopyPill text={item.product_reference} />
                               </div>
                             </div>
-                            <div className="flex items-start gap-4 shrink-0 ml-3">
+                            <div className="flex items-start gap-[8px] shrink-0 ml-3">
                               <div className="flex flex-col items-end text-right gap-1">
                                 <p className="text-[13px] leading-[16px] text-[var(--color-text-primary)]">×{item.quantity}</p>
                                 <p className="text-[12px] leading-[16px] text-[var(--color-text-secondary)] font-heading font-semibold">{formatCurrency(item.unit_price)}</p>
@@ -481,7 +481,7 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                                 <CopyPill text={item.product_reference} />
                               </div>
                             </div>
-                            <div className="flex items-start gap-4 shrink-0 ml-3">
+                            <div className="flex items-start gap-[8px] shrink-0 ml-3">
                               <div className="flex flex-col items-end text-right gap-1">
                                 <p className="text-[13px] leading-[16px] text-[var(--color-text-primary)]">×{item.quantity}</p>
                                 <p className="text-[12px] leading-[16px] text-[var(--color-text-secondary)] font-heading font-semibold">{formatCurrency(item.unit_price)}</p>
