@@ -111,7 +111,7 @@ function OrderCard({
           <StatusBadge status={order.status} />
         </div>
         {order.project_name && (
-          <span className="inline-flex h-[28px] items-center gap-1 rounded-[4px] bg-[#F6F8FB] px-[8px] font-[var(--font-body)] text-[12px] leading-[16px] font-[var(--font-weight-semibold)] text-[#525252]">
+          <span className="inline-flex h-[28px] items-center gap-1 rounded-[40px] bg-[#F6F8FB] px-[8px] font-[var(--font-body)] text-[12px] leading-[16px] font-[var(--font-weight-semibold)] text-[#525252]">
             {order.project_name}
           </span>
         )}
