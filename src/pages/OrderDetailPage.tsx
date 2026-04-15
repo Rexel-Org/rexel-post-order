@@ -201,7 +201,7 @@ export default function OrderDetailPage() {
           </div>
         </div>
         <div className="text-right">
-          <p className="font-[var(--font-body)] text-[20px] font-bold leading-[27px] text-[var(--color-text-primary)]">
+          <p className="font-[var(--font-heading)] text-[20px] font-bold leading-[27px] text-[var(--color-text-primary)]">
             {formatCurrency(order.total_amount)}
           </p>
           <p className="font-[var(--font-body)] text-[12px] leading-[16px] text-[var(--color-text-secondary)]">{t("detail.exclTax")}</p>
@@ -290,7 +290,7 @@ export default function OrderDetailPage() {
                 <td colSpan={6} className="px-5 py-3 text-sm font-semibold text-[var(--color-text-primary)] text-right">
                   {t("detail.totalExcl")}
                 </td>
-                <td className="px-5 py-3 text-right font-[var(--font-body)] text-lg font-bold text-[var(--color-text-primary)]">
+                <td className="px-5 py-3 text-right font-[var(--font-heading)] text-lg font-bold text-[var(--color-text-primary)]">
                   {formatCurrency(computedTotal)}
                 </td>
               </tr>
@@ -346,7 +346,7 @@ export default function OrderDetailPage() {
               <td colSpan={6} className="px-5 py-3 text-sm font-semibold text-[var(--color-text-primary)] text-right">
                 {t("detail.totalExcl")}
               </td>
-              <td className="px-5 py-3 text-right font-[var(--font-body)] text-lg font-bold text-[var(--color-text-primary)]">
+              <td className="px-5 py-3 text-right font-[var(--font-heading)] text-lg font-bold text-[var(--color-text-primary)]">
                 {formatCurrency(computedTotal)}
               </td>
             </tr>
