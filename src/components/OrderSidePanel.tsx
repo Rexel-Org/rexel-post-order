@@ -322,17 +322,17 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                       <X className="h-5 w-5" />
                     </button>
                   </div>
-                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2">
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-3">
                     <p className="text-[13px] text-[var(--color-text-secondary)]">
                       {t("side.ordered")}{" "}
                       <span className="font-semibold text-[var(--color-text-primary)]">{formatDate(data.order.order_date, "dd/MM/yyyy")}</span>
                     </p>
+                    {data.order.project_name && (
+                      <span className="inline-flex h-7 items-center rounded-full bg-[var(--color-bg-layer-01)] px-3 text-[12px] font-semibold text-[var(--color-text-secondary)]">
+                        {data.order.project_name}
+                      </span>
+                    )}
                   </div>
-                  {data.order.project_name && (
-                    <span className="inline-flex h-8 items-center gap-1 mt-3 rounded-full bg-[var(--color-bg-layer-01)] px-3 text-[12px] font-semibold text-[var(--color-text-secondary)]">
-                      {data.order.project_name}
-                    </span>
-                  )}
                 </div>
 
                 <div className="flex px-6 border-b border-[var(--color-border-subtle)]">
