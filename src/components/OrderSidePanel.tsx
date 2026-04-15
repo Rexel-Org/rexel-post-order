@@ -420,13 +420,13 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                           <div key={item.id} className="flex items-start justify-between text-[13px] rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] p-3">
                             <div className="flex items-start gap-3 min-w-0">
                               <div className="h-10 w-10 shrink-0 rounded border border-[#E0E4EB] bg-[#F6F8FB] flex items-center justify-center"><Package className="h-5 w-5 text-[#a8a8a8]" /></div>
-                              <div className="min-w-0">
+                              <div className="min-w-0 space-y-2">
                                 <p className="font-semibold text-[var(--color-text-primary)] truncate">{item.product_name}</p>
                                 <CopyPill text={item.product_reference} />
                               </div>
                             </div>
                             <div className="flex items-start gap-3 shrink-0 ml-3">
-                              <div className="text-right">
+                              <div className="text-right space-y-2">
                                 <p className="text-[var(--color-text-primary)]">×{item.quantity}</p>
                                 <p className="text-[12px] text-[var(--color-text-secondary)]">{formatCurrency(item.unit_price)}</p>
                               </div>
@@ -458,13 +458,13 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                           <div key={item.id} className="flex items-start justify-between text-[13px] rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] p-3">
                             <div className="flex items-start gap-3 min-w-0">
                               <div className="h-10 w-10 shrink-0 rounded border border-[#E0E4EB] bg-[#F6F8FB] flex items-center justify-center"><Package className="h-5 w-5 text-[#a8a8a8]" /></div>
-                              <div className="min-w-0">
+                              <div className="min-w-0 space-y-2">
                                 <p className="font-semibold text-[var(--color-text-primary)] truncate">{item.product_name}</p>
                                 <CopyPill text={item.product_reference} />
                               </div>
                             </div>
                             <div className="flex items-start gap-3 shrink-0 ml-3">
-                              <div className="text-right">
+                              <div className="text-right space-y-2">
                                 <p className="text-[var(--color-text-primary)]">×{item.quantity}</p>
                                 <p className="text-[12px] text-[var(--color-text-secondary)]">{formatCurrency(item.unit_price)}</p>
                               </div>
