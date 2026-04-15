@@ -88,9 +88,9 @@ function needsAttention(s: string) { return NEEDS_ATTENTION_STATUSES.includes(s)
 
 // --- Order Card (list view) ---
 function OrderCard({
-  order, lineItems, onClick, warning, onReorder,
+  order, lineItems, onClick, warning, onReorder, inJoblist, onToggleJoblist,
 }: {
-  order: OrderRow; lineItems: LineItemRow[]; onClick: () => void; warning?: boolean; onReorder?: () => void;
+  order: OrderRow; lineItems: LineItemRow[]; onClick: () => void; warning?: boolean; onReorder?: () => void; inJoblist?: boolean; onToggleJoblist?: () => void;
 }) {
   const { t, formatDate, formatCurrency } = useI18n();
   const orderLineItems = lineItems.filter((li) => li.order_id === order.id);
@@ -159,13 +159,15 @@ function OrderCard({
           )}
         </div>
         <div className="flex items-center gap-2">
-          <button
-            onClick={(e) => { e.stopPropagation(); toast.success("Ajouté à la joblist"); }}
-            className="inline-flex h-[32px] w-[32px] items-center justify-center rounded-[var(--border-radius-sm)] border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-rexel-primary-10)] transition-colors"
-            title="Ajouter à la joblist"
-          >
-            <Star className="h-4 w-4" />
-          </button>
+          {onToggleJoblist && (
+            <button
+              onClick={(e) => { e.stopPropagation(); onToggleJoblist(); }}
+              className="inline-flex h-[32px] w-[32px] items-center justify-center rounded-[var(--border-radius-sm)] border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-rexel-primary-10)] transition-colors"
+              title={inJoblist ? "Retirer de la joblist" : "Ajouter à la joblist"}
+            >
+              <Star className={cn("h-4 w-4", inJoblist && "fill-[var(--color-primary)]")} />
+            </button>
+          )}
           {onReorder && (
             <button
               onClick={(e) => { e.stopPropagation(); onReorder(); }}
@@ -229,6 +231,15 @@ export default function OrderHistory() {
   
   const [currentPage, setCurrentPage] = useState(1);
   const [sidePanelOrder, setSidePanelOrder] = useState<string | null>(null);
+  const [joblistIds, setJoblistIds] = useState<Set<string>>(new Set());
+  const toggleJoblist = (orderId: string) => {
+    setJoblistIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(orderId)) { next.delete(orderId); toast.success("Retiré de la joblist"); }
+      else { next.add(orderId); toast.success("Ajouté à la joblist"); }
+      return next;
+    });
+  };
   const ROWS_PER_PAGE = 10;
 
   useEffect(() => {
@@ -645,11 +656,11 @@ export default function OrderHistory() {
                             <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                               <div className="flex items-center gap-2">
                                 <button
-                                  onClick={() => toast.success("Ajouté à la joblist")}
+                                  onClick={() => toggleJoblist(order.id)}
                                   className="flex h-8 w-8 items-center justify-center rounded-[var(--border-radius-sm)] border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-rexel-primary-10)] transition-colors"
-                                  title="Ajouter à la joblist"
+                                  title={joblistIds.has(order.id) ? "Retirer de la joblist" : "Ajouter à la joblist"}
                                 >
-                                  <Star className="h-3.5 w-3.5" />
+                                  <Star className={cn("h-3.5 w-3.5", joblistIds.has(order.id) && "fill-[var(--color-primary)]")} />
                                 </button>
                                 <button
                                   onClick={() => handleReorderAll(order)}
@@ -740,10 +751,10 @@ export default function OrderHistory() {
                           <td className="px-4 py-3 text-[13px] text-[var(--color-text-secondary)]">{order.items_remaining}</td>
                           <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                             <div className="flex items-center gap-2">
-                              <button onClick={() => toast.success("Ajouté à la joblist")}
+                              <button onClick={() => toggleJoblist(order.id)}
                                 className="flex h-8 w-8 items-center justify-center rounded-[var(--border-radius-sm)] border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-rexel-primary-10)] transition-colors"
-                                title="Ajouter à la joblist">
-                                <Star className="h-3.5 w-3.5" />
+                                title={joblistIds.has(order.id) ? "Retirer de la joblist" : "Ajouter à la joblist"}>
+                                <Star className={cn("h-3.5 w-3.5", joblistIds.has(order.id) && "fill-[var(--color-primary)]")} />
                               </button>
                               <button onClick={() => handleReorderAll(order)}
                                 className="flex h-8 w-8 items-center justify-center rounded-[var(--border-radius-sm)] border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-rexel-primary-10)] transition-colors"
@@ -804,7 +815,7 @@ export default function OrderHistory() {
               </div>
               <div className="grid gap-3 grid-cols-1">
                 {needsAttentionOrders.map((o) => (
-                  <OrderCard key={o.id} order={o} lineItems={lineItems} onClick={() => setSidePanelOrder(o.order_number)} warning onReorder={() => handleReorderAll(o)} />
+                  <OrderCard key={o.id} order={o} lineItems={lineItems} onClick={() => setSidePanelOrder(o.order_number)} warning onReorder={() => handleReorderAll(o)} inJoblist={joblistIds.has(o.id)} onToggleJoblist={() => toggleJoblist(o.id)} />
                 ))}
               </div>
             </div>
@@ -822,7 +833,7 @@ export default function OrderHistory() {
               </h2>
               <div className="grid gap-3 grid-cols-1">
                 {ongoingOrders.slice(0, visibleCount).map((o) => (
-                  <OrderCard key={o.id} order={o} lineItems={lineItems} onClick={() => setSidePanelOrder(o.order_number)} onReorder={() => handleReorderAll(o)} />
+                  <OrderCard key={o.id} order={o} lineItems={lineItems} onClick={() => setSidePanelOrder(o.order_number)} onReorder={() => handleReorderAll(o)} inJoblist={joblistIds.has(o.id)} onToggleJoblist={() => toggleJoblist(o.id)} />
                 ))}
               </div>
             </div>
@@ -831,7 +842,7 @@ export default function OrderHistory() {
           {activeTab !== "ongoing" && ongoingOrders.length > 0 && (
             <div className="grid gap-3 grid-cols-1">
               {ongoingOrders.slice(0, visibleCount).map((o) => (
-                <OrderCard key={o.id} order={o} lineItems={lineItems} onClick={() => setSidePanelOrder(o.order_number)} onReorder={() => handleReorderAll(o)} />
+                <OrderCard key={o.id} order={o} lineItems={lineItems} onClick={() => setSidePanelOrder(o.order_number)} onReorder={() => handleReorderAll(o)} inJoblist={joblistIds.has(o.id)} onToggleJoblist={() => toggleJoblist(o.id)} />
               ))}
             </div>
           )}
