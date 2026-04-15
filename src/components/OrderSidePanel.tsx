@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import {
   CheckCircle, Truck, Package, AlertTriangle, XCircle,
-  ClipboardCheck, FileText, ShoppingCart,
+  ClipboardCheck, FileText, ShoppingCart, Star,
   Phone, Mail, X, Copy, Check, Download,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -660,13 +660,22 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                     : `${t("side.validateReception")} (${checkedCount}/${data.lineItems.length})`}
                 </button>
               ) : (
-                <button
-                  type="button"
-                  onClick={handleReorderAll}
-                  className="w-full inline-flex items-center justify-center gap-2 h-10 rounded-[var(--border-radius-sm)] bg-[var(--color-primary)] text-[var(--color-white)] text-[13px] font-semibold hover:bg-[var(--color-primary-hover)] transition-colors"
-                >
-                  <ShoppingCart className="h-4 w-4" /> {t("side.reorderAll")}
-                </button>
+                <div className="flex items-center gap-[var(--spacing-4)]">
+                  <button
+                    type="button"
+                    onClick={() => toast.success("Ajouté à la joblist")}
+                    className="inline-flex items-center justify-center gap-2 h-10 px-4 rounded-[var(--border-radius-sm)] border border-[var(--color-primary)] text-[var(--color-primary)] text-[13px] font-semibold hover:bg-[var(--color-rexel-primary-10)] transition-colors"
+                  >
+                    <Star className="h-4 w-4" /> Joblist
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleReorderAll}
+                    className="flex-1 inline-flex items-center justify-center gap-2 h-10 rounded-[var(--border-radius-sm)] bg-[var(--color-primary)] text-[var(--color-white)] text-[13px] font-semibold hover:bg-[var(--color-primary-hover)] transition-colors"
+                  >
+                    <ShoppingCart className="h-4 w-4" /> {t("side.reorderAll")}
+                  </button>
+                </div>
               )}
             </div>
           </>
