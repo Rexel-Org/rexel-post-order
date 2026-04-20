@@ -432,8 +432,8 @@ export default function OrderHistory() {
         </p>
       </div>
 
-      {/* Status filter pills */}
-      <div className="flex flex-wrap items-center gap-2">
+      {/* Status filter cards (toggle, KPI-style) */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-7">
         {statusFilterOptions.map((opt) => {
           const active = statusFilters.has(opt.key);
           const meta = statusVisual[opt.key];
@@ -445,19 +445,27 @@ export default function OrderHistory() {
               onClick={() => toggleStatusFilter(opt.key)}
               aria-pressed={active}
               className={cn(
-                "inline-flex h-8 items-center gap-1.5 rounded-full border px-3 text-[12px] font-semibold transition-colors",
+                "flex items-center gap-3 rounded-[var(--border-radius-sm)] border bg-white px-4 py-3 text-left transition-all",
                 active
-                  ? "border-[var(--color-primary)] bg-[var(--color-primary)] text-white"
-                  : "border-[var(--color-border-subtle)] bg-[var(--color-bg-layer-02)] text-[var(--color-text-primary)] hover:border-[var(--color-primary)]"
+                  ? "border-[var(--color-primary)] shadow-[var(--shadow-2)] ring-1 ring-[var(--color-primary)]"
+                  : "border-[var(--color-border-subtle)] hover:border-[var(--color-primary)] hover:shadow-[var(--shadow-1)]"
               )}
             >
-              {Icon && <Icon className="h-3 w-3" />}
-              {opt.label}
-              <span className={cn("text-[11px]", active ? "opacity-90" : "text-[var(--color-text-secondary)]")}>({count})</span>
+              {Icon && (
+                <span className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--border-radius-sm)]", meta?.bgClass)}>
+                  <Icon className={cn("h-4 w-4", meta?.colorClass)} />
+                </span>
+              )}
+              <div className="min-w-0 flex-1">
+                <div className="font-heading text-[20px] font-semibold leading-none text-[var(--color-text-primary)]">{count}</div>
+                <div className="mt-1 truncate text-[12px] leading-[14px] text-[var(--color-text-secondary)]">{opt.label}</div>
+              </div>
             </button>
           );
         })}
-        {statusFilters.size > 0 && (
+      </div>
+      {statusFilters.size > 0 && (
+        <div className="-mt-3">
           <button
             onClick={() => setStatusFilters(new Set())}
             className="inline-flex h-8 items-center gap-1 rounded-full px-2 text-[12px] font-semibold text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
@@ -465,8 +473,9 @@ export default function OrderHistory() {
             <X className="h-3 w-3" />
             {t("orders.clearAllFilters") ?? "Clear"}
           </button>
-        )}
-      </div>
+        </div>
+      )}
+
 
       {/* Filter bar — sticky */}
       <div className="sticky top-[var(--flow-sticky-site-header-height,140px)] z-30 mt-[var(--spacing-3)] space-y-3 border-b border-[var(--color-border-subtle)] bg-[var(--color-bg-page)] pb-[var(--spacing-4)] pt-[var(--spacing-3)] mb-[var(--spacing-4)]">
