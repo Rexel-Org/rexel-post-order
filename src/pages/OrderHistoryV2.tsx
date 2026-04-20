@@ -797,31 +797,21 @@ export default function OrderHistory() {
             </table>
           </div>
 
-          {totalPages > 1 && (
-            <div className="flex items-center justify-between pt-2">
-              <span className="text-[12px] text-[var(--color-text-secondary)]">
-                {t("orders.showing")} {(currentPage - 1) * ROWS_PER_PAGE + 1}–{Math.min(currentPage * ROWS_PER_PAGE, tableSorted.length)} {t("orders.of")} {tableSorted.length}
-              </span>
-              <div className="flex items-center gap-1">
-                <button onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1}
-                  className="flex h-8 w-8 items-center justify-center rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-layer-01)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
-                  <ChevronLeft className="h-4 w-4" />
-                </button>
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                  <button key={page} onClick={() => setCurrentPage(page)}
-                    className={cn("flex h-8 w-8 items-center justify-center rounded-[var(--border-radius-sm)] text-[12px] font-semibold transition-colors",
-                      page === currentPage ? "bg-[var(--color-primary)] text-white" : "border border-[var(--color-border-subtle)] text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-layer-01)]"
-                    )}>
-                    {page}
-                  </button>
-                ))}
-                <button onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}
-                  className="flex h-8 w-8 items-center justify-center rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-layer-01)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
-                  <ChevronRight className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
-          )}
+          {/* Lazy-load sentinel + counter */}
+          <div className="flex items-center justify-between pt-2">
+            <span className="text-[12px] text-[var(--color-text-secondary)]">
+              {t("orders.showing")} {visibleRows.length} {t("orders.of")} {tableSorted.length}
+            </span>
+            {hasMore && (
+              <button
+                onClick={() => setVisibleCount((c) => Math.min(c + LAZY_PAGE_SIZE, tableSorted.length))}
+                className="inline-flex h-8 items-center gap-1 rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] px-3 text-[12px] font-semibold text-[var(--color-text-secondary)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-colors"
+              >
+                {t("orders.loadMore") ?? "Load more"}
+              </button>
+            )}
+          </div>
+          {hasMore && <div ref={loadMoreRef} className="h-1 w-full" aria-hidden />}
         </div>
       )}
 
