@@ -457,6 +457,70 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                     </div>
                   )}
 
+                  {(() => {
+                    const info = getDeliveryInfo(data.order.order_number, data.order.order_type);
+                    return (
+                      <div className="rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] p-4 space-y-3">
+                        <div className="flex items-start gap-2">
+                          <MapPin className="h-4 w-4 text-[var(--color-primary)] shrink-0 mt-0.5" />
+                          <div className="min-w-0 flex-1">
+                            <p className="text-[12px] font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider mb-1">
+                              {info.isPickup ? t("side.pickupAgency") : t("side.deliveryAddress")}
+                            </p>
+                            {info.isPickup ? (
+                              <>
+                                <p className="text-[13px] font-semibold text-[var(--color-text-primary)]">{info.branch.name}</p>
+                                <p className="text-[12px] text-[var(--color-text-secondary)] mt-0.5">{info.branch.address}</p>
+                              </>
+                            ) : (
+                              <>
+                                <p className="text-[13px] font-semibold text-[var(--color-text-primary)]">{info.site.line1}</p>
+                                <p className="text-[12px] text-[var(--color-text-secondary)] mt-0.5">{info.site.line2}</p>
+                              </>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="border-t border-[var(--color-border-subtle)] pt-3 flex items-start gap-2">
+                          <User className="h-4 w-4 text-[var(--color-primary)] shrink-0 mt-0.5" />
+                          <div className="min-w-0 flex-1">
+                            <p className="text-[12px] font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider mb-1">
+                              {info.isPickup ? t("side.pickupContact") : t("side.deliveryContact")}
+                            </p>
+                            {info.isPickup ? (
+                              <>
+                                <p className="text-[13px] font-semibold text-[var(--color-text-primary)]">{info.branch.name}</p>
+                                <p className="text-[12px] text-[var(--color-text-secondary)] mt-1 flex items-center flex-wrap gap-x-1.5 gap-y-1">
+                                  <Phone className="h-3 w-3" />
+                                  <a href={`tel:${info.branch.phone.replace(/\s/g, "")}`} className="hover:text-[var(--color-primary)]">{info.branch.phone}</a>
+                                  <span className="text-[#a8a8a8]">·</span>
+                                  <Mail className="h-3 w-3" />
+                                  <a href={`mailto:${info.branch.email}`} className="hover:text-[var(--color-primary)] truncate">{info.branch.email}</a>
+                                </p>
+                                <p className="text-[12px] text-[var(--color-text-secondary)] mt-1.5 flex items-center gap-1.5">
+                                  <Clock className="h-3 w-3" />
+                                  <span className="font-semibold">{t("side.pickupHours")} :</span>
+                                  <span>{t("side.pickupHoursValue")}</span>
+                                </p>
+                              </>
+                            ) : (
+                              <>
+                                <p className="text-[13px] font-semibold text-[var(--color-text-primary)]">{info.contact.name}</p>
+                                <p className="text-[12px] text-[var(--color-text-secondary)] mt-1 flex items-center flex-wrap gap-x-1.5 gap-y-1">
+                                  <Phone className="h-3 w-3" />
+                                  <a href={`tel:${info.contact.phone.replace(/\s/g, "")}`} className="hover:text-[var(--color-primary)]">{info.contact.phone}</a>
+                                  <span className="text-[#a8a8a8]">·</span>
+                                  <Mail className="h-3 w-3" />
+                                  <a href={`mailto:${info.contact.email}`} className="hover:text-[var(--color-primary)] truncate">{info.contact.email}</a>
+                                </p>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })()}
+
                   {data.shipments.length > 0 && (
                     <div className="space-y-3">
                       <h3 className="text-[13px] font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider">{t("side.shipmentsH")}</h3>
