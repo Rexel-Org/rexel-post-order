@@ -453,6 +453,7 @@ const sv: Record<string, string> = {
   "orderStatus.delayed": "Försenad",
   "orderStatus.cancelled": "Avbruten",
   "orderStatus.completed": "Slutförd",
+  "orderStatus.backorder": "Restorder",
   "shipStatus.confirmed": "Bekräftad",
   "shipStatus.being_prepared": "Förbereds",
   "shipStatus.in_transit": "På väg",
