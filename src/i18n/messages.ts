@@ -44,6 +44,7 @@ const en: Record<string, string> = {
   "orderStatus.delayed": "Delayed",
   "orderStatus.cancelled": "Cancelled",
   "orderStatus.completed": "Completed",
+  "orderStatus.backorder": "Backorder",
   "shipStatus.confirmed": "Confirmed",
   "shipStatus.being_prepared": "Being prepared",
   "shipStatus.in_transit": "In transit",
