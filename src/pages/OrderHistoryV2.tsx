@@ -327,11 +327,12 @@ export default function OrderHistory() {
     });
   }, [filtered, sortKey, sortDir]);
 
-  // Lazy loading (infinite scroll)
-  const LAZY_PAGE_SIZE = 20;
+  // Lazy loading (infinite scroll) — small batches, fires only when sentinel actually intersects
+  const LAZY_PAGE_SIZE = 10;
   const visibleRows = tableSorted.slice(0, visibleCount);
   const hasMore = visibleCount < tableSorted.length;
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
+  const isLoadingMoreRef = useRef(false);
 
   useEffect(() => { setVisibleCount(LAZY_PAGE_SIZE); setCurrentPage(1); }, [statusFilters, searchQuery, dateFrom, dateTo, projectFilter, sortKey, sortDir]);
 
@@ -340,15 +341,20 @@ export default function OrderHistory() {
     if (!node || !hasMore) return;
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0]?.isIntersecting) {
+        const entry = entries[0];
+        if (!entry?.isIntersecting || isLoadingMoreRef.current) return;
+        isLoadingMoreRef.current = true;
+        // Simulate small async delay so the user perceives progressive loading
+        setTimeout(() => {
           setVisibleCount((c) => Math.min(c + LAZY_PAGE_SIZE, tableSorted.length));
-        }
+          isLoadingMoreRef.current = false;
+        }, 250);
       },
-      { rootMargin: "200px" }
+      { root: null, rootMargin: "0px", threshold: 0.1 }
     );
     observer.observe(node);
     return () => observer.disconnect();
-  }, [hasMore, tableSorted.length]);
+  }, [hasMore, tableSorted.length, visibleCount]);
 
   const hasActiveFilters = searchQuery || projectFilter !== "all" || dateFrom || dateTo;
 
