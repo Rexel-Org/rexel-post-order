@@ -800,8 +800,8 @@ export default function OrderHistory() {
         </div>
       )}
 
-      {/* Table empty state */}
-      {viewMode === "table" && filtered.length === 0 && (
+      {/* Empty state */}
+      {filtered.length === 0 && (
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <Package className="h-16 w-16 text-[var(--color-text-secondary)] mb-4" strokeWidth={1} />
           <h3 className="text-[16px] font-semibold text-[var(--color-text-primary)] mb-1">{t("orders.emptyFilteredTitle")}</h3>
