@@ -692,28 +692,34 @@ export default function OrderHistory() {
             <table className="w-full table-fixed">
               <colgroup>
                 <col className="w-[14%]" />
-                <col className="w-[12%]" />
                 <col className="w-[11%]" />
                 <col className="w-[16%]" />
                 <col className="w-[11%]" />
                 <col className="w-[14%]" />
                 <col className="w-[10%]" />
-                <col className="w-[12%]" />
+                <col className="w-[16%]" />
+                <col className="w-[8%]" />
               </colgroup>
               <thead>
                 <tr className="border-b border-[var(--color-border-subtle)] bg-[var(--color-bg-layer-01)]">
                   <SortableHeader colKey="order_number" label={t("orders.colOrder")} />
-                  <SortableHeader colKey="po_number" label={t("orders.colPO")} />
                   <SortableHeader colKey="order_date" label={t("orders.colDate")} />
                   <SortableHeader colKey="status" label={t("orders.colStatus")} />
                   <SortableHeader colKey="total_amount" label={t("orders.colTotal")} align="right" />
                   <SortableHeader colKey="expected_delivery" label={t("orders.colExpDelivery")} />
                   <SortableHeader colKey="items_remaining" label={t("orders.colRemaining")} />
+                  <th className="px-4 py-3 text-left text-[12px] font-semibold uppercase tracking-wider text-[var(--color-text-secondary)]">
+                    {t("orders.colItems") ?? "Articles"}
+                  </th>
                   <th className="px-4 py-3 w-10" />
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--color-border-subtle)]">
-                {paginatedRows.map((order) => (
+                {paginatedRows.map((order) => {
+                  const orderItems = lineItems.filter((li) => li.order_id === order.id);
+                  const thumbs = orderItems.slice(0, 3);
+                  const moreCount = orderItems.length - thumbs.length;
+                  return (
                   <tr
                     key={order.id}
                     className={cn(
@@ -725,12 +731,27 @@ export default function OrderHistory() {
                     onClick={() => setSidePanelOrder(order.order_number)}
                   >
                     <td className="px-4 py-3 text-[13px] font-semibold text-[var(--color-text-primary)]">{order.order_number}</td>
-                    <td className="px-4 py-3 text-[13px] text-[var(--color-text-secondary)]">{order.po_number ?? "—"}</td>
                     <td className="px-4 py-3 text-[13px] text-[var(--color-text-secondary)]">{formatDate(order.order_date, "dd/MM/yyyy")}</td>
                     <td className="px-4 py-3"><StatusBadge status={order.status} /></td>
                     <td className="px-4 py-3 text-[13px] text-right font-heading font-semibold text-[var(--color-text-primary)]">{formatCurrency(order.total_amount)}</td>
                     <td className="px-4 py-3 text-[13px] font-semibold text-[var(--color-primary)]">{formatDate(order.expected_delivery, "dd/MM/yyyy")}</td>
                     <td className="px-4 py-3 text-[13px] text-[var(--color-text-secondary)]">{order.items_remaining}</td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-1.5">
+                        {thumbs.map((li) => (
+                          <div
+                            key={li.id}
+                            className="h-8 w-8 shrink-0 rounded-[var(--border-radius-sm)] bg-[#F6F8FB] border border-[#E0E4EB] flex items-center justify-center"
+                            title={li.product_name}
+                          >
+                            <Package className="h-3.5 w-3.5 text-[#a8a8a8]" />
+                          </div>
+                        ))}
+                        {moreCount > 0 && (
+                          <span className="text-[11px] font-semibold text-[var(--color-text-secondary)]">+{moreCount}</span>
+                        )}
+                      </div>
+                    </td>
                     <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                       <div className="flex items-center gap-2">
                         <button onClick={() => toggleJoblist(order.id)}
@@ -746,7 +767,8 @@ export default function OrderHistory() {
                       </div>
                     </td>
                   </tr>
-                ))}
+                  );
+                })}
               </tbody>
             </table>
           </div>
