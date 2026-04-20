@@ -479,17 +479,16 @@ export default function OrderHistory() {
         </p>
       </div>
 
-      {/* Status filter cards (toggle, KPI-style) */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-7">
-        {statusFilterOptions.map((opt) => {
-          const active = statusFilters.has(opt.key);
-          const meta = statusVisual[opt.key];
-          const Icon = meta?.icon;
-          const count = statusCounts[opt.key] ?? 0;
+      {/* Status filter cards (3 grouped toggles, KPI-style) */}
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+        {statusGroups.map((group) => {
+          const active = group.statuses.every((s) => statusFilters.has(s));
+          const Icon = group.icon;
+          const count = groupCounts[group.key] ?? 0;
           return (
             <button
-              key={opt.key}
-              onClick={() => toggleStatusFilter(opt.key)}
+              key={group.key}
+              onClick={() => toggleGroupFilter(group)}
               aria-pressed={active}
               className={cn(
                 "flex items-center gap-3 rounded-[var(--border-radius-sm)] border bg-white px-4 py-3 text-left transition-all",
@@ -498,14 +497,12 @@ export default function OrderHistory() {
                   : "border-[var(--color-border-subtle)] hover:border-[var(--color-primary)] hover:shadow-[var(--shadow-1)]"
               )}
             >
-              {Icon && (
-                <span className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--border-radius-sm)]", meta?.bgClass)}>
-                  <Icon className={cn("h-4 w-4", meta?.colorClass)} />
-                </span>
-              )}
+              <span className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--border-radius-sm)] border", group.bgClass)}>
+                <Icon className={cn("h-4 w-4", group.colorClass)} />
+              </span>
               <div className="min-w-0 flex-1">
                 <div className="font-heading text-[20px] font-semibold leading-none text-[var(--color-text-primary)]">{count}</div>
-                <div className="mt-1 truncate text-[12px] leading-[14px] text-[var(--color-text-secondary)]">{opt.label}</div>
+                <div className="mt-1 truncate text-[12px] leading-[14px] text-[var(--color-text-secondary)]">{group.label}</div>
               </div>
             </button>
           );
