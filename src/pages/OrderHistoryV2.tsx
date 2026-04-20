@@ -216,14 +216,23 @@ export default function OrderHistory() {
   const { data: lineItems = [], isLoading: itemsLoading } = useLineItems();
   const isLoading = ordersLoading || itemsLoading;
 
-  const [activeTab, setActiveTab] = useState<"ongoing" | "backorders" | "completed">("ongoing");
+  const [statusFilters, setStatusFilters] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState("");
   const [activeDatePreset, setActiveDatePreset] = useState<DatePresetId | null>("3m");
   const [dateFrom, setDateFrom] = useState<Date | undefined>(subMonths(new Date(), 3));
   const [dateTo, setDateTo] = useState<Date | undefined>(undefined);
   const [projectFilter, setProjectFilter] = useState<string>("all");
   const [visibleCount, setVisibleCount] = useState(10);
-  const [viewMode, setViewMode] = useState<"list" | "table">("list");
+  const [viewMode, setViewMode] = useState<"table" | "kanban">("table");
+
+  const toggleStatusFilter = (status: string) => {
+    setStatusFilters((prev) => {
+      const next = new Set(prev);
+      if (next.has(status)) next.delete(status);
+      else next.add(status);
+      return next;
+    });
+  };
 
   // Table state
   const [sortKey, setSortKey] = useState<SortKey>("order_date");
@@ -272,10 +281,8 @@ export default function OrderHistory() {
     const q = searchQuery.toLowerCase().trim();
     return orders
       .filter((o) => {
-        if (activeTab === "ongoing") return isOngoing(o.status);
-        if (activeTab === "completed") return isCompleted(o.status);
-        if (activeTab === "backorders") return o.status === "partially_delivered";
-        return true;
+        if (statusFilters.size === 0) return true;
+        return statusFilters.has(o.status);
       })
       .filter((o) => {
         if (!q) return true;
@@ -295,7 +302,7 @@ export default function OrderHistory() {
         if (projectFilter === "all") return true;
         return o.project_name === projectFilter;
       });
-  }, [orders, lineItems, activeTab, searchQuery, dateFrom, dateTo, projectFilter]);
+  }, [orders, lineItems, statusFilters, searchQuery, dateFrom, dateTo, projectFilter]);
 
   // Table sorted data
   const tableSorted = useMemo(() => {
@@ -319,11 +326,7 @@ export default function OrderHistory() {
   const totalPages = Math.ceil(tableSorted.length / ROWS_PER_PAGE);
   const paginatedRows = tableSorted.slice((currentPage - 1) * ROWS_PER_PAGE, currentPage * ROWS_PER_PAGE);
 
-  // Split for list view
-  const needsAttentionOrders = activeTab === "ongoing" ? filtered.filter((o) => needsAttention(o.status)) : [];
-  const ongoingOrders = activeTab === "ongoing" ? filtered.filter((o) => !needsAttention(o.status)) : filtered;
-
-  useEffect(() => { setVisibleCount(10); setCurrentPage(1); }, [activeTab, searchQuery, dateFrom, dateTo, projectFilter]);
+  useEffect(() => { setVisibleCount(10); setCurrentPage(1); }, [statusFilters, searchQuery, dateFrom, dateTo, projectFilter]);
 
   const hasActiveFilters = searchQuery || projectFilter !== "all" || dateFrom || dateTo;
 
