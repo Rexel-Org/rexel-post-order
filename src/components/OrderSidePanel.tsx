@@ -27,6 +27,11 @@ const statusVisual: Record<string, { icon: typeof CheckCircle; colorClass: strin
   in_transit: { icon: Truck, colorClass: "text-[var(--color-info)]", bgClass: "bg-[var(--color-alert-info-bg)] border-[var(--color-info)]" },
   partially_delivered: {
     icon: Package,
+    colorClass: "text-[var(--color-alert-warning-text)]",
+    bgClass: "bg-[var(--color-alert-warning-bg)] border-[var(--color-alert-warning-border)]",
+  },
+  backorder: {
+    icon: AlertTriangle,
     colorClass: "text-[var(--color-alert-error-text)]",
     bgClass: "bg-[var(--color-alert-error-bg)] border-[var(--color-alert-error-border)]",
   },
@@ -373,9 +378,21 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                     const isDelayed = data.order.status === "delayed";
                     const isPartial = data.order.status === "partially_delivered";
                     const isWarning = isDelayed || isPartial;
-                    const bgColor = isWarning ? "bg-[var(--color-alert-error-bg)]" : "bg-[var(--color-alert-info-bg)]";
-                    const borderColor = isWarning ? "border-[var(--color-alert-error-border)]" : "border-[var(--color-info)]";
-                    const textColor = isWarning ? "text-[var(--color-alert-error-text)]" : "text-[var(--color-info)]";
+                    const bgColor = isDelayed
+                      ? "bg-[var(--color-alert-error-bg)]"
+                      : isPartial
+                        ? "bg-[var(--color-alert-warning-bg)]"
+                        : "bg-[var(--color-alert-info-bg)]";
+                    const borderColor = isDelayed
+                      ? "border-[var(--color-alert-error-border)]"
+                      : isPartial
+                        ? "border-[var(--color-alert-warning-border)]"
+                        : "border-[var(--color-info)]";
+                    const textColor = isDelayed
+                      ? "text-[var(--color-alert-error-text)]"
+                      : isPartial
+                        ? "text-[var(--color-alert-warning-text)]"
+                        : "text-[var(--color-info)]";
                     const Icon = isDelayed ? AlertTriangle : Truck;
                     return (
                       <div className={cn("flex items-center gap-2 rounded-[var(--border-radius-sm)] border px-3 min-h-[52px] text-[14px] font-semibold", bgColor, borderColor, textColor)}>
