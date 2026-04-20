@@ -433,8 +433,10 @@ export default function OrderHistory() {
   const toggleGroupFilter = (group: StatusGroup) => {
     setStatusFilters((prev) => {
       const next = new Set(prev);
-      const allActive = group.statuses.every((s) => next.has(s));
-      if (allActive) {
+      // Cumulable: if any of this group's statuses is selected -> deselect group;
+      // otherwise add all of its statuses without touching other groups.
+      const anyActive = group.statuses.some((s) => next.has(s));
+      if (anyActive) {
         group.statuses.forEach((s) => next.delete(s));
       } else {
         group.statuses.forEach((s) => next.add(s));
