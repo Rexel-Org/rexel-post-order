@@ -602,7 +602,7 @@ export default function OrderHistory() {
               )}
               title="Kanban"
             >
-              <LayoutGrid className="h-4 w-4" />
+              <Kanban className="h-4 w-4" />
             </button>
           </div>
         </div>
