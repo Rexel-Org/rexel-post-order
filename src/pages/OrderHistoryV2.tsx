@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import {
   Search, X, AlertTriangle, XCircle, CheckCircle, Package,
   Truck, Copy, Download, CalendarIcon, LayoutGrid, List,
@@ -29,6 +29,11 @@ const statusVisual: Record<string, { icon: typeof CheckCircle; colorClass: strin
   in_transit: { icon: Truck, colorClass: "text-[var(--color-info)]", bgClass: "bg-[var(--color-alert-info-bg)] border-[var(--color-info)]" },
   partially_delivered: {
     icon: Package,
+    colorClass: "text-[var(--color-warning-text,var(--color-warning))]",
+    bgClass: "bg-[var(--color-alert-warning-bg)] border-[var(--color-warning)]",
+  },
+  backorder: {
+    icon: AlertTriangle,
     colorClass: "text-[var(--color-alert-error-text)]",
     bgClass: "bg-[var(--color-alert-error-bg)] border-[var(--color-alert-error-border)]",
   },
@@ -322,11 +327,28 @@ export default function OrderHistory() {
     });
   }, [filtered, sortKey, sortDir]);
 
-  // Pagination
-  const totalPages = Math.ceil(tableSorted.length / ROWS_PER_PAGE);
-  const paginatedRows = tableSorted.slice((currentPage - 1) * ROWS_PER_PAGE, currentPage * ROWS_PER_PAGE);
+  // Lazy loading (infinite scroll)
+  const LAZY_PAGE_SIZE = 20;
+  const visibleRows = tableSorted.slice(0, visibleCount);
+  const hasMore = visibleCount < tableSorted.length;
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => { setVisibleCount(10); setCurrentPage(1); }, [statusFilters, searchQuery, dateFrom, dateTo, projectFilter]);
+  useEffect(() => { setVisibleCount(LAZY_PAGE_SIZE); setCurrentPage(1); }, [statusFilters, searchQuery, dateFrom, dateTo, projectFilter, sortKey, sortDir]);
+
+  useEffect(() => {
+    const node = loadMoreRef.current;
+    if (!node || !hasMore) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          setVisibleCount((c) => Math.min(c + LAZY_PAGE_SIZE, tableSorted.length));
+        }
+      },
+      { rootMargin: "200px" }
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [hasMore, tableSorted.length]);
 
   const hasActiveFilters = searchQuery || projectFilter !== "all" || dateFrom || dateTo;
 
@@ -375,8 +397,8 @@ export default function OrderHistory() {
     toast.success(t("orders.csvExported"));
   };
 
-  // Status filter groups (3 grouped toggles)
-  const ATTENTION_STATUSES = ["delayed", "cancelled", "partially_delivered"];
+  // Status filter groups (3 grouped toggles, cumulable)
+  const ATTENTION_STATUSES = ["delayed", "cancelled", "backorder", "partially_delivered"];
   const ONGOING_GROUP = ["on_track", "being_prepared", "in_transit"];
   const COMPLETED_GROUP = ["completed"];
 
@@ -390,6 +412,14 @@ export default function OrderHistory() {
   };
 
   const statusGroups: StatusGroup[] = [
+    {
+      key: "attention",
+      label: "Points d'attention",
+      statuses: ATTENTION_STATUSES,
+      icon: AlertTriangle,
+      colorClass: "text-[var(--color-alert-error-text)]",
+      bgClass: "bg-[var(--color-alert-error-bg)] border-[var(--color-alert-error-border)]",
+    },
     {
       key: "ongoing",
       label: "En cours",
@@ -406,14 +436,6 @@ export default function OrderHistory() {
       colorClass: "text-[var(--color-success)]",
       bgClass: "bg-[var(--color-alert-success-bg)] border-[var(--color-success)]",
     },
-    {
-      key: "attention",
-      label: "Points d'attention",
-      statuses: ATTENTION_STATUSES,
-      icon: AlertTriangle,
-      colorClass: "text-[var(--color-alert-error-text)]",
-      bgClass: "bg-[var(--color-alert-error-bg)] border-[var(--color-alert-error-border)]",
-    },
   ];
 
   const groupCounts = useMemo(() => {
@@ -428,8 +450,10 @@ export default function OrderHistory() {
   const toggleGroupFilter = (group: StatusGroup) => {
     setStatusFilters((prev) => {
       const next = new Set(prev);
-      const allActive = group.statuses.every((s) => next.has(s));
-      if (allActive) {
+      // Cumulable: if any of this group's statuses is selected -> deselect group;
+      // otherwise add all of its statuses without touching other groups.
+      const anyActive = group.statuses.some((s) => next.has(s));
+      if (anyActive) {
         group.statuses.forEach((s) => next.delete(s));
       } else {
         group.statuses.forEach((s) => next.add(s));
@@ -482,7 +506,7 @@ export default function OrderHistory() {
       {/* Status filter cards (3 grouped toggles, KPI-style) */}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         {statusGroups.map((group) => {
-          const active = group.statuses.every((s) => statusFilters.has(s));
+          const active = group.statuses.some((s) => statusFilters.has(s));
           const Icon = group.icon;
           const count = groupCounts[group.key] ?? 0;
           return (
@@ -715,7 +739,7 @@ export default function OrderHistory() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--color-border-subtle)]">
-                {paginatedRows.map((order) => {
+                {visibleRows.map((order) => {
                   const orderItems = lineItems.filter((li) => li.order_id === order.id);
                   const thumbs = orderItems.slice(0, 3);
                   const moreCount = orderItems.length - thumbs.length;
@@ -773,31 +797,21 @@ export default function OrderHistory() {
             </table>
           </div>
 
-          {totalPages > 1 && (
-            <div className="flex items-center justify-between pt-2">
-              <span className="text-[12px] text-[var(--color-text-secondary)]">
-                {t("orders.showing")} {(currentPage - 1) * ROWS_PER_PAGE + 1}–{Math.min(currentPage * ROWS_PER_PAGE, tableSorted.length)} {t("orders.of")} {tableSorted.length}
-              </span>
-              <div className="flex items-center gap-1">
-                <button onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1}
-                  className="flex h-8 w-8 items-center justify-center rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-layer-01)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
-                  <ChevronLeft className="h-4 w-4" />
-                </button>
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                  <button key={page} onClick={() => setCurrentPage(page)}
-                    className={cn("flex h-8 w-8 items-center justify-center rounded-[var(--border-radius-sm)] text-[12px] font-semibold transition-colors",
-                      page === currentPage ? "bg-[var(--color-primary)] text-white" : "border border-[var(--color-border-subtle)] text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-layer-01)]"
-                    )}>
-                    {page}
-                  </button>
-                ))}
-                <button onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}
-                  className="flex h-8 w-8 items-center justify-center rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-layer-01)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
-                  <ChevronRight className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
-          )}
+          {/* Lazy-load sentinel + counter */}
+          <div className="flex items-center justify-between pt-2">
+            <span className="text-[12px] text-[var(--color-text-secondary)]">
+              {t("orders.showing")} {visibleRows.length} {t("orders.of")} {tableSorted.length}
+            </span>
+            {hasMore && (
+              <button
+                onClick={() => setVisibleCount((c) => Math.min(c + LAZY_PAGE_SIZE, tableSorted.length))}
+                className="inline-flex h-8 items-center gap-1 rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] px-3 text-[12px] font-semibold text-[var(--color-text-secondary)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-colors"
+              >
+                {t("orders.loadMore") ?? "Load more"}
+              </button>
+            )}
+          </div>
+          {hasMore && <div ref={loadMoreRef} className="h-1 w-full" aria-hidden />}
         </div>
       )}
 
@@ -805,13 +819,14 @@ export default function OrderHistory() {
       {viewMode === "kanban" && filtered.length > 0 && (
         <div className="flex gap-4 overflow-x-auto pb-4">
           {([
+            { key: "delayed", label: t("orderStatus.delayed") },
+            { key: "cancelled", label: t("orderStatus.cancelled") },
+            { key: "backorder", label: t("orderStatus.backorder") },
+            { key: "partially_delivered", label: t("orderStatus.partially_delivered") },
             { key: "on_track", label: t("orderStatus.on_track") },
             { key: "being_prepared", label: t("orderStatus.being_prepared") },
             { key: "in_transit", label: t("orderStatus.in_transit") },
-            { key: "partially_delivered", label: t("orderStatus.partially_delivered") },
-            { key: "delayed", label: t("orderStatus.delayed") },
             { key: "completed", label: t("orderStatus.completed") },
-            { key: "cancelled", label: t("orderStatus.cancelled") },
           ] as { key: string; label: string }[])
             .filter((opt) => statusFilters.size === 0 || statusFilters.has(opt.key))
             .map((opt) => {
