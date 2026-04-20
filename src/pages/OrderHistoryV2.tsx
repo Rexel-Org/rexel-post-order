@@ -800,7 +800,12 @@ export default function OrderHistory() {
               </button>
             )}
           </div>
-          {hasMore && <div ref={loadMoreRef} className="h-1 w-full" aria-hidden />}
+          {hasMore && (
+            <div ref={loadMoreRef} className="flex items-center justify-center py-4">
+              <div className="h-5 w-5 animate-spin rounded-full border-2 border-[var(--color-primary)] border-t-transparent" />
+              <span className="ml-2 text-[12px] text-[var(--color-text-secondary)]">{t("orders.loadMore") ?? "Load more"}…</span>
+            </div>
+          )}
         </div>
       )}
 
