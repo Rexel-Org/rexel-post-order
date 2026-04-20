@@ -489,7 +489,7 @@ export default function OrderHistory() {
       {/* Status filter cards (3 grouped toggles, KPI-style) */}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         {statusGroups.map((group) => {
-          const active = group.statuses.every((s) => statusFilters.has(s));
+          const active = group.statuses.some((s) => statusFilters.has(s));
           const Icon = group.icon;
           const count = groupCounts[group.key] ?? 0;
           return (
