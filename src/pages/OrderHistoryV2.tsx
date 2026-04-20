@@ -331,8 +331,24 @@ export default function OrderHistory() {
   const LAZY_PAGE_SIZE = 20;
   const visibleRows = tableSorted.slice(0, visibleCount);
   const hasMore = visibleCount < tableSorted.length;
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => { setVisibleCount(LAZY_PAGE_SIZE); setCurrentPage(1); }, [statusFilters, searchQuery, dateFrom, dateTo, projectFilter, sortKey, sortDir]);
+
+  useEffect(() => {
+    const node = loadMoreRef.current;
+    if (!node || !hasMore) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          setVisibleCount((c) => Math.min(c + LAZY_PAGE_SIZE, tableSorted.length));
+        }
+      },
+      { rootMargin: "200px" }
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [hasMore, tableSorted.length]);
 
   const hasActiveFilters = searchQuery || projectFilter !== "all" || dateFrom || dateTo;
 
