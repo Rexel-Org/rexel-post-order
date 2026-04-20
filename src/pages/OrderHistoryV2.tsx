@@ -358,6 +358,18 @@ export default function OrderHistory() {
     return () => observer.disconnect();
   }, [hasMore, tableSorted.length, visibleCount]);
 
+  // Detect when sticky filter zone becomes "stuck" (sentinel scrolls out of view)
+  useEffect(() => {
+    const node = stickySentinelRef.current;
+    if (!node) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsStickyStuck(!entry.isIntersecting),
+      { threshold: 0, rootMargin: "-1px 0px 0px 0px" }
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
   const hasActiveFilters = searchQuery || projectFilter !== "all" || dateFrom || dateTo;
 
   const clearAllFilters = () => {
