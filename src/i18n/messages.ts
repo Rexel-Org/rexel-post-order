@@ -654,6 +654,7 @@ const de: Record<string, string> = {
   "orderStatus.delayed": "Verspätet",
   "orderStatus.cancelled": "Storniert",
   "orderStatus.completed": "Abgeschlossen",
+  "orderStatus.backorder": "Rückstand",
   "shipStatus.confirmed": "Bestätigt",
   "shipStatus.being_prepared": "In Vorbereitung",
   "shipStatus.in_transit": "Unterwegs",
