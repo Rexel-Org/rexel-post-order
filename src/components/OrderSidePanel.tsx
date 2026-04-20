@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import {
   CheckCircle, Truck, Package, AlertTriangle, XCircle,
   ClipboardCheck, FileText, ShoppingCart, Star,
-  Phone, Mail, X, Copy, Check, Download,
+  Phone, Mail, X, Copy, Check, Download, MapPin, Clock, User,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
