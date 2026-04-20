@@ -375,11 +375,21 @@ export default function OrderHistory() {
     toast.success(t("orders.csvExported"));
   };
 
-  const tabs = [
-    { key: "ongoing" as const, label: `${t("orders.tabOngoing")} (${ongoingCount})` },
-    { key: "backorders" as const, label: `${t("orders.tabBackorders")} (${backorderCount})` },
-    { key: "completed" as const, label: `${t("orders.tabCompleted")} (${completedCount})` },
+  // Status filter pills (multi-select toggle)
+  const statusFilterOptions: { key: string; label: string }[] = [
+    { key: "on_track", label: t("orderStatus.on_track") },
+    { key: "being_prepared", label: t("orderStatus.being_prepared") },
+    { key: "in_transit", label: t("orderStatus.in_transit") },
+    { key: "partially_delivered", label: t("orderStatus.partially_delivered") },
+    { key: "delayed", label: t("orderStatus.delayed") },
+    { key: "completed", label: t("orderStatus.completed") },
+    { key: "cancelled", label: t("orderStatus.cancelled") },
   ];
+  const statusCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const o of orders) counts[o.status] = (counts[o.status] ?? 0) + 1;
+    return counts;
+  }, [orders]);
 
   if (isLoading) {
     return (
@@ -422,16 +432,40 @@ export default function OrderHistory() {
         </p>
       </div>
 
-      {/* Tabs */}
-      <div className="flex border-b border-[var(--color-border-subtle)]">
-        {tabs.map((tab) => (
-          <button key={tab.key} onClick={() => setActiveTab(tab.key)} className={cn(
-            "px-4 py-2.5 text-[13px] font-semibold transition-colors border-b-2 -mb-px",
-            activeTab === tab.key ? "border-[var(--color-primary)] text-[var(--color-primary)]" : "border-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
-          )}>
-            {tab.label}
+      {/* Status filter pills */}
+      <div className="flex flex-wrap items-center gap-2">
+        {statusFilterOptions.map((opt) => {
+          const active = statusFilters.has(opt.key);
+          const meta = statusVisual[opt.key];
+          const Icon = meta?.icon;
+          const count = statusCounts[opt.key] ?? 0;
+          return (
+            <button
+              key={opt.key}
+              onClick={() => toggleStatusFilter(opt.key)}
+              aria-pressed={active}
+              className={cn(
+                "inline-flex h-8 items-center gap-1.5 rounded-full border px-3 text-[12px] font-semibold transition-colors",
+                active
+                  ? "border-[var(--color-primary)] bg-[var(--color-primary)] text-white"
+                  : "border-[var(--color-border-subtle)] bg-[var(--color-bg-layer-02)] text-[var(--color-text-primary)] hover:border-[var(--color-primary)]"
+              )}
+            >
+              {Icon && <Icon className="h-3 w-3" />}
+              {opt.label}
+              <span className={cn("text-[11px]", active ? "opacity-90" : "text-[var(--color-text-secondary)]")}>({count})</span>
+            </button>
+          );
+        })}
+        {statusFilters.size > 0 && (
+          <button
+            onClick={() => setStatusFilters(new Set())}
+            className="inline-flex h-8 items-center gap-1 rounded-full px-2 text-[12px] font-semibold text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
+          >
+            <X className="h-3 w-3" />
+            {t("orders.clearAllFilters") ?? "Clear"}
           </button>
-        ))}
+        )}
       </div>
 
       {/* Filter bar — sticky */}
