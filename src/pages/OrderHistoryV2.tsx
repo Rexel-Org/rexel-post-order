@@ -503,15 +503,6 @@ export default function OrderHistory() {
           {/* View toggle */}
           <div className="flex items-center rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] overflow-hidden">
             <button
-              onClick={() => setViewMode("list")}
-              className={cn("flex h-10 w-10 items-center justify-center transition-colors",
-                viewMode === "list" ? "bg-[var(--color-primary)] text-white" : "bg-[var(--color-bg-layer-02)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
-              )}
-              title={t("orders.cardView")}
-            >
-              <LayoutGrid className="h-4 w-4" />
-            </button>
-            <button
               onClick={() => setViewMode("table")}
               className={cn("flex h-10 w-10 items-center justify-center transition-colors",
                 viewMode === "table" ? "bg-[var(--color-primary)] text-white" : "bg-[var(--color-bg-layer-02)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
@@ -519,6 +510,15 @@ export default function OrderHistory() {
               title={t("orders.tableView")}
             >
               <List className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => setViewMode("kanban")}
+              className={cn("flex h-10 w-10 items-center justify-center transition-colors",
+                viewMode === "kanban" ? "bg-[var(--color-primary)] text-white" : "bg-[var(--color-bg-layer-02)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
+              )}
+              title="Kanban"
+            >
+              <LayoutGrid className="h-4 w-4" />
             </button>
           </div>
         </div>
