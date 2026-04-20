@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect, useRef } from "react";
 import {
   Search, X, AlertTriangle, XCircle, CheckCircle, Package,
-  Truck, Copy, Download, CalendarIcon, LayoutGrid, List,
+  Truck, Copy, Download, CalendarIcon, Kanban, List,
   ArrowUpDown, ArrowUp, ArrowDown, ShoppingCart, Star,
   ChevronLeft, ChevronRight,
 } from "lucide-react";
@@ -602,7 +602,7 @@ export default function OrderHistory() {
               )}
               title="Kanban"
             >
-              <LayoutGrid className="h-4 w-4" />
+              <Kanban className="h-4 w-4" />
             </button>
           </div>
         </div>
