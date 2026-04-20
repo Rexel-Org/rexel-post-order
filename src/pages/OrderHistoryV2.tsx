@@ -29,6 +29,11 @@ const statusVisual: Record<string, { icon: typeof CheckCircle; colorClass: strin
   in_transit: { icon: Truck, colorClass: "text-[var(--color-info)]", bgClass: "bg-[var(--color-alert-info-bg)] border-[var(--color-info)]" },
   partially_delivered: {
     icon: Package,
+    colorClass: "text-[var(--color-warning-text,var(--color-warning))]",
+    bgClass: "bg-[var(--color-alert-warning-bg)] border-[var(--color-warning)]",
+  },
+  backorder: {
+    icon: AlertTriangle,
     colorClass: "text-[var(--color-alert-error-text)]",
     bgClass: "bg-[var(--color-alert-error-bg)] border-[var(--color-alert-error-border)]",
   },
