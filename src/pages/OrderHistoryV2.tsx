@@ -819,13 +819,14 @@ export default function OrderHistory() {
       {viewMode === "kanban" && filtered.length > 0 && (
         <div className="flex gap-4 overflow-x-auto pb-4">
           {([
+            { key: "delayed", label: t("orderStatus.delayed") },
+            { key: "cancelled", label: t("orderStatus.cancelled") },
+            { key: "backorder", label: t("orderStatus.backorder") },
+            { key: "partially_delivered", label: t("orderStatus.partially_delivered") },
             { key: "on_track", label: t("orderStatus.on_track") },
             { key: "being_prepared", label: t("orderStatus.being_prepared") },
             { key: "in_transit", label: t("orderStatus.in_transit") },
-            { key: "partially_delivered", label: t("orderStatus.partially_delivered") },
-            { key: "delayed", label: t("orderStatus.delayed") },
             { key: "completed", label: t("orderStatus.completed") },
-            { key: "cancelled", label: t("orderStatus.cancelled") },
           ] as { key: string; label: string }[])
             .filter((opt) => statusFilters.size === 0 || statusFilters.has(opt.key))
             .map((opt) => {
