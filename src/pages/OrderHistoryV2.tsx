@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect, useRef } from "react";
 import {
   Search, X, AlertTriangle, XCircle, CheckCircle, Package,
-  Truck, Copy, Download, CalendarIcon, LayoutGrid, List,
+  Truck, Copy, Download, CalendarIcon, Kanban, List,
   ArrowUpDown, ArrowUp, ArrowDown, ShoppingCart, Star,
   ChevronLeft, ChevronRight,
 } from "lucide-react";
