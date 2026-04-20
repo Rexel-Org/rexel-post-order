@@ -517,10 +517,13 @@ export default function OrderHistory() {
         </p>
       </div>
 
+      {/* Sentinel to detect sticky "stuck" state */}
+      <div ref={stickySentinelRef} className="h-px w-full" aria-hidden />
+
       {/* Sticky filter zone — KPI cards + filter bar grouped together */}
       <div className="sticky top-[var(--flow-sticky-site-header-height,140px)] z-30 -mx-1 space-y-3 border-b border-[var(--color-border-subtle)] bg-[var(--color-bg-page)] px-1 pb-[var(--spacing-3)] pt-[var(--spacing-2)] mb-[var(--spacing-4)]">
-        {/* Status filter cards (3 grouped toggles, compact) */}
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+        {/* Status filter cards (3 grouped toggles) — compact when sticky stuck */}
+        <div className={cn("grid grid-cols-1 transition-all duration-200", isStickyStuck ? "gap-2 sm:grid-cols-3" : "gap-3 sm:grid-cols-3")}>
           {statusGroups.map((group) => {
             const active = group.statuses.some((s) => statusFilters.has(s));
             const Icon = group.icon;
@@ -531,18 +534,19 @@ export default function OrderHistory() {
                 onClick={() => toggleGroupFilter(group)}
                 aria-pressed={active}
                 className={cn(
-                  "flex items-center gap-2.5 rounded-[var(--border-radius-sm)] border bg-white px-3 py-2 text-left transition-all",
+                  "flex items-center rounded-[var(--border-radius-sm)] border bg-white text-left transition-all duration-200",
+                  isStickyStuck ? "gap-2.5 px-3 py-2" : "gap-3 px-4 py-3",
                   active
                     ? "border-[var(--color-primary)] shadow-[var(--shadow-1)] ring-1 ring-[var(--color-primary)]"
-                    : "border-[var(--color-border-subtle)] hover:border-[var(--color-primary)]"
+                    : "border-[var(--color-border-subtle)] hover:border-[var(--color-primary)] hover:shadow-[var(--shadow-1)]"
                 )}
               >
-                <span className={cn("flex h-7 w-7 shrink-0 items-center justify-center rounded-[var(--border-radius-sm)] border", group.bgClass)}>
-                  <Icon className={cn("h-3.5 w-3.5", group.colorClass)} />
+                <span className={cn("flex shrink-0 items-center justify-center rounded-[var(--border-radius-sm)] border transition-all duration-200", isStickyStuck ? "h-7 w-7" : "h-9 w-9", group.bgClass)}>
+                  <Icon className={cn("transition-all duration-200", isStickyStuck ? "h-3.5 w-3.5" : "h-4 w-4", group.colorClass)} />
                 </span>
                 <div className="min-w-0 flex-1">
-                  <div className="font-heading text-[16px] font-semibold leading-none text-[var(--color-text-primary)]">{count}</div>
-                  <div className="mt-0.5 truncate text-[11px] leading-[14px] text-[var(--color-text-secondary)]">{group.label}</div>
+                  <div className={cn("font-heading font-semibold leading-none text-[var(--color-text-primary)] transition-all duration-200", isStickyStuck ? "text-[16px]" : "text-[20px]")}>{count}</div>
+                  <div className={cn("truncate text-[var(--color-text-secondary)] transition-all duration-200", isStickyStuck ? "mt-0.5 text-[11px] leading-[14px]" : "mt-1 text-[12px] leading-[14px]")}>{group.label}</div>
                 </div>
               </button>
             );
