@@ -739,7 +739,7 @@ export default function OrderHistory() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--color-border-subtle)]">
-                {paginatedRows.map((order) => {
+                {visibleRows.map((order) => {
                   const orderItems = lineItems.filter((li) => li.order_id === order.id);
                   const thumbs = orderItems.slice(0, 3);
                   const moreCount = orderItems.length - thumbs.length;
