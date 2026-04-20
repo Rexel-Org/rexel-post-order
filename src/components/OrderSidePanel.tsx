@@ -377,28 +377,28 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                   {data.order.expected_delivery && data.order.status !== "completed" && data.order.status !== "cancelled" && (() => {
                     const isDelayed = data.order.status === "delayed";
                     const isPartial = data.order.status === "partially_delivered";
-                    const isWarning = isDelayed || isPartial;
-                    const bgColor = isDelayed
+                    const isBackorder = data.order.status === "backorder";
+                    const bgColor = isDelayed || isBackorder
                       ? "bg-[var(--color-alert-error-bg)]"
                       : isPartial
                         ? "bg-[var(--color-alert-warning-bg)]"
                         : "bg-[var(--color-alert-info-bg)]";
-                    const borderColor = isDelayed
+                    const borderColor = isDelayed || isBackorder
                       ? "border-[var(--color-alert-error-border)]"
                       : isPartial
                         ? "border-[var(--color-alert-warning-border)]"
                         : "border-[var(--color-info)]";
-                    const textColor = isDelayed
+                    const textColor = isDelayed || isBackorder
                       ? "text-[var(--color-alert-error-text)]"
                       : isPartial
                         ? "text-[var(--color-alert-warning-text)]"
                         : "text-[var(--color-info)]";
-                    const Icon = isDelayed ? AlertTriangle : Truck;
+                    const Icon = isDelayed || isBackorder ? AlertTriangle : Truck;
                     return (
                       <div className={cn("flex items-center gap-2 rounded-[var(--border-radius-sm)] border px-3 min-h-[52px] text-[14px] font-semibold", bgColor, borderColor, textColor)}>
                         <Icon className="h-4 w-4 shrink-0" />
                         <span>
-                          {isDelayed ? t("side.delayedPrefix") : `${t("side.expectedDelivery")} `}
+                          {isDelayed ? t("side.delayedPrefix") : isBackorder ? `${t("side.expectedDelivery")} ` : `${t("side.expectedDelivery")} `}
                           {formatDate(data.order.expected_delivery, "dd/MM/yyyy")}
                           {isDelayed && data.order.previous_expected_delivery && (
                             <>
