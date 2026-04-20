@@ -375,21 +375,68 @@ export default function OrderHistory() {
     toast.success(t("orders.csvExported"));
   };
 
-  // Status filter pills (multi-select toggle)
-  const statusFilterOptions: { key: string; label: string }[] = [
-    { key: "on_track", label: t("orderStatus.on_track") },
-    { key: "being_prepared", label: t("orderStatus.being_prepared") },
-    { key: "in_transit", label: t("orderStatus.in_transit") },
-    { key: "partially_delivered", label: t("orderStatus.partially_delivered") },
-    { key: "delayed", label: t("orderStatus.delayed") },
-    { key: "completed", label: t("orderStatus.completed") },
-    { key: "cancelled", label: t("orderStatus.cancelled") },
+  // Status filter groups (3 grouped toggles)
+  const ATTENTION_STATUSES = ["delayed", "cancelled", "partially_delivered"];
+  const ONGOING_GROUP = ["on_track", "being_prepared", "in_transit"];
+  const COMPLETED_GROUP = ["completed"];
+
+  type StatusGroup = {
+    key: string;
+    label: string;
+    statuses: string[];
+    icon: typeof CheckCircle;
+    colorClass: string;
+    bgClass: string;
+  };
+
+  const statusGroups: StatusGroup[] = [
+    {
+      key: "ongoing",
+      label: "En cours",
+      statuses: ONGOING_GROUP,
+      icon: Truck,
+      colorClass: "text-[var(--color-info)]",
+      bgClass: "bg-[var(--color-alert-info-bg)] border-[var(--color-info)]",
+    },
+    {
+      key: "completed",
+      label: "Terminé",
+      statuses: COMPLETED_GROUP,
+      icon: CheckCircle,
+      colorClass: "text-[var(--color-success)]",
+      bgClass: "bg-[var(--color-alert-success-bg)] border-[var(--color-success)]",
+    },
+    {
+      key: "attention",
+      label: "Points d'attention",
+      statuses: ATTENTION_STATUSES,
+      icon: AlertTriangle,
+      colorClass: "text-[var(--color-alert-error-text)]",
+      bgClass: "bg-[var(--color-alert-error-bg)] border-[var(--color-alert-error-border)]",
+    },
   ];
-  const statusCounts = useMemo(() => {
+
+  const groupCounts = useMemo(() => {
     const counts: Record<string, number> = {};
-    for (const o of orders) counts[o.status] = (counts[o.status] ?? 0) + 1;
+    for (const g of statusGroups) {
+      counts[g.key] = orders.filter((o) => g.statuses.includes(o.status)).length;
+    }
     return counts;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orders]);
+
+  const toggleGroupFilter = (group: StatusGroup) => {
+    setStatusFilters((prev) => {
+      const next = new Set(prev);
+      const allActive = group.statuses.every((s) => next.has(s));
+      if (allActive) {
+        group.statuses.forEach((s) => next.delete(s));
+      } else {
+        group.statuses.forEach((s) => next.add(s));
+      }
+      return next;
+    });
+  };
 
   if (isLoading) {
     return (
