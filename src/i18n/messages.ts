@@ -249,6 +249,7 @@ const fr: Record<string, string> = {
   "orderStatus.delayed": "Retardée",
   "orderStatus.cancelled": "Annulée",
   "orderStatus.completed": "Terminée",
+  "orderStatus.backorder": "Backorder",
   "shipStatus.confirmed": "Confirmée",
   "shipStatus.being_prepared": "En préparation",
   "shipStatus.in_transit": "En transit",
