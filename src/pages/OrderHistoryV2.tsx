@@ -327,11 +327,12 @@ export default function OrderHistory() {
     });
   }, [filtered, sortKey, sortDir]);
 
-  // Lazy loading (infinite scroll)
-  const LAZY_PAGE_SIZE = 20;
+  // Lazy loading (infinite scroll) — small batches, fires only when sentinel actually intersects
+  const LAZY_PAGE_SIZE = 10;
   const visibleRows = tableSorted.slice(0, visibleCount);
   const hasMore = visibleCount < tableSorted.length;
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
+  const isLoadingMoreRef = useRef(false);
 
   useEffect(() => { setVisibleCount(LAZY_PAGE_SIZE); setCurrentPage(1); }, [statusFilters, searchQuery, dateFrom, dateTo, projectFilter, sortKey, sortDir]);
 
@@ -340,15 +341,20 @@ export default function OrderHistory() {
     if (!node || !hasMore) return;
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0]?.isIntersecting) {
+        const entry = entries[0];
+        if (!entry?.isIntersecting || isLoadingMoreRef.current) return;
+        isLoadingMoreRef.current = true;
+        // Simulate small async delay so the user perceives progressive loading
+        setTimeout(() => {
           setVisibleCount((c) => Math.min(c + LAZY_PAGE_SIZE, tableSorted.length));
-        }
+          isLoadingMoreRef.current = false;
+        }, 250);
       },
-      { rootMargin: "200px" }
+      { root: null, rootMargin: "0px", threshold: 0.1 }
     );
     observer.observe(node);
     return () => observer.disconnect();
-  }, [hasMore, tableSorted.length]);
+  }, [hasMore, tableSorted.length, visibleCount]);
 
   const hasActiveFilters = searchQuery || projectFilter !== "all" || dateFrom || dateTo;
 
@@ -497,50 +503,39 @@ export default function OrderHistory() {
         </p>
       </div>
 
-      {/* Status filter cards (3 grouped toggles, KPI-style) */}
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-        {statusGroups.map((group) => {
-          const active = group.statuses.some((s) => statusFilters.has(s));
-          const Icon = group.icon;
-          const count = groupCounts[group.key] ?? 0;
-          return (
-            <button
-              key={group.key}
-              onClick={() => toggleGroupFilter(group)}
-              aria-pressed={active}
-              className={cn(
-                "flex items-center gap-3 rounded-[var(--border-radius-sm)] border bg-white px-4 py-3 text-left transition-all",
-                active
-                  ? "border-[var(--color-primary)] shadow-[var(--shadow-2)] ring-1 ring-[var(--color-primary)]"
-                  : "border-[var(--color-border-subtle)] hover:border-[var(--color-primary)] hover:shadow-[var(--shadow-1)]"
-              )}
-            >
-              <span className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--border-radius-sm)] border", group.bgClass)}>
-                <Icon className={cn("h-4 w-4", group.colorClass)} />
-              </span>
-              <div className="min-w-0 flex-1">
-                <div className="font-heading text-[20px] font-semibold leading-none text-[var(--color-text-primary)]">{count}</div>
-                <div className="mt-1 truncate text-[12px] leading-[14px] text-[var(--color-text-secondary)]">{group.label}</div>
-              </div>
-            </button>
-          );
-        })}
-      </div>
-      {statusFilters.size > 0 && (
-        <div className="-mt-3">
-          <button
-            onClick={() => setStatusFilters(new Set())}
-            className="inline-flex h-8 items-center gap-1 rounded-full px-2 text-[12px] font-semibold text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
-          >
-            <X className="h-3 w-3" />
-            {t("orders.clearAllFilters") ?? "Clear"}
-          </button>
+      {/* Sticky filter zone — KPI cards + filter bar grouped together */}
+      <div className="sticky top-[var(--flow-sticky-site-header-height,140px)] z-30 -mx-1 space-y-3 border-b border-[var(--color-border-subtle)] bg-[var(--color-bg-page)] px-1 pb-[var(--spacing-3)] pt-[var(--spacing-2)] mb-[var(--spacing-4)]">
+        {/* Status filter cards (3 grouped toggles, compact) */}
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+          {statusGroups.map((group) => {
+            const active = group.statuses.some((s) => statusFilters.has(s));
+            const Icon = group.icon;
+            const count = groupCounts[group.key] ?? 0;
+            return (
+              <button
+                key={group.key}
+                onClick={() => toggleGroupFilter(group)}
+                aria-pressed={active}
+                className={cn(
+                  "flex items-center gap-2.5 rounded-[var(--border-radius-sm)] border bg-white px-3 py-2 text-left transition-all",
+                  active
+                    ? "border-[var(--color-primary)] shadow-[var(--shadow-1)] ring-1 ring-[var(--color-primary)]"
+                    : "border-[var(--color-border-subtle)] hover:border-[var(--color-primary)]"
+                )}
+              >
+                <span className={cn("flex h-7 w-7 shrink-0 items-center justify-center rounded-[var(--border-radius-sm)] border", group.bgClass)}>
+                  <Icon className={cn("h-3.5 w-3.5", group.colorClass)} />
+                </span>
+                <div className="min-w-0 flex-1">
+                  <div className="font-heading text-[16px] font-semibold leading-none text-[var(--color-text-primary)]">{count}</div>
+                  <div className="mt-0.5 truncate text-[11px] leading-[14px] text-[var(--color-text-secondary)]">{group.label}</div>
+                </div>
+              </button>
+            );
+          })}
         </div>
-      )}
 
-
-      {/* Filter bar — sticky */}
-      <div className="sticky top-[var(--flow-sticky-site-header-height,140px)] z-30 mt-[var(--spacing-3)] space-y-3 border-b border-[var(--color-border-subtle)] bg-[var(--color-bg-page)] pb-[var(--spacing-4)] pt-[var(--spacing-3)] mb-[var(--spacing-4)]">
+        {/* Filter bar */}
         <div className="flex items-center gap-3">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-text-placeholder)]" />
@@ -805,7 +800,12 @@ export default function OrderHistory() {
               </button>
             )}
           </div>
-          {hasMore && <div ref={loadMoreRef} className="h-1 w-full" aria-hidden />}
+          {hasMore && (
+            <div ref={loadMoreRef} className="flex items-center justify-center py-4">
+              <div className="h-5 w-5 animate-spin rounded-full border-2 border-[var(--color-primary)] border-t-transparent" />
+              <span className="ml-2 text-[12px] text-[var(--color-text-secondary)]">{t("orders.loadMore") ?? "Load more"}…</span>
+            </div>
+          )}
         </div>
       )}
 
