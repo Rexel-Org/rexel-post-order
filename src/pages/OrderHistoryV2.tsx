@@ -327,11 +327,12 @@ export default function OrderHistory() {
     });
   }, [filtered, sortKey, sortDir]);
 
-  // Pagination
-  const totalPages = Math.ceil(tableSorted.length / ROWS_PER_PAGE);
-  const paginatedRows = tableSorted.slice((currentPage - 1) * ROWS_PER_PAGE, currentPage * ROWS_PER_PAGE);
+  // Lazy loading (infinite scroll)
+  const LAZY_PAGE_SIZE = 20;
+  const visibleRows = tableSorted.slice(0, visibleCount);
+  const hasMore = visibleCount < tableSorted.length;
 
-  useEffect(() => { setVisibleCount(10); setCurrentPage(1); }, [statusFilters, searchQuery, dateFrom, dateTo, projectFilter]);
+  useEffect(() => { setVisibleCount(LAZY_PAGE_SIZE); setCurrentPage(1); }, [statusFilters, searchQuery, dateFrom, dateTo, projectFilter, sortKey, sortDir]);
 
   const hasActiveFilters = searchQuery || projectFilter !== "all" || dateFrom || dateTo;
 
