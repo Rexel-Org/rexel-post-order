@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import {
   CheckCircle, Truck, Package, AlertTriangle, XCircle,
   ClipboardCheck, FileText, ShoppingCart, Star,
-  Phone, Mail, X, Copy, Check, Download,
+  Phone, Mail, X, Copy, Check, Download, MapPin, Clock, User,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
@@ -19,6 +19,39 @@ function productImageUrl(ref: string) {
   const hash = Array.from(ref).reduce((a, c) => a + c.charCodeAt(0), 0);
   const id = (hash % 200) + 10;
   return `https://picsum.photos/seed/${id}/64/64`;
+}
+
+const DELIVERY_CONTACTS = [
+  { name: "Marc Dubois", phone: "+33 6 12 34 56 78", email: "marc.dubois@chantier-pro.fr" },
+  { name: "Sophie Laurent", phone: "+33 6 87 65 43 21", email: "s.laurent@batipro.fr" },
+  { name: "Julien Moreau", phone: "+33 6 45 23 78 90", email: "j.moreau@elec-installation.fr" },
+  { name: "Camille Bernard", phone: "+33 6 78 12 34 56", email: "c.bernard@artisan-elec.fr" },
+];
+const PICKUP_BRANCHES = [
+  { name: "Rexel Paris-Est", address: "12 rue des Pyrénées, 75020 Paris", phone: "+33 1 43 67 89 10", email: "paris-est@rexel.fr" },
+  { name: "Rexel Lyon-Vaise", address: "45 quai Paul Sédallian, 69009 Lyon", phone: "+33 4 78 83 12 34", email: "lyon-vaise@rexel.fr" },
+  { name: "Rexel Lille-Sud", address: "8 rue de l'Industrie, 59155 Faches-Thumesnil", phone: "+33 3 20 95 67 89", email: "lille-sud@rexel.fr" },
+];
+const SITE_ADDRESSES = [
+  { line1: "Chantier Tour Horizon", line2: "24 avenue de la République, 75011 Paris" },
+  { line1: "Résidence Les Jardins", line2: "8 rue Victor Hugo, 92100 Boulogne-Billancourt" },
+  { line1: "Bureaux Atlas — Bât. C", line2: "15 boulevard Haussmann, 75008 Paris" },
+  { line1: "Centre logistique Nord", line2: "Zone d'activité du Mont, 95500 Gonesse" },
+];
+
+function hashString(s: string) {
+  return Array.from(s).reduce((a, c) => a + c.charCodeAt(0), 0);
+}
+function getDeliveryInfo(orderNumber: string, orderType: string) {
+  const isPickup = orderType?.toLowerCase().includes("pickup") || orderType?.toLowerCase().includes("retrait");
+  const h = hashString(orderNumber);
+  if (isPickup) {
+    const branch = PICKUP_BRANCHES[h % PICKUP_BRANCHES.length];
+    return { isPickup: true as const, branch };
+  }
+  const site = SITE_ADDRESSES[h % SITE_ADDRESSES.length];
+  const contact = DELIVERY_CONTACTS[h % DELIVERY_CONTACTS.length];
+  return { isPickup: false as const, site, contact };
 }
 
 const statusVisual: Record<string, { icon: typeof CheckCircle; colorClass: string; bgClass: string }> = {
@@ -423,6 +456,70 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                       {t("side.deliveredCompleted")}
                     </div>
                   )}
+
+                  {(() => {
+                    const info = getDeliveryInfo(data.order.order_number, data.order.order_type);
+                    return (
+                      <div className="rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] p-4 space-y-3">
+                        <div className="flex items-start gap-2">
+                          <MapPin className="h-4 w-4 text-[var(--color-primary)] shrink-0 mt-0.5" />
+                          <div className="min-w-0 flex-1">
+                            <p className="text-[12px] font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider mb-1">
+                              {info.isPickup ? t("side.pickupAgency") : t("side.deliveryAddress")}
+                            </p>
+                            {info.isPickup ? (
+                              <>
+                                <p className="text-[13px] font-semibold text-[var(--color-text-primary)]">{info.branch.name}</p>
+                                <p className="text-[12px] text-[var(--color-text-secondary)] mt-0.5">{info.branch.address}</p>
+                              </>
+                            ) : (
+                              <>
+                                <p className="text-[13px] font-semibold text-[var(--color-text-primary)]">{info.site.line1}</p>
+                                <p className="text-[12px] text-[var(--color-text-secondary)] mt-0.5">{info.site.line2}</p>
+                              </>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="border-t border-[var(--color-border-subtle)] pt-3 flex items-start gap-2">
+                          <User className="h-4 w-4 text-[var(--color-primary)] shrink-0 mt-0.5" />
+                          <div className="min-w-0 flex-1">
+                            <p className="text-[12px] font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider mb-1">
+                              {info.isPickup ? t("side.pickupContact") : t("side.deliveryContact")}
+                            </p>
+                            {info.isPickup ? (
+                              <>
+                                <p className="text-[13px] font-semibold text-[var(--color-text-primary)]">{info.branch.name}</p>
+                                <p className="text-[12px] text-[var(--color-text-secondary)] mt-1 flex items-center flex-wrap gap-x-1.5 gap-y-1">
+                                  <Phone className="h-3 w-3" />
+                                  <a href={`tel:${info.branch.phone.replace(/\s/g, "")}`} className="hover:text-[var(--color-primary)]">{info.branch.phone}</a>
+                                  <span className="text-[#a8a8a8]">·</span>
+                                  <Mail className="h-3 w-3" />
+                                  <a href={`mailto:${info.branch.email}`} className="hover:text-[var(--color-primary)] truncate">{info.branch.email}</a>
+                                </p>
+                                <p className="text-[12px] text-[var(--color-text-secondary)] mt-1.5 flex items-center gap-1.5">
+                                  <Clock className="h-3 w-3" />
+                                  <span className="font-semibold">{t("side.pickupHours")} :</span>
+                                  <span>{t("side.pickupHoursValue")}</span>
+                                </p>
+                              </>
+                            ) : (
+                              <>
+                                <p className="text-[13px] font-semibold text-[var(--color-text-primary)]">{info.contact.name}</p>
+                                <p className="text-[12px] text-[var(--color-text-secondary)] mt-1 flex items-center flex-wrap gap-x-1.5 gap-y-1">
+                                  <Phone className="h-3 w-3" />
+                                  <a href={`tel:${info.contact.phone.replace(/\s/g, "")}`} className="hover:text-[var(--color-primary)]">{info.contact.phone}</a>
+                                  <span className="text-[#a8a8a8]">·</span>
+                                  <Mail className="h-3 w-3" />
+                                  <a href={`mailto:${info.contact.email}`} className="hover:text-[var(--color-primary)] truncate">{info.contact.email}</a>
+                                </p>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })()}
 
                   {data.shipments.length > 0 && (
                     <div className="space-y-3">
