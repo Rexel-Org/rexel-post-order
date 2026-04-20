@@ -375,21 +375,68 @@ export default function OrderHistory() {
     toast.success(t("orders.csvExported"));
   };
 
-  // Status filter pills (multi-select toggle)
-  const statusFilterOptions: { key: string; label: string }[] = [
-    { key: "on_track", label: t("orderStatus.on_track") },
-    { key: "being_prepared", label: t("orderStatus.being_prepared") },
-    { key: "in_transit", label: t("orderStatus.in_transit") },
-    { key: "partially_delivered", label: t("orderStatus.partially_delivered") },
-    { key: "delayed", label: t("orderStatus.delayed") },
-    { key: "completed", label: t("orderStatus.completed") },
-    { key: "cancelled", label: t("orderStatus.cancelled") },
+  // Status filter groups (3 grouped toggles)
+  const ATTENTION_STATUSES = ["delayed", "cancelled", "partially_delivered"];
+  const ONGOING_GROUP = ["on_track", "being_prepared", "in_transit"];
+  const COMPLETED_GROUP = ["completed"];
+
+  type StatusGroup = {
+    key: string;
+    label: string;
+    statuses: string[];
+    icon: typeof CheckCircle;
+    colorClass: string;
+    bgClass: string;
+  };
+
+  const statusGroups: StatusGroup[] = [
+    {
+      key: "ongoing",
+      label: "En cours",
+      statuses: ONGOING_GROUP,
+      icon: Truck,
+      colorClass: "text-[var(--color-info)]",
+      bgClass: "bg-[var(--color-alert-info-bg)] border-[var(--color-info)]",
+    },
+    {
+      key: "completed",
+      label: "Terminé",
+      statuses: COMPLETED_GROUP,
+      icon: CheckCircle,
+      colorClass: "text-[var(--color-success)]",
+      bgClass: "bg-[var(--color-alert-success-bg)] border-[var(--color-success)]",
+    },
+    {
+      key: "attention",
+      label: "Points d'attention",
+      statuses: ATTENTION_STATUSES,
+      icon: AlertTriangle,
+      colorClass: "text-[var(--color-alert-error-text)]",
+      bgClass: "bg-[var(--color-alert-error-bg)] border-[var(--color-alert-error-border)]",
+    },
   ];
-  const statusCounts = useMemo(() => {
+
+  const groupCounts = useMemo(() => {
     const counts: Record<string, number> = {};
-    for (const o of orders) counts[o.status] = (counts[o.status] ?? 0) + 1;
+    for (const g of statusGroups) {
+      counts[g.key] = orders.filter((o) => g.statuses.includes(o.status)).length;
+    }
     return counts;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orders]);
+
+  const toggleGroupFilter = (group: StatusGroup) => {
+    setStatusFilters((prev) => {
+      const next = new Set(prev);
+      const allActive = group.statuses.every((s) => next.has(s));
+      if (allActive) {
+        group.statuses.forEach((s) => next.delete(s));
+      } else {
+        group.statuses.forEach((s) => next.add(s));
+      }
+      return next;
+    });
+  };
 
   if (isLoading) {
     return (
@@ -432,17 +479,16 @@ export default function OrderHistory() {
         </p>
       </div>
 
-      {/* Status filter cards (toggle, KPI-style) */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-7">
-        {statusFilterOptions.map((opt) => {
-          const active = statusFilters.has(opt.key);
-          const meta = statusVisual[opt.key];
-          const Icon = meta?.icon;
-          const count = statusCounts[opt.key] ?? 0;
+      {/* Status filter cards (3 grouped toggles, KPI-style) */}
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+        {statusGroups.map((group) => {
+          const active = group.statuses.every((s) => statusFilters.has(s));
+          const Icon = group.icon;
+          const count = groupCounts[group.key] ?? 0;
           return (
             <button
-              key={opt.key}
-              onClick={() => toggleStatusFilter(opt.key)}
+              key={group.key}
+              onClick={() => toggleGroupFilter(group)}
               aria-pressed={active}
               className={cn(
                 "flex items-center gap-3 rounded-[var(--border-radius-sm)] border bg-white px-4 py-3 text-left transition-all",
@@ -451,14 +497,12 @@ export default function OrderHistory() {
                   : "border-[var(--color-border-subtle)] hover:border-[var(--color-primary)] hover:shadow-[var(--shadow-1)]"
               )}
             >
-              {Icon && (
-                <span className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--border-radius-sm)]", meta?.bgClass)}>
-                  <Icon className={cn("h-4 w-4", meta?.colorClass)} />
-                </span>
-              )}
+              <span className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--border-radius-sm)] border", group.bgClass)}>
+                <Icon className={cn("h-4 w-4", group.colorClass)} />
+              </span>
               <div className="min-w-0 flex-1">
                 <div className="font-heading text-[20px] font-semibold leading-none text-[var(--color-text-primary)]">{count}</div>
-                <div className="mt-1 truncate text-[12px] leading-[14px] text-[var(--color-text-secondary)]">{opt.label}</div>
+                <div className="mt-1 truncate text-[12px] leading-[14px] text-[var(--color-text-secondary)]">{group.label}</div>
               </div>
             </button>
           );
@@ -648,28 +692,34 @@ export default function OrderHistory() {
             <table className="w-full table-fixed">
               <colgroup>
                 <col className="w-[14%]" />
-                <col className="w-[12%]" />
                 <col className="w-[11%]" />
                 <col className="w-[16%]" />
                 <col className="w-[11%]" />
                 <col className="w-[14%]" />
                 <col className="w-[10%]" />
-                <col className="w-[12%]" />
+                <col className="w-[16%]" />
+                <col className="w-[8%]" />
               </colgroup>
               <thead>
                 <tr className="border-b border-[var(--color-border-subtle)] bg-[var(--color-bg-layer-01)]">
                   <SortableHeader colKey="order_number" label={t("orders.colOrder")} />
-                  <SortableHeader colKey="po_number" label={t("orders.colPO")} />
                   <SortableHeader colKey="order_date" label={t("orders.colDate")} />
                   <SortableHeader colKey="status" label={t("orders.colStatus")} />
                   <SortableHeader colKey="total_amount" label={t("orders.colTotal")} align="right" />
                   <SortableHeader colKey="expected_delivery" label={t("orders.colExpDelivery")} />
                   <SortableHeader colKey="items_remaining" label={t("orders.colRemaining")} />
+                  <th className="px-4 py-3 text-left text-[12px] font-semibold uppercase tracking-wider text-[var(--color-text-secondary)]">
+                    {t("orders.colItems") ?? "Articles"}
+                  </th>
                   <th className="px-4 py-3 w-10" />
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--color-border-subtle)]">
-                {paginatedRows.map((order) => (
+                {paginatedRows.map((order) => {
+                  const orderItems = lineItems.filter((li) => li.order_id === order.id);
+                  const thumbs = orderItems.slice(0, 3);
+                  const moreCount = orderItems.length - thumbs.length;
+                  return (
                   <tr
                     key={order.id}
                     className={cn(
@@ -681,12 +731,27 @@ export default function OrderHistory() {
                     onClick={() => setSidePanelOrder(order.order_number)}
                   >
                     <td className="px-4 py-3 text-[13px] font-semibold text-[var(--color-text-primary)]">{order.order_number}</td>
-                    <td className="px-4 py-3 text-[13px] text-[var(--color-text-secondary)]">{order.po_number ?? "—"}</td>
                     <td className="px-4 py-3 text-[13px] text-[var(--color-text-secondary)]">{formatDate(order.order_date, "dd/MM/yyyy")}</td>
                     <td className="px-4 py-3"><StatusBadge status={order.status} /></td>
                     <td className="px-4 py-3 text-[13px] text-right font-heading font-semibold text-[var(--color-text-primary)]">{formatCurrency(order.total_amount)}</td>
                     <td className="px-4 py-3 text-[13px] font-semibold text-[var(--color-primary)]">{formatDate(order.expected_delivery, "dd/MM/yyyy")}</td>
                     <td className="px-4 py-3 text-[13px] text-[var(--color-text-secondary)]">{order.items_remaining}</td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-1.5">
+                        {thumbs.map((li) => (
+                          <div
+                            key={li.id}
+                            className="h-8 w-8 shrink-0 rounded-[var(--border-radius-sm)] bg-[#F6F8FB] border border-[#E0E4EB] flex items-center justify-center"
+                            title={li.product_name}
+                          >
+                            <Package className="h-3.5 w-3.5 text-[#a8a8a8]" />
+                          </div>
+                        ))}
+                        {moreCount > 0 && (
+                          <span className="text-[11px] font-semibold text-[var(--color-text-secondary)]">+{moreCount}</span>
+                        )}
+                      </div>
+                    </td>
                     <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                       <div className="flex items-center gap-2">
                         <button onClick={() => toggleJoblist(order.id)}
@@ -702,7 +767,8 @@ export default function OrderHistory() {
                       </div>
                     </td>
                   </tr>
-                ))}
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -738,7 +804,15 @@ export default function OrderHistory() {
       {/* ===== KANBAN VIEW ===== */}
       {viewMode === "kanban" && filtered.length > 0 && (
         <div className="flex gap-4 overflow-x-auto pb-4">
-          {statusFilterOptions
+          {([
+            { key: "on_track", label: t("orderStatus.on_track") },
+            { key: "being_prepared", label: t("orderStatus.being_prepared") },
+            { key: "in_transit", label: t("orderStatus.in_transit") },
+            { key: "partially_delivered", label: t("orderStatus.partially_delivered") },
+            { key: "delayed", label: t("orderStatus.delayed") },
+            { key: "completed", label: t("orderStatus.completed") },
+            { key: "cancelled", label: t("orderStatus.cancelled") },
+          ] as { key: string; label: string }[])
             .filter((opt) => statusFilters.size === 0 || statusFilters.has(opt.key))
             .map((opt) => {
               const colOrders = filtered.filter((o) => o.status === opt.key);
