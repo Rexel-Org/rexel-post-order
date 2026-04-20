@@ -366,6 +366,30 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                       <X className="h-5 w-5" />
                     </button>
                   </div>
+                  {data.order.po_number && (() => {
+                    const refs = data.order.po_number.split(",").map((r) => r.trim()).filter(Boolean);
+                    return (
+                      <div className="mt-2 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[13px] text-[var(--color-text-secondary)]">
+                        <span>{t("common.po")}:</span>
+                        {refs.map((ref, i) => (
+                          <span key={ref} className="inline-flex items-center">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                navigator.clipboard.writeText(ref);
+                                toast.success(t("common.copied"));
+                              }}
+                              className="font-mono font-semibold text-[var(--color-text-primary)] hover:text-[var(--color-primary)] transition-colors"
+                              title={t("common.copied")}
+                            >
+                              {ref}
+                            </button>
+                            {i < refs.length - 1 && <span className="text-[var(--color-text-placeholder)] ml-1.5">•</span>}
+                          </span>
+                        ))}
+                      </div>
+                    );
+                  })()}
                   <div className="flex items-center justify-between gap-x-3 mt-3">
                     <p className="text-[13px] text-[var(--color-text-secondary)]">
                       {t("side.ordered")}{" "}
