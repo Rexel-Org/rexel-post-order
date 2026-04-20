@@ -21,6 +21,39 @@ function productImageUrl(ref: string) {
   return `https://picsum.photos/seed/${id}/64/64`;
 }
 
+const DELIVERY_CONTACTS = [
+  { name: "Marc Dubois", phone: "+33 6 12 34 56 78", email: "marc.dubois@chantier-pro.fr" },
+  { name: "Sophie Laurent", phone: "+33 6 87 65 43 21", email: "s.laurent@batipro.fr" },
+  { name: "Julien Moreau", phone: "+33 6 45 23 78 90", email: "j.moreau@elec-installation.fr" },
+  { name: "Camille Bernard", phone: "+33 6 78 12 34 56", email: "c.bernard@artisan-elec.fr" },
+];
+const PICKUP_BRANCHES = [
+  { name: "Rexel Paris-Est", address: "12 rue des Pyrénées, 75020 Paris", phone: "+33 1 43 67 89 10", email: "paris-est@rexel.fr" },
+  { name: "Rexel Lyon-Vaise", address: "45 quai Paul Sédallian, 69009 Lyon", phone: "+33 4 78 83 12 34", email: "lyon-vaise@rexel.fr" },
+  { name: "Rexel Lille-Sud", address: "8 rue de l'Industrie, 59155 Faches-Thumesnil", phone: "+33 3 20 95 67 89", email: "lille-sud@rexel.fr" },
+];
+const SITE_ADDRESSES = [
+  { line1: "Chantier Tour Horizon", line2: "24 avenue de la République, 75011 Paris" },
+  { line1: "Résidence Les Jardins", line2: "8 rue Victor Hugo, 92100 Boulogne-Billancourt" },
+  { line1: "Bureaux Atlas — Bât. C", line2: "15 boulevard Haussmann, 75008 Paris" },
+  { line1: "Centre logistique Nord", line2: "Zone d'activité du Mont, 95500 Gonesse" },
+];
+
+function hashString(s: string) {
+  return Array.from(s).reduce((a, c) => a + c.charCodeAt(0), 0);
+}
+function getDeliveryInfo(orderNumber: string, orderType: string) {
+  const isPickup = orderType?.toLowerCase().includes("pickup") || orderType?.toLowerCase().includes("retrait");
+  const h = hashString(orderNumber);
+  if (isPickup) {
+    const branch = PICKUP_BRANCHES[h % PICKUP_BRANCHES.length];
+    return { isPickup: true as const, branch };
+  }
+  const site = SITE_ADDRESSES[h % SITE_ADDRESSES.length];
+  const contact = DELIVERY_CONTACTS[h % DELIVERY_CONTACTS.length];
+  return { isPickup: false as const, site, contact };
+}
+
 const statusVisual: Record<string, { icon: typeof CheckCircle; colorClass: string; bgClass: string }> = {
   on_track: { icon: CheckCircle, colorClass: "text-[var(--color-success)]", bgClass: "bg-[var(--color-alert-success-bg)] border-[var(--color-success)]" },
   being_prepared: { icon: Package, colorClass: "text-[var(--color-info)]", bgClass: "bg-[var(--color-alert-info-bg)] border-[var(--color-info)]" },
