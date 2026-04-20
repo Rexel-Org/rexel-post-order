@@ -245,6 +245,8 @@ export default function OrderHistory() {
   
   const [currentPage, setCurrentPage] = useState(1);
   const [sidePanelOrder, setSidePanelOrder] = useState<string | null>(null);
+  const [isStickyStuck, setIsStickyStuck] = useState(false);
+  const stickySentinelRef = useRef<HTMLDivElement | null>(null);
   const [joblistIds, setJoblistIds] = useState<Set<string>>(new Set());
   const toggleJoblist = (orderId: string) => {
     setJoblistIds((prev) => {
