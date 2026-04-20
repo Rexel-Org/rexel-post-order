@@ -645,7 +645,17 @@ export default function OrderHistory() {
       {viewMode === "table" && filtered.length > 0 && (
         <div className="space-y-4">
           <div className="overflow-hidden rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-layer-02)] shadow-[var(--shadow-1)]">
-            <table className="w-full">
+            <table className="w-full table-fixed">
+              <colgroup>
+                <col className="w-[14%]" />
+                <col className="w-[12%]" />
+                <col className="w-[11%]" />
+                <col className="w-[16%]" />
+                <col className="w-[11%]" />
+                <col className="w-[14%]" />
+                <col className="w-[10%]" />
+                <col className="w-[12%]" />
+              </colgroup>
               <thead>
                 <tr className="border-b border-[var(--color-border-subtle)] bg-[var(--color-bg-layer-01)]">
                   <SortableHeader colKey="order_number" label={t("orders.colOrder")} />
