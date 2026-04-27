@@ -420,7 +420,7 @@ export default function OrderHistory() {
       <div className="flex border-b border-[var(--color-border-subtle)]">
         {tabs.map((tab) => (
           <button key={tab.key} onClick={() => setActiveTab(tab.key)} className={cn(
-            "px-4 py-2.5 text-[13px] font-semibold transition-colors border-b-2 -mb-px",
+            "px-4 py-2.5 text-[12px] font-semibold transition-colors border-b-2 -mb-px",
             activeTab === tab.key ? "border-[var(--color-primary)] text-[var(--color-primary)]" : "border-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
           )}>
             {tab.label}
@@ -436,7 +436,7 @@ export default function OrderHistory() {
             <input
               type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={t("orders.searchPlaceholder")}
-              className="h-10 w-full rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-layer-02)] pl-9 pr-9 text-[13px] text-[var(--color-text-primary)] placeholder:text-[var(--color-text-placeholder)] focus:border-[var(--color-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:ring-offset-2"
+              className="h-10 w-full rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-layer-02)] pl-9 pr-9 text-[12px] text-[var(--color-text-primary)] placeholder:text-[var(--color-text-placeholder)] focus:border-[var(--color-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:ring-offset-2"
             />
             {searchQuery && (
               <button onClick={() => setSearchQuery("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]">
@@ -446,7 +446,7 @@ export default function OrderHistory() {
           </div>
 
           <Select value={projectFilter} onValueChange={setProjectFilter}>
-            <SelectTrigger className="w-[220px] h-10 border-[var(--color-border-subtle)] text-[13px]">
+            <SelectTrigger className="w-[220px] h-10 border-[var(--color-border-subtle)] text-[12px]">
               <SelectValue placeholder={t("orders.allProjects")} />
             </SelectTrigger>
             <SelectContent>
@@ -455,7 +455,7 @@ export default function OrderHistory() {
             </SelectContent>
           </Select>
 
-          <button onClick={() => exportCSV()} className="inline-flex h-10 items-center gap-1.5 rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-layer-02)] px-4 text-[13px] font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-bg-layer-01)] transition-colors">
+          <button onClick={() => exportCSV()} className="inline-flex h-10 items-center gap-1.5 rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-layer-02)] px-4 text-[12px] font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-bg-layer-01)] transition-colors">
             <Download className="h-4 w-4" />
             {t("orders.exportCsv")}
           </button>
@@ -663,12 +663,12 @@ export default function OrderHistory() {
                             )}
                             onClick={() => setSidePanelOrder(order.order_number)}
                           >
-                            <td className="px-4 py-3 text-[13px] font-semibold text-[var(--color-text-primary)]">{order.order_number}</td>
-                            <td className="px-4 py-3 text-[13px] text-[var(--color-text-secondary)]">{order.po_number ?? "—"}</td>
-                            <td className="px-4 py-3 text-[13px] text-[var(--color-text-secondary)]">{formatDate(order.order_date, "dd/MM/yyyy")}</td>
+                            <td className="px-4 py-3 text-[12px] font-semibold text-[var(--color-text-primary)]">{order.order_number}</td>
+                            <td className="px-4 py-3 text-[12px] text-[var(--color-text-secondary)]">{order.po_number ?? "—"}</td>
+                            <td className="px-4 py-3 text-[12px] text-[var(--color-text-secondary)]">{formatDate(order.order_date, "dd/MM/yyyy")}</td>
                             <td className="px-4 py-3"><StatusBadge status={order.status} /></td>
-                            <td className="px-4 py-3 text-[13px] font-semibold text-[var(--color-primary)]">{formatDate(order.expected_delivery, "dd/MM/yyyy")}</td>
-                            <td className="px-4 py-3 text-[13px] text-[var(--color-text-secondary)]">{order.items_remaining}</td>
+                            <td className="px-4 py-3 text-[12px] font-semibold text-[var(--color-primary)]">{formatDate(order.expected_delivery, "dd/MM/yyyy")}</td>
+                            <td className="px-4 py-3 text-[12px] text-[var(--color-text-secondary)]">{order.items_remaining}</td>
                             <td className="px-4 py-3">
                               <div className="flex items-center gap-1.5">
                                 {thumbs.map((li) => (
@@ -685,7 +685,7 @@ export default function OrderHistory() {
                                 )}
                               </div>
                             </td>
-                            <td className="px-4 py-3 text-[13px] text-right font-heading font-semibold text-[var(--color-text-primary)]">{formatCurrency(order.total_amount)}</td>
+                            <td className="px-4 py-3 text-[12px] text-right font-heading font-semibold text-[var(--color-text-primary)]">{formatCurrency(order.total_amount)}</td>
                             <td className="pl-2 pr-4 py-3" onClick={(e) => e.stopPropagation()}>
                               <div className="flex items-center justify-end gap-2">
                                 <button
@@ -798,12 +798,12 @@ export default function OrderHistory() {
                           )}
                           onClick={() => setSidePanelOrder(order.order_number)}
                         >
-                          <td className="px-4 py-3 text-[13px] font-semibold text-[var(--color-text-primary)]">{order.order_number}</td>
-                          <td className="px-4 py-3 text-[13px] text-[var(--color-text-secondary)]">{order.po_number ?? "—"}</td>
-                          <td className="px-4 py-3 text-[13px] text-[var(--color-text-secondary)]">{formatDate(order.order_date, "dd/MM/yyyy")}</td>
+                          <td className="px-4 py-3 text-[12px] font-semibold text-[var(--color-text-primary)]">{order.order_number}</td>
+                          <td className="px-4 py-3 text-[12px] text-[var(--color-text-secondary)]">{order.po_number ?? "—"}</td>
+                          <td className="px-4 py-3 text-[12px] text-[var(--color-text-secondary)]">{formatDate(order.order_date, "dd/MM/yyyy")}</td>
                           <td className="px-4 py-3"><StatusBadge status={order.status} /></td>
-                          <td className="px-4 py-3 text-[13px] font-semibold text-[var(--color-primary)]">{formatDate(order.expected_delivery, "dd/MM/yyyy")}</td>
-                          <td className="px-4 py-3 text-[13px] text-[var(--color-text-secondary)]">{order.items_remaining}</td>
+                          <td className="px-4 py-3 text-[12px] font-semibold text-[var(--color-primary)]">{formatDate(order.expected_delivery, "dd/MM/yyyy")}</td>
+                          <td className="px-4 py-3 text-[12px] text-[var(--color-text-secondary)]">{order.items_remaining}</td>
                           <td className="px-4 py-3">
                             <div className="flex items-center gap-1.5">
                               {thumbs.map((li) => (
@@ -820,7 +820,7 @@ export default function OrderHistory() {
                               )}
                             </div>
                           </td>
-                          <td className="px-4 py-3 text-[13px] text-right font-heading font-semibold text-[var(--color-text-primary)]">{formatCurrency(order.total_amount)}</td>
+                          <td className="px-4 py-3 text-[12px] text-right font-heading font-semibold text-[var(--color-text-primary)]">{formatCurrency(order.total_amount)}</td>
                           <td className="pl-2 pr-4 py-3" onClick={(e) => e.stopPropagation()}>
                             <div className="flex items-center justify-end gap-2">
                               <button
@@ -937,13 +937,13 @@ export default function OrderHistory() {
               <h3 className="text-[16px] font-semibold text-[var(--color-text-primary)] mb-1">
                 {hasActiveFilters ? t("orders.emptyFilteredTitle") : t("orders.emptyNoOrdersTitle")}
               </h3>
-              <p className="text-[13px] text-[var(--color-text-secondary)] mb-4 max-w-sm">
+              <p className="text-[12px] text-[var(--color-text-secondary)] mb-4 max-w-sm">
                 {hasActiveFilters ? t("orders.emptyFilteredHint") : t("orders.emptyNoOrdersHint")}
               </p>
               {hasActiveFilters && (
                 <button
                   onClick={clearAllFilters}
-                  className="inline-flex h-10 items-center gap-1.5 rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] px-4 text-[13px] font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-bg-layer-01)] transition-colors"
+                  className="inline-flex h-10 items-center gap-1.5 rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] px-4 text-[12px] font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-bg-layer-01)] transition-colors"
                 >
                   {t("orders.clearAllFilters")}
                 </button>
@@ -956,7 +956,7 @@ export default function OrderHistory() {
             <div className="flex justify-center pt-2">
               <button
                 onClick={() => setVisibleCount((v) => v + 10)}
-                className="inline-flex h-10 items-center gap-1.5 rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] px-6 text-[13px] font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-bg-layer-01)] transition-colors"
+                className="inline-flex h-10 items-center gap-1.5 rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] px-6 text-[12px] font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-bg-layer-01)] transition-colors"
               >
                 {t("orders.loadMore")} ({(activeTab === "ongoing" ? ongoingOrders : filtered).length - visibleCount} {t("orders.remaining")})
               </button>
@@ -970,10 +970,10 @@ export default function OrderHistory() {
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <Package className="h-16 w-16 text-[var(--color-text-secondary)] mb-4" strokeWidth={1} />
           <h3 className="text-[16px] font-semibold text-[var(--color-text-primary)] mb-1">{t("orders.emptyFilteredTitle")}</h3>
-          <p className="text-[13px] text-[var(--color-text-secondary)] mb-4 max-w-sm">{t("orders.emptyFilteredHint")}</p>
+          <p className="text-[12px] text-[var(--color-text-secondary)] mb-4 max-w-sm">{t("orders.emptyFilteredHint")}</p>
           <button
             onClick={clearAllFilters}
-            className="inline-flex h-10 items-center gap-1.5 rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] px-4 text-[13px] font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-bg-layer-01)] transition-colors"
+            className="inline-flex h-10 items-center gap-1.5 rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] px-4 text-[12px] font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-bg-layer-01)] transition-colors"
           >
             {t("orders.clearAllFilters")}
           </button>

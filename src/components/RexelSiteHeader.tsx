@@ -26,7 +26,7 @@ function RexelHeaderBlueBar({ cartArticleCount, cartHref }: { cartArticleCount: 
     <div className="w-full text-white" style={{ backgroundColor: NAVY }} role="banner">
       <div className="mx-auto flex max-w-[1440px] flex-col gap-[var(--spacing-3)] px-[var(--spacing-3)] py-[var(--spacing-3)] lg:flex-row lg:items-center lg:gap-[var(--spacing-3)]">
         <div className="flex shrink-0 flex-wrap items-center gap-[8px]">
-          <div className="flex h-[40px] items-center border-2 border-white bg-white px-[10px] font-[var(--font-body)] text-[15px] font-[var(--font-weight-bold)] tracking-[0.06em] text-[#003399]">
+          <div className="flex h-[40px] items-center border-2 border-white bg-white px-[10px] font-[var(--font-body)] text-[14px] font-[var(--font-weight-bold)] tracking-[0.06em] text-[#003399]">
             REXEL
           </div>
           <div className="flex h-[40px] flex-col justify-center bg-[#198038] px-[10px] py-[4px] font-[var(--font-body)] leading-tight text-white">
