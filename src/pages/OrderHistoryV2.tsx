@@ -505,7 +505,7 @@ export default function OrderHistory() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Header */}
       <div>
         <h1 className="font-heading text-[var(--font-size-xl)] font-semibold leading-[var(--line-height-xl)] text-[var(--color-text-primary)]">
