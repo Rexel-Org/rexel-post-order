@@ -9,7 +9,7 @@ function UtilityLink({ icon, label, href = "#" }: { icon: string; label: string;
   return (
     <a
       href={href}
-      className="flex flex-col items-center gap-[2px] text-center font-[var(--font-body)] text-[11px] leading-[14px] text-white no-underline transition-opacity hover:opacity-90"
+      className="flex flex-col items-center gap-[2px] text-center font-[var(--font-body)] text-[12px] leading-[16px] text-white no-underline transition-opacity hover:opacity-90"
     >
       <MaterialIcon name={icon} size={22} className="text-white" />
       <span className="max-w-[72px] truncate">{label}</span>
@@ -31,7 +31,7 @@ function RexelHeaderBlueBar({ cartArticleCount, cartHref }: { cartArticleCount: 
           </div>
           <div className="flex h-[40px] flex-col justify-center bg-[#198038] px-[10px] py-[4px] font-[var(--font-body)] leading-tight text-white">
             <span className="text-[14px] font-[var(--font-weight-bold)]">&amp;DIT</span>
-            <span className="text-[9px] font-[var(--font-weight-semibold)] opacity-95">Technologies</span>
+            <span className="text-[12px] font-[var(--font-weight-semibold)] opacity-95 leading-[14px]">Technologies</span>
           </div>
         </div>
 
@@ -62,12 +62,12 @@ function RexelHeaderBlueBar({ cartArticleCount, cartHref }: { cartArticleCount: 
           <UtilityLink icon="print" label="taina.hake" />
           <a
             href={cartHref}
-            className="relative flex flex-col items-center gap-[2px] text-center font-[var(--font-body)] text-[11px] leading-[14px] text-white no-underline transition-opacity hover:opacity-90"
+            className="relative flex flex-col items-center gap-[2px] text-center font-[var(--font-body)] text-[12px] leading-[16px] text-white no-underline transition-opacity hover:opacity-90"
           >
             <span className="relative inline-flex">
               <MaterialIcon name="shopping_cart" size={22} className="text-white" />
               {showBadge && (
-                <span className="absolute -right-[6px] -top-[4px] flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#ff832b] px-[4px] font-[var(--font-body)] text-[10px] font-[var(--font-weight-bold)] leading-none text-white">
+                <span className="absolute -right-[6px] -top-[4px] flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#ff832b] px-[4px] font-[var(--font-body)] text-[12px] font-[var(--font-weight-bold)] leading-none text-white">
                   {badgeText}
                 </span>
               )}

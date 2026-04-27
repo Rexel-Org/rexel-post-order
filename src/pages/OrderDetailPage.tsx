@@ -106,7 +106,7 @@ function ShipmentCard({ shipment, lineItems }: { shipment: ShipmentRow; lineItem
             {shipmentItems.map((item) => (
               <div key={item.id} className="flex items-center justify-between text-sm">
                 <div className="flex items-center gap-2 min-w-0">
-                  <div className="h-8 w-8 shrink-0 rounded bg-[var(--color-bg-layer-01)] flex items-center justify-center text-[10px] font-bold text-[var(--color-text-secondary)]">
+                  <div className="h-8 w-8 shrink-0 rounded bg-[var(--color-bg-layer-01)] flex items-center justify-center text-[12px] font-bold text-[var(--color-text-secondary)]">
                     {item.supplier.slice(0, 2).toUpperCase()}
                   </div>
                   <div className="min-w-0">

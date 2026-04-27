@@ -168,7 +168,7 @@ function OrderCard({
             <button
               onClick={(e) => { e.stopPropagation(); onToggleJoblist(); }}
               className="inline-flex h-[32px] w-[32px] items-center justify-center rounded-[var(--border-radius-sm)] border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-rexel-primary-10)] transition-colors"
-              title={inJoblist ? "Retirer de la joblist" : "Ajouter à la joblist"}
+              title={inJoblist ? t("orders.joblistRemove") : t("orders.joblistAdd")}
             >
               <Star className={cn("h-4 w-4", inJoblist && "fill-[var(--color-primary)]")} />
             </button>
@@ -223,8 +223,8 @@ export default function OrderHistory() {
 
   const [statusFilters, setStatusFilters] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeDatePreset, setActiveDatePreset] = useState<DatePresetId | null>("3m");
-  const [dateFrom, setDateFrom] = useState<Date | undefined>(subMonths(new Date(), 3));
+  const [activeDatePreset, setActiveDatePreset] = useState<DatePresetId | null>(null);
+  const [dateFrom, setDateFrom] = useState<Date | undefined>(undefined);
   const [dateTo, setDateTo] = useState<Date | undefined>(undefined);
   const [projectFilter, setProjectFilter] = useState<string>("all");
   const [visibleCount, setVisibleCount] = useState(10);
@@ -251,8 +251,8 @@ export default function OrderHistory() {
   const toggleJoblist = (orderId: string) => {
     setJoblistIds((prev) => {
       const next = new Set(prev);
-      if (next.has(orderId)) { next.delete(orderId); toast.success("Retiré de la joblist"); }
-      else { next.add(orderId); toast.success("Ajouté à la joblist"); }
+      if (next.has(orderId)) { next.delete(orderId); toast.success(t("orders.joblistRemoved")); }
+      else { next.add(orderId); toast.success(t("orders.joblistAdded")); }
       return next;
     });
   };
@@ -521,7 +521,7 @@ export default function OrderHistory() {
       <div ref={stickySentinelRef} className="h-px w-full" aria-hidden />
 
       {/* Sticky filter zone — KPI cards + filter bar grouped together */}
-      <div className="sticky top-[var(--flow-sticky-site-header-height,140px)] z-30 -mx-1 space-y-3 border-b border-[var(--color-border-subtle)] bg-[var(--color-bg-page)] px-1 pb-[var(--spacing-3)] pt-[var(--spacing-2)] mb-[var(--spacing-4)]">
+      <div className="sticky top-[var(--flow-sticky-site-header-height,140px)] z-30 -mx-1 space-y-2 bg-[var(--color-bg-page)] px-1 pb-[var(--spacing-3)] pt-[var(--spacing-2)] mb-[var(--spacing-4)]">
         {/* Status filter cards (3 grouped toggles) — compact when sticky stuck */}
         <div className={cn("grid grid-cols-1 transition-all duration-200", isStickyStuck ? "gap-2 sm:grid-cols-3" : "gap-3 sm:grid-cols-3")}>
           {statusGroups.map((group) => {
@@ -546,7 +546,7 @@ export default function OrderHistory() {
                 </span>
                 <div className="min-w-0 flex-1">
                   <div className={cn("font-heading font-semibold leading-none text-[var(--color-text-primary)] transition-all duration-200", isStickyStuck ? "text-[16px]" : "text-[20px]")}>{count}</div>
-                  <div className={cn("truncate text-[var(--color-text-secondary)] transition-all duration-200", isStickyStuck ? "mt-0.5 text-[11px] leading-[14px]" : "mt-1 text-[12px] leading-[14px]")}>{group.label}</div>
+                  <div className={cn("truncate text-[var(--color-text-secondary)] transition-all duration-200", isStickyStuck ? "mt-0.5 text-[12px] leading-[14px]" : "mt-1 text-[12px] leading-[14px]")}>{group.label}</div>
                 </div>
               </button>
             );
@@ -608,7 +608,7 @@ export default function OrderHistory() {
         </div>
 
         {/* Date chips + range picker */}
-        <div className="flex items-center gap-1.5 flex-wrap">
+        <div className="flex items-center gap-1 flex-wrap">
           {datePresets.map((p) => (
             <button key={p.id} onClick={() => applyPreset(p.id, p.getFrom)} className={cn(
               "h-8 rounded-full border px-3 text-[12px] font-semibold transition-colors",
@@ -619,7 +619,6 @@ export default function OrderHistory() {
               {t(`datePreset.${p.id}`)}
             </button>
           ))}
-          <div className="h-4 w-px bg-[var(--color-border-subtle)] mx-1" />
 
           {/* Range picker */}
           <Popover open={rangePickerOpen} onOpenChange={setRangePickerOpen}>
@@ -694,7 +693,7 @@ export default function OrderHistory() {
           {/* Clear filters */}
           {hasActiveFilters && (
             <>
-              <div className="h-4 w-px bg-[var(--color-border-subtle)] mx-1" />
+              {/* separator removed */}
               <button
                 onClick={clearAllFilters}
                 className="inline-flex h-8 items-center gap-1 rounded-full border border-[var(--color-border-subtle)] px-3 text-[12px] font-semibold text-[var(--color-text-secondary)] hover:border-[var(--color-error)] hover:text-[var(--color-error)] transition-colors"
@@ -722,27 +721,29 @@ export default function OrderHistory() {
           <div className="overflow-hidden rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-layer-02)] shadow-[var(--shadow-1)]">
             <table className="w-full table-fixed">
               <colgroup>
-                <col className="w-[14%]" />
-                <col className="w-[11%]" />
-                <col className="w-[16%]" />
-                <col className="w-[11%]" />
-                <col className="w-[14%]" />
-                <col className="w-[10%]" />
-                <col className="w-[16%]" />
-                <col className="w-[8%]" />
+                <col className="w-[140px]" />
+                <col className="w-[120px]" />
+                <col className="w-[160px]" />
+                <col className="w-[140px]" />
+                <col className="w-[100px]" />
+                <col className="w-[160px]" />
+                <col className="w-[120px]" />
+                <col className="w-[120px]" />
               </colgroup>
               <thead>
                 <tr className="border-b border-[var(--color-border-subtle)] bg-[var(--color-bg-layer-01)]">
-                  <SortableHeader colKey="order_number" label={t("orders.colOrder")} />
+                  <th className="px-4 py-3 text-left text-[12px] font-semibold uppercase tracking-wider text-[var(--color-text-secondary)]">
+                    {t("orders.colOrder")}
+                  </th>
                   <SortableHeader colKey="order_date" label={t("orders.colDate")} />
                   <SortableHeader colKey="status" label={t("orders.colStatus")} />
-                  <SortableHeader colKey="total_amount" label={t("orders.colTotal")} align="right" />
                   <SortableHeader colKey="expected_delivery" label={t("orders.colExpDelivery")} />
                   <SortableHeader colKey="items_remaining" label={t("orders.colRemaining")} />
                   <th className="px-4 py-3 text-left text-[12px] font-semibold uppercase tracking-wider text-[var(--color-text-secondary)]">
-                    {t("orders.colItems") ?? "Articles"}
+                    {t("orders.colPreview")}
                   </th>
-                  <th className="px-4 py-3 w-10" />
+                  <SortableHeader colKey="total_amount" label={t("orders.colTotal")} align="right" />
+                  <th className="px-4 py-3 w-[120px]" />
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--color-border-subtle)]">
@@ -764,7 +765,6 @@ export default function OrderHistory() {
                     <td className="px-4 py-3 text-[13px] font-semibold text-[var(--color-text-primary)]">{order.order_number}</td>
                     <td className="px-4 py-3 text-[13px] text-[var(--color-text-secondary)]">{formatDate(order.order_date, "dd/MM/yyyy")}</td>
                     <td className="px-4 py-3"><StatusBadge status={order.status} /></td>
-                    <td className="px-4 py-3 text-[13px] text-right font-heading font-semibold text-[var(--color-text-primary)]">{formatCurrency(order.total_amount)}</td>
                     <td className="px-4 py-3 text-[13px] font-semibold text-[var(--color-primary)]">{formatDate(order.expected_delivery, "dd/MM/yyyy")}</td>
                     <td className="px-4 py-3 text-[13px] text-[var(--color-text-secondary)]">{order.items_remaining}</td>
                     <td className="px-4 py-3">
@@ -779,20 +779,27 @@ export default function OrderHistory() {
                           </div>
                         ))}
                         {moreCount > 0 && (
-                          <span className="text-[11px] font-semibold text-[var(--color-text-secondary)]">+{moreCount}</span>
+                          <span className="text-[12px] font-semibold text-[var(--color-text-secondary)]">+{moreCount}</span>
                         )}
                       </div>
                     </td>
-                    <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
-                      <div className="flex items-center gap-2">
-                        <button onClick={() => toggleJoblist(order.id)}
-                          className="flex h-8 w-8 items-center justify-center rounded-[var(--border-radius-sm)] border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-rexel-primary-10)] transition-colors"
-                          title={joblistIds.has(order.id) ? "Retirer de la joblist" : "Ajouter à la joblist"}>
+                    <td className="px-4 py-3 text-[13px] text-right font-heading font-semibold text-[var(--color-text-primary)]">{formatCurrency(order.total_amount)}</td>
+                    <td className="pl-2 pr-4 py-3" onClick={(e) => e.stopPropagation()}>
+                      <div className="flex items-center justify-end gap-2">
+                        <button
+                          onClick={() => toggleJoblist(order.id)}
+                          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[var(--border-radius-sm)] border border-[var(--color-primary)] bg-white text-[var(--color-primary)] hover:bg-[var(--color-rexel-primary-10)] transition-colors"
+                          title={joblistIds.has(order.id) ? "Retirer de la joblist" : "Ajouter à la joblist"}
+                          aria-label={joblistIds.has(order.id) ? "Retirer de la joblist" : "Ajouter à la joblist"}
+                        >
                           <Star className={cn("h-3.5 w-3.5", joblistIds.has(order.id) && "fill-[var(--color-primary)]")} />
                         </button>
-                        <button onClick={() => handleReorderAll(order)}
-                          className="flex h-8 w-8 items-center justify-center rounded-[var(--border-radius-sm)] bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-hover)] transition-colors"
-                          title={t("orders.reorderAllTitle")}>
+                        <button
+                          onClick={() => handleReorderAll(order)}
+                          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[var(--border-radius-sm)] bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-hover)] transition-colors"
+                          title={t("orders.reorderAllTitle")}
+                          aria-label={t("orders.reorderAllTitle")}
+                        >
                           <ShoppingCart className="h-3.5 w-3.5" />
                         </button>
                       </div>
@@ -829,90 +836,88 @@ export default function OrderHistory() {
 
       {/* ===== KANBAN VIEW ===== */}
       {viewMode === "kanban" && filtered.length > 0 && (
-        <div className="flex gap-4 overflow-x-auto pb-4">
-          {([
-            { key: "delayed", label: t("orderStatus.delayed") },
-            { key: "cancelled", label: t("orderStatus.cancelled") },
-            { key: "backorder", label: t("orderStatus.backorder") },
-            { key: "partially_delivered", label: t("orderStatus.partially_delivered") },
-            { key: "on_track", label: t("orderStatus.on_track") },
-            { key: "being_prepared", label: t("orderStatus.being_prepared") },
-            { key: "in_transit", label: t("orderStatus.in_transit") },
-            { key: "completed", label: t("orderStatus.completed") },
-          ] as { key: string; label: string }[])
-            .filter((opt) => statusFilters.size === 0 || statusFilters.has(opt.key))
-            .map((opt) => {
-              const colOrders = filtered.filter((o) => o.status === opt.key);
-              const meta = statusVisual[opt.key];
-              const Icon = meta?.icon;
+        <div className="grid grid-cols-1 gap-4 pb-4 lg:grid-cols-3">
+          {statusGroups
+            .filter((group) => statusFilters.size === 0 || group.statuses.some((s) => statusFilters.has(s)))
+            .map((group) => {
+              const colOrders = filtered.filter((o) => group.statuses.includes(o.status));
+              const Icon = group.icon;
               return (
                 <div
-                  key={opt.key}
-                  className="flex w-[300px] shrink-0 flex-col rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-layer-01)]"
+                  key={group.key}
+                  className="flex min-h-0 flex-col overflow-hidden rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-layer-01)]"
                 >
-                  <div className={cn("flex items-center justify-between gap-2 border-b border-[var(--color-border-subtle)] px-3 py-2", meta?.bgClass)}>
-                    <div className={cn("flex items-center gap-1.5 text-[13px] font-semibold", meta?.colorClass)}>
-                      {Icon && <Icon className="h-4 w-4" />}
-                      {opt.label}
-                    </div>
-                    <span className={cn("inline-flex h-6 min-w-[24px] items-center justify-center rounded-full bg-white px-2 text-[11px] font-semibold", meta?.colorClass)}>
-                      {colOrders.length}
-                    </span>
-                  </div>
-                  <div className="flex flex-col gap-2 p-2 max-h-[calc(100vh-340px)] overflow-y-auto">
-                    {colOrders.length === 0 ? (
-                      <div className="flex items-center justify-center py-8 text-[12px] text-[var(--color-text-secondary)]">
-                        —
+                  <div className="max-h-[calc(100vh-340px)] overflow-y-auto">
+                    <div
+                      className={cn(
+                        "sticky top-0 z-10 flex items-center justify-between gap-2 border-b border-[var(--color-border-subtle)] px-3 py-2 shadow-sm",
+                        group.bgClass
+                      )}
+                    >
+                      <div className={cn("flex items-center gap-1.5 text-[13px] font-semibold", group.colorClass)}>
+                        <Icon className="h-4 w-4" />
+                        {group.label}
                       </div>
-                    ) : (
-                      colOrders.map((order) => (
-                        <div
-                          key={order.id}
-                          onClick={() => setSidePanelOrder(order.order_number)}
-                          className={cn(
-                            "cursor-pointer rounded-[var(--border-radius-sm)] border bg-white p-3 transition-all hover:shadow-[var(--shadow-2)]",
-                            sidePanelOrder === order.order_number
-                              ? "border-[var(--color-primary)]"
-                              : "border-[#E0E4EB]"
-                          )}
-                        >
-                          <div className="flex items-center justify-between gap-2 mb-1">
-                            <span className="text-[12px] font-semibold text-[var(--color-text-primary)]">{order.order_number}</span>
-                            {order.project_name && (
-                              <span className="inline-flex h-5 items-center rounded-[4px] bg-[#F6F8FB] px-2 text-[10px] font-semibold text-[#525252] truncate max-w-[120px]">
-                                {order.project_name}
-                              </span>
+                                <span className={cn("inline-flex h-6 min-w-[24px] items-center justify-center rounded-full bg-white px-2 text-[12px] font-semibold", group.colorClass)}>
+                        {colOrders.length}
+                      </span>
+                    </div>
+
+                    <div className="flex flex-col gap-2 p-2">
+                      {colOrders.length === 0 ? (
+                        <div className="flex items-center justify-center py-8 text-[12px] text-[var(--color-text-secondary)]">—</div>
+                      ) : (
+                        colOrders.map((order) => (
+                          <div
+                            key={order.id}
+                            onClick={() => setSidePanelOrder(order.order_number)}
+                            className={cn(
+                              "cursor-pointer rounded-[var(--border-radius-sm)] border bg-white p-3 transition-all hover:shadow-[var(--shadow-2)]",
+                              sidePanelOrder === order.order_number ? "border-[var(--color-primary)]" : "border-[#E0E4EB]"
                             )}
-                          </div>
-                          <div className="text-[11px] text-[var(--color-text-secondary)] mb-2">
-                            {formatDate(order.order_date, "dd/MM/yyyy")} · {formatCurrency(order.total_amount)}
-                          </div>
-                          {order.expected_delivery && (
-                            <div className="flex items-center gap-1 text-[11px] font-semibold text-[var(--color-primary)] mb-2">
-                              <Truck className="h-3 w-3" />
-                              {formatDate(order.expected_delivery, "dd/MM/yyyy")}
+                          >
+                            <div className="flex items-center justify-between gap-2 mb-1">
+                              <span className="text-[12px] font-semibold text-[var(--color-text-primary)]">{order.order_number}</span>
+                              {order.project_name && (
+                                <span className="inline-flex h-5 items-center rounded-[4px] bg-[#F6F8FB] px-2 text-[12px] font-semibold text-[#525252] truncate max-w-[120px]">
+                                  {order.project_name}
+                                </span>
+                              )}
                             </div>
-                          )}
-                          <div className="flex items-center justify-between gap-2 pt-2 border-t border-[var(--color-border-subtle)]" onClick={(e) => e.stopPropagation()}>
-                            <span className="text-[11px] text-[var(--color-text-secondary)]">
-                              {order.items_remaining > 0 ? `${order.items_remaining} ${t("orders.itemsRemaining")}` : "—"}
-                            </span>
-                            <div className="flex items-center gap-1.5">
-                              <button onClick={() => toggleJoblist(order.id)}
-                                className="flex h-7 w-7 items-center justify-center rounded-[var(--border-radius-sm)] border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-rexel-primary-10)] transition-colors"
-                                title={joblistIds.has(order.id) ? "Retirer de la joblist" : "Ajouter à la joblist"}>
-                                <Star className={cn("h-3 w-3", joblistIds.has(order.id) && "fill-[var(--color-primary)]")} />
-                              </button>
-                              <button onClick={() => handleReorderAll(order)}
-                                className="flex h-7 w-7 items-center justify-center rounded-[var(--border-radius-sm)] bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-hover)] transition-colors"
-                                title={t("orders.reorderAllTitle")}>
-                                <ShoppingCart className="h-3 w-3" />
-                              </button>
+                            <div className="text-[12px] text-[var(--color-text-secondary)] mb-2">
+                              {formatDate(order.order_date, "dd/MM/yyyy")} · {formatCurrency(order.total_amount)}
+                            </div>
+                            {order.expected_delivery && (
+                              <div className="flex items-center gap-1 text-[12px] font-semibold text-[var(--color-primary)] mb-2">
+                                <Truck className="h-3 w-3" />
+                                {formatDate(order.expected_delivery, "dd/MM/yyyy")}
+                              </div>
+                            )}
+                            <div className="flex items-center justify-between gap-2 pt-2 border-t border-[var(--color-border-subtle)]" onClick={(e) => e.stopPropagation()}>
+                              <span className="text-[12px] text-[var(--color-text-secondary)]">
+                                {order.items_remaining > 0 ? `${order.items_remaining} ${t("orders.itemsRemaining")}` : "—"}
+                              </span>
+                              <div className="flex items-center gap-1.5">
+                                <button
+                                  onClick={() => toggleJoblist(order.id)}
+                                  className="flex h-8 w-8 items-center justify-center rounded-[var(--border-radius-sm)] border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-rexel-primary-10)] transition-colors"
+                                  title={joblistIds.has(order.id) ? "Retirer de la joblist" : "Ajouter à la joblist"}
+                                >
+                                  <Star className={cn("h-4 w-4", joblistIds.has(order.id) && "fill-[var(--color-primary)]")} />
+                                </button>
+                                <button
+                                  onClick={() => handleReorderAll(order)}
+                                  className="flex h-8 w-8 items-center justify-center rounded-[var(--border-radius-sm)] bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-hover)] transition-colors"
+                                  title={t("orders.reorderAllTitle")}
+                                >
+                                  <ShoppingCart className="h-4 w-4" />
+                                </button>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))
-                    )}
+                        ))
+                      )}
+                    </div>
                   </div>
                 </div>
               );

@@ -56,7 +56,7 @@ function stepIndex(status: string) {
   return 0;
 }
 
-function CopyPill({ text }: { text: string }) {
+function CopyPill({ text, className }: { text: string; className?: string }) {
   const { t } = useI18n();
   return (
     <button
@@ -66,7 +66,10 @@ function CopyPill({ text }: { text: string }) {
         navigator.clipboard.writeText(text);
         toast.success(t("common.copied"));
       }}
-      className="inline-flex h-8 items-center gap-1 rounded-full border border-[var(--color-border-subtle)] bg-white px-3 text-[12px] font-semibold text-[var(--color-primary)] hover:border-[var(--color-primary)] transition-colors"
+      className={cn(
+        "inline-flex h-8 items-center gap-1 rounded-full border border-[var(--color-border-subtle)] bg-white px-3 text-[12px] font-semibold text-[var(--color-primary)] hover:border-[var(--color-primary)] transition-colors",
+        className
+      )}
     >
       {text}
       <Copy className="h-3 w-3 text-[var(--color-primary)]" />
@@ -179,8 +182,14 @@ const MOCK_DOCUMENTS = [
 function groupDocsByType(docs: typeof MOCK_DOCUMENTS) {
   const groups: Record<string, typeof MOCK_DOCUMENTS> = {};
   docs.forEach((doc) => {
-    if (!groups[doc.type]) groups[doc.type] = [];
-    groups[doc.type].push(doc);
+    const normalizedType = (() => {
+      const t = doc.type.trim();
+      const low = t.toLowerCase();
+      if (low.includes("pro-forma") || low.includes("pro forma")) return "Invoice";
+      return t;
+    })();
+    if (!groups[normalizedType]) groups[normalizedType] = [];
+    groups[normalizedType].push(doc);
   });
   return groups;
 }
@@ -199,6 +208,8 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
   const [activeTab, setActiveTab] = useState<TabKey>("detail");
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
   const [showAllItems, setShowAllItems] = useState(false);
+  const [expandedDocName, setExpandedDocName] = useState<string | null>(null);
+  const [showMoreDeliveryNote, setShowMoreDeliveryNote] = useState(false);
 
   const open = !!orderNumber;
   const isCompletedOrder = data?.order.status === "completed";
@@ -212,6 +223,10 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
       setCheckedItems(all);
     }
   }, [data, isCompletedOrder]);
+
+  useEffect(() => {
+    setShowMoreDeliveryNote(false);
+  }, [expandedDocName]);
 
   const toggleItem = (id: string) => {
     if (isCompletedOrder) return;
@@ -296,7 +311,112 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
     [t, receptionEnabled]
   );
 
-  const docGroups = groupDocsByType(MOCK_DOCUMENTS);
+  const fulfillmentMode: "delivery" | "pickup" = data?.order?.delivery_address ? "delivery" : "pickup";
+  const fulfillmentModeLabel =
+    fulfillmentMode === "delivery" ? t("side.fulfillmentDelivery") : t("side.fulfillmentPickup");
+
+  const receptionContact = useMemo(() => {
+    const raw = data?.order?.delivery_address as Record<string, unknown> | null | undefined;
+    const read = (...keys: string[]) => {
+      for (const k of keys) {
+        const v = raw?.[k];
+        if (typeof v === "string" && v.trim().length > 0) return v.trim();
+      }
+      return undefined;
+    };
+
+    const firstName = read(
+      `${fulfillmentMode}_contact_first_name`,
+      `${fulfillmentMode}_contact_firstname`,
+      `${fulfillmentMode}_contact_given_name`,
+      "contact_first_name",
+      "contact_firstname",
+      "reception_first_name",
+      "pickup_first_name"
+    );
+    const lastName = read(
+      `${fulfillmentMode}_contact_last_name`,
+      `${fulfillmentMode}_contact_lastname`,
+      `${fulfillmentMode}_contact_family_name`,
+      "contact_last_name",
+      "contact_lastname",
+      "reception_last_name",
+      "pickup_last_name"
+    );
+    const phone = read(
+      `${fulfillmentMode}_contact_phone`,
+      `${fulfillmentMode}_contact_mobile`,
+      "contact_phone",
+      "contact_mobile",
+      "phone",
+      "mobile",
+      "reception_phone",
+      "pickup_phone"
+    );
+    const email =
+      read(
+        `${fulfillmentMode}_contact_email`,
+        "contact_email",
+        "reception_email",
+        "pickup_email"
+      ) ?? (data?.order?.customer_email ?? undefined);
+
+    const name = [firstName, lastName].filter(Boolean).join(" ").trim();
+    const mock =
+      fulfillmentMode === "delivery"
+        ? { name: "Camille Dupont", phone: "06 12 34 56 78", email: "camille.dupont@exemple.fr" }
+        : { name: "Thomas Martin", phone: "06 98 76 54 32", email: "thomas.martin@exemple.fr" };
+
+    return {
+      name: name.length > 0 ? name : mock.name,
+      phone: phone ?? mock.phone,
+      email: email ?? mock.email,
+    };
+  }, [data?.order?.customer_email, data?.order?.delivery_address, fulfillmentMode]);
+
+  const contactShort = useMemo(() => {
+    const full = receptionContact.name.trim();
+    if (!full || full === "—") return "—";
+    const parts = full.split(/\s+/).filter(Boolean);
+    if (parts.length === 1) return parts[0];
+    const firstInitial = parts[0][0] ? `${parts[0][0].toUpperCase()}.` : "";
+    const last = parts[parts.length - 1];
+    return `${firstInitial} ${last}`.trim();
+  }, [receptionContact.name]);
+
+  const fulfillmentAddress = useMemo(() => {
+    const raw = data?.order?.delivery_address as Record<string, string> | null | undefined;
+    const clean = (v: unknown) => (typeof v === "string" ? v.trim() : "");
+    if (!raw) {
+      return { titleLine: "", streetLine: "", zipCityLine: "" };
+    }
+
+    const titleLine = [clean(raw.company), clean(raw.site), clean(raw.name)].filter(Boolean)[0] ?? "";
+    const streetLine =
+      [clean(raw.line1), clean(raw.line2), clean(raw.street)].filter(Boolean).join(", ") || "";
+
+    const zip =
+      clean(raw.zip) || clean(raw.postal_code) || clean(raw.postcode);
+    const city = clean(raw.city);
+    const zipCityLine = [zip, city].filter(Boolean).join(" ").trim();
+
+    return { titleLine, streetLine, zipCityLine };
+  }, [data?.order?.delivery_address]);
+
+  const documentsForOrder = useMemo(() => {
+    const dynamicDeliveryNotes =
+      data?.shipments?.map((s) => {
+        const baseId = data.order.order_number.replace(/\s+/g, "-");
+        const name = `Delivery note BL-${baseId}-${String(s.shipment_index).padStart(2, "0")}`;
+        const date = (s.delivered_at ?? s.expected_delivery ?? data.order.order_date) as string;
+        return { name, type: "Delivery note", date, icon: FileText };
+      }) ?? [];
+
+    const staticDocs = MOCK_DOCUMENTS.filter((d) => d.type !== "Delivery note");
+    return [...dynamicDeliveryNotes, ...staticDocs];
+  }, [data?.order?.order_date, data?.order?.order_number, data?.shipments]);
+
+  const docGroups = useMemo(() => groupDocsByType(documentsForOrder), [documentsForOrder]);
 
   return (
     <Sheet open={open} onOpenChange={handleOpenChange}>
@@ -316,7 +436,8 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
               <div className="sticky top-0 z-20 bg-[var(--color-bg-page)] border-b border-[var(--color-border-subtle)] shadow-sm">
                 <div className="px-6 py-5">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-center gap-2">
                       <CopyPill text={data.order.order_number} />
                       {(() => {
                         const meta = statusVisual[data.order.status] ?? statusVisual.on_track;
@@ -328,23 +449,89 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                           </span>
                         );
                       })()}
+                      </div>
                     </div>
                     <button type="button" onClick={onClose} className="text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]">
                       <X className="h-5 w-5" />
                     </button>
                   </div>
-                  <div className="flex items-center justify-between gap-x-3 mt-3">
-                    <p className="text-[13px] text-[var(--color-text-secondary)]">
-                      {t("side.ordered")}{" "}
-                      <span className="font-semibold text-[var(--color-text-primary)]">{formatDate(data.order.order_date, "dd/MM/yyyy")}</span>
-                      <span className="text-[#a8a8a8] mx-2">|</span>
-                      <span className="font-heading font-semibold text-[var(--color-text-primary)]">{formatCurrency(data.order.total_amount)}</span>
-                    </p>
+                  <div className="mt-3 rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-layer-01)] px-3 py-2.5">
+                    {/* Primary row */}
+                    <div className="grid grid-cols-1 gap-1 sm:grid-cols-2 sm:items-center">
+                      <div className="text-[13px] leading-[18px] text-[var(--color-text-primary)]">
+                        <span className="text-[var(--color-text-secondary)]">{t("side.ordered")} </span>
+                        <span className="font-semibold">{formatDate(data.order.order_date, "dd/MM/yyyy")}</span>
+                      </div>
+                      <div className="text-[13px] leading-[18px] sm:text-right">
+                        <span className="font-heading font-semibold text-[var(--color-text-primary)]">
+                          {formatCurrency(data.order.total_amount)}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Secondary row */}
+                    <div className="mt-2 grid grid-cols-1 gap-1 sm:grid-cols-2 sm:items-start">
+                      <div className="text-[12px] leading-[16px] text-[var(--color-text-secondary)] break-words">
+                        {t("side.orderedBy")}{" "}
+                        <span className="font-semibold text-[var(--color-text-primary)]">
+                          {data.order.customer_email ?? "camille.dupont@exemple.fr"}
+                        </span>
+                      </div>
+                      <div className="text-[12px] leading-[16px] text-[var(--color-text-secondary)] break-all sm:text-right">
+                        <span className="font-semibold">{t("side.orderId")}:</span> {data.order.id}
+                      </div>
+                    </div>
+
                     {data.order.project_name && (
-                      <span className="inline-flex h-7 items-center rounded-[4px] bg-[var(--color-bg-layer-01)] px-3 text-[12px] font-semibold text-[var(--color-text-secondary)] shrink-0">
-                        {data.order.project_name}
-                      </span>
+                      <div className="mt-2">
+                        <span className="inline-flex h-6 items-center rounded-[4px] bg-white px-2.5 text-[12px] font-semibold text-[var(--color-text-secondary)]">
+                          {data.order.project_name}
+                        </span>
+                      </div>
                     )}
+                  </div>
+
+                  <div className="mt-6 overflow-hidden rounded-[var(--border-radius-sm)] bg-white shadow-[var(--shadow-1)] pt-4 pb-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2">
+                      <div className="px-4 md:pr-5">
+                        <p className="text-[14px] font-semibold text-[var(--color-text-primary)]">
+                          {fulfillmentMode === "delivery" ? t("side.deliveryAddressCard") : t("side.pickupAddressCard")}
+                        </p>
+                        <div className="mt-2 space-y-1.5 text-[12px] text-[var(--color-text-secondary)]">
+                          {fulfillmentAddress.titleLine || fulfillmentAddress.streetLine || fulfillmentAddress.zipCityLine ? (
+                            <>
+                              <div className="font-semibold text-[var(--color-text-primary)] break-words text-[14px]">
+                                {fulfillmentAddress.titleLine || "—"}
+                              </div>
+                              {fulfillmentAddress.streetLine && <div className="break-words mt-1">{fulfillmentAddress.streetLine}</div>}
+                              {fulfillmentAddress.zipCityLine && <div className="break-words mt-1">{fulfillmentAddress.zipCityLine}</div>}
+                            </>
+                          ) : (
+                            <div>—</div>
+                          )}
+                          <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1">
+                            <span className="text-[var(--color-text-secondary)]">Contact :</span>
+                            <span className="font-semibold text-[var(--color-text-primary)]">{contactShort}</span>
+                            <span className="text-[#a8a8a8]">·</span>
+                            <span className="font-semibold text-[var(--color-text-primary)]">{receptionContact.phone}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="mt-4 border-t border-[var(--color-border-subtle)] px-4 md:mt-0 md:border-t-0 md:border-l md:border-[var(--color-border-subtle)] md:pl-5">
+                        <p className="text-[14px] font-semibold text-[var(--color-text-primary)]">{t("side.billingCard")}</p>
+                        <div className="mt-2 space-y-1 text-[12px] text-[var(--color-text-secondary)]">
+                          <div className="font-semibold text-[var(--color-text-primary)]">
+                            {data.order.project_name ?? "SAS Martin Électricité"}
+                          </div>
+                          <div>
+                            {t("common.po")}{" "}
+                            <span className="font-semibold text-[var(--color-text-primary)]">{data.order.po_number ?? "PO-4521"}</span>
+                          </div>
+                          <div>{t("side.billingTerms")}</div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -458,7 +645,7 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                                   type="button"
                                   onClick={() => toggleJoblistItem(item.id)}
                                   className="h-8 w-8 flex items-center justify-center rounded-[var(--border-radius-sm)] border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-rexel-primary-10)] transition-colors"
-                                  title="Ajouter à une joblist"
+                                  title={t("side.addToJoblist")}
                                 >
                                   <Star className="h-3.5 w-3.5" fill={joblistItems[item.id] ? "currentColor" : "none"} />
                                 </button>
@@ -510,7 +697,7 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                                   type="button"
                                   onClick={() => toggleJoblistItem(item.id)}
                                   className="h-8 w-8 flex items-center justify-center rounded-[var(--border-radius-sm)] border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-rexel-primary-10)] transition-colors"
-                                  title="Ajouter à une joblist"
+                                  title={t("side.addToJoblist")}
                                 >
                                   <Star className="h-3.5 w-3.5" fill={joblistItems[item.id] ? "currentColor" : "none"} />
                                 </button>
@@ -570,7 +757,7 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
               {activeTab === "documents" && (
                 <div className="px-6 py-5 space-y-5">
                   <p className="text-[12px] text-[var(--color-text-secondary)]">
-                    {MOCK_DOCUMENTS.length} {t("side.docsCount")}
+                    {documentsForOrder.length} {t("side.docsCount")}
                   </p>
                   {Object.entries(docGroups).map(([type, docs]) => (
                     <div key={type} className="space-y-2">
@@ -588,17 +775,126 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                         </button>
                       </div>
                       {docs.map((doc, i) => (
-                        <div key={i} className="flex items-center gap-3 rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] p-3 hover:bg-[var(--color-bg-layer-01)] transition-colors cursor-pointer group">
-                          <div className="flex h-9 w-9 items-center justify-center rounded-[var(--border-radius-sm)] bg-[var(--color-rexel-primary-10)] text-[var(--color-primary)] shrink-0">
-                            <doc.icon className="h-4 w-4" />
+                        <div key={i} className="rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] p-3 hover:bg-[var(--color-bg-layer-01)] transition-colors group">
+                          <div className="flex items-center gap-3">
+                            <div className="flex h-9 w-9 items-center justify-center rounded-[var(--border-radius-sm)] bg-[var(--color-rexel-primary-10)] text-[var(--color-primary)] shrink-0">
+                              <doc.icon className="h-4 w-4" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-[13px] font-semibold text-[var(--color-text-primary)] truncate">{doc.name}</p>
+                              <p className="text-[12px] text-[var(--color-text-secondary)]">{formatDate(doc.date, "dd/MM/yyyy")}</p>
+                            </div>
+
+                            {type === "Delivery note" && (
+                              <button
+                                type="button"
+                                onClick={() => setExpandedDocName((p) => (p === doc.name ? null : doc.name))}
+                                className="hidden sm:inline-flex h-8 items-center justify-center rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] px-2 text-[12px] font-semibold text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] hover:border-[var(--color-primary)] transition-colors"
+                              >
+                                {expandedDocName === doc.name ? t("side.hideDetails") : t("side.viewDetails")}
+                              </button>
+                            )}
+
+                            <button
+                              type="button"
+                              onClick={() => toast.success(`${t("side.downloading")} 1 ${type}`)}
+                              className="opacity-0 group-hover:opacity-100 h-8 w-8 flex items-center justify-center rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] transition-all"
+                            >
+                              <Download className="h-4 w-4" />
+                            </button>
                           </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-[13px] font-semibold text-[var(--color-text-primary)] truncate">{doc.name}</p>
-                            <p className="text-[12px] text-[var(--color-text-secondary)]">{formatDate(doc.date, "dd/MM/yyyy")}</p>
-                          </div>
-                          <button type="button" className="opacity-0 group-hover:opacity-100 h-8 w-8 flex items-center justify-center rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] transition-all">
-                            <Download className="h-4 w-4" />
-                          </button>
+
+                          {type === "Delivery note" && expandedDocName === doc.name && data && (
+                            <div className="mt-3 rounded-[var(--border-radius-sm)] bg-white border border-[var(--color-border-subtle)] p-3 space-y-3">
+                              <p className="text-[12px] font-semibold uppercase tracking-wider text-[var(--color-text-secondary)]">
+                                {t("side.deliveryNoteDetails")}
+                              </p>
+
+                              {(() => {
+                                const shipmentIdxMatch = doc.name.match(/-(\d{2})$/);
+                                const shipmentIndex = shipmentIdxMatch ? Number(shipmentIdxMatch[1]) : null;
+                                const shipment = shipmentIndex
+                                  ? data.shipments.find((s) => s.shipment_index === shipmentIndex)
+                                  : undefined;
+                                const items = shipment ? data.lineItems.filter((li) => li.shipment_id === shipment.id) : [];
+                                if (items.length === 0) return null;
+
+                                const siteRef = data.order.project_name ?? "R4";
+                                const invoiceNumber = `INV-${data.order.order_number}`;
+                                const invoiceDate = data.order.order_date;
+                                const orderType = data.order.order_type || "Standard";
+                                const passedBy = data.order.customer_email ?? "salesemployee_benjamin.hodeau@rexel.fr";
+                                const carrier = shipment?.carrier ?? "Rexel Express";
+                                const trackingNumber = "Non communiqué";
+                                const weightKg = 0;
+                                const nbRefs = items.length;
+                                const nbParcels = 0;
+
+                                return (
+                                  <div className="space-y-3">
+                                    <div className="grid grid-cols-1 gap-3 md:grid-cols-2 text-[12px] text-[var(--color-text-secondary)]">
+                                      <div className="space-y-1">
+                                        <div><span className="font-semibold text-[var(--color-text-primary)]">{t("side.deliveryMode")}</span>{" "}{fulfillmentModeLabel}</div>
+                                        <div><span className="font-semibold text-[var(--color-text-primary)]">{t("side.siteRef")}</span>{" "}{siteRef}</div>
+                                        <div className="break-words">
+                                          <span className="font-semibold text-[var(--color-text-primary)]">{t("side.addressLabel")}</span>{" "}
+                                          {[fulfillmentAddress.titleLine, fulfillmentAddress.streetLine, fulfillmentAddress.zipCityLine]
+                                            .filter(Boolean)
+                                            .join(", ") || "—"}
+                                        </div>
+                                      </div>
+                                      <div className="space-y-1">
+                                        <div className="font-semibold text-[var(--color-text-primary)]">{t(`orderStatus.${data.order.status}`)}</div>
+                                        <div><span className="font-semibold text-[var(--color-text-primary)]">{t("side.carrier")}</span>{" "}{carrier}</div>
+                                        <div><span className="font-semibold text-[var(--color-text-primary)]">{t("side.trackingNumber")}</span>{" "}{trackingNumber}</div>
+                                      </div>
+                                    </div>
+
+                                    <div className="flex items-center justify-between gap-3">
+                                      <div className="flex flex-wrap gap-x-4 gap-y-1 text-[12px] text-[var(--color-text-secondary)]">
+                                        <span><span className="font-semibold text-[var(--color-text-primary)]">{t("side.nbRefs")}</span>{" "}{nbRefs}</span>
+                                        <span><span className="font-semibold text-[var(--color-text-primary)]">{t("side.nbParcels")}</span>{" "}{nbParcels}</span>
+                                      </div>
+                                      <button
+                                        type="button"
+                                        onClick={() => setShowMoreDeliveryNote((v) => !v)}
+                                        className="shrink-0 text-[12px] font-semibold text-[var(--color-primary)] hover:underline"
+                                      >
+                                        {showMoreDeliveryNote ? t("side.lessInfo") : t("side.moreInfo")}
+                                      </button>
+                                    </div>
+
+                                    {showMoreDeliveryNote && (
+                                      <div className="rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-layer-01)] p-3 text-[12px] text-[var(--color-text-secondary)] space-y-1">
+                                        <div><span className="font-semibold text-[var(--color-text-primary)]">{t("side.passedBy")}</span>{" "}{passedBy}</div>
+                                        <div><span className="font-semibold text-[var(--color-text-primary)]">{t("side.invoiceNumber")}</span>{" "}{invoiceNumber}</div>
+                                        <div><span className="font-semibold text-[var(--color-text-primary)]">{t("side.invoiceDate")}</span>{" "}{formatDate(invoiceDate, "dd/MM/yyyy")}</div>
+                                        <div><span className="font-semibold text-[var(--color-text-primary)]">{t("side.orderType")}</span>{" "}{orderType}</div>
+                                        <div><span className="font-semibold text-[var(--color-text-primary)]">{t("side.weightKg")}</span>{" "}{weightKg}</div>
+                                      </div>
+                                    )}
+
+                                    <div className="space-y-2">
+                                      {items.slice(0, 3).map((li) => (
+                                        <div key={li.id} className="flex items-center gap-2 text-[12px] text-[var(--color-text-secondary)]">
+                                          <div className="h-6 w-6 shrink-0 rounded border border-[#E0E4EB] bg-[#F6F8FB] flex items-center justify-center">
+                                            <Package className="h-3 w-3 text-[#a8a8a8]" />
+                                          </div>
+                                          <span className="truncate text-[var(--color-text-primary)]">{li.product_name}</span>
+                                          <span className="ml-auto shrink-0">×{li.quantity}</span>
+                                        </div>
+                                      ))}
+                                      {items.length > 3 && (
+                                        <div className="text-[12px] text-[var(--color-text-secondary)]">
+                                          +{items.length - 3} {t("side.items")}
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                );
+                              })()}
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>
@@ -713,10 +1009,10 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                   </button>
                   <button
                     type="button"
-                    onClick={() => toast.success("Ajouté à la joblist")}
+                    onClick={() => toast.success(t("orders.joblistAdded"))}
                     className="w-full inline-flex items-center justify-center gap-2 h-10 rounded-[var(--border-radius-sm)] border border-[var(--color-primary)] text-[var(--color-primary)] text-[13px] font-semibold hover:bg-[var(--color-rexel-primary-10)] transition-colors"
                   >
-                    <Star className="h-4 w-4" /> Ajouter à une joblist
+                    <Star className="h-4 w-4" /> {t("side.addToJoblist")}
                   </button>
                 </div>
               )}

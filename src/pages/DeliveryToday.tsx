@@ -77,7 +77,7 @@ function ShipmentCard({
           {items.slice(0, 3).map((item) => (
             <div key={item.id} className="flex items-center justify-between font-[var(--font-body)] text-[14px] leading-[20px]">
               <div className="flex items-center gap-2 min-w-0">
-                <div className="h-7 w-7 shrink-0 rounded-[4px] bg-[#F6F8FB] flex items-center justify-center font-[var(--font-body)] text-[10px] font-bold text-[#525252]">
+                <div className="h-7 w-7 shrink-0 rounded-[4px] bg-[#F6F8FB] flex items-center justify-center font-[var(--font-body)] text-[12px] font-bold text-[#525252]">
                   {item.supplier.slice(0, 2).toUpperCase()}
                 </div>
                 <span className="truncate text-[#161616]">{item.product_name}</span>

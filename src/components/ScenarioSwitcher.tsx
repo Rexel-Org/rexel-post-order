@@ -8,32 +8,67 @@ import {
 import { useI18n } from "@/i18n/useI18n";
 import type { MarketCode } from "@/i18n/messages";
 import { useMarketLocaleStore } from "@/stores/marketLocaleStore";
+import { useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useVersionStore, type AppVersion } from "@/stores/versionStore";
 
-const MARKETS: MarketCode[] = ["FR", "SE", "DE"];
+const MARKETS: MarketCode[] = ["FR", "SE", "DE", "EN"];
 
 export default function ScenarioSwitcher() {
   const { t } = useI18n();
   const market = useMarketLocaleStore((s) => s.market);
   const setMarket = useMarketLocaleStore((s) => s.setMarket);
+  const version = useVersionStore((s) => s.version);
+  const setVersion = useVersionStore((s) => s.setVersion);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const triggerClass =
     "h-8 w-[min(200px,70vw)] border-[var(--color-border-subtle)] bg-[var(--color-white)] text-[12px] text-[var(--color-text-primary)] shadow-none";
 
+  useEffect(() => {
+    const isV2 = location.pathname.startsWith("/v2");
+    const inferred: AppVersion = isV2 ? "v2" : "v1";
+    if (inferred !== version) setVersion(inferred);
+  }, [location.pathname, setVersion, version]);
+
   return (
-    <label className="flex items-center gap-2 font-[var(--font-body)] text-[12px] text-[var(--color-text-secondary)]">
-      <span className="whitespace-nowrap">{t("proto.market")}</span>
-      <Select value={market} onValueChange={(v) => setMarket(v as MarketCode)}>
-        <SelectTrigger className={triggerClass}>
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {MARKETS.map((code) => (
-            <SelectItem key={code} value={code}>
-              {t(`market.${code}`)}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </label>
+    <div className="flex flex-col items-start gap-2 font-[var(--font-body)] text-[12px] text-[var(--color-text-secondary)] sm:flex-row sm:items-center">
+      <label className="flex items-center gap-2">
+        <span className="whitespace-nowrap">{t("proto.market")}</span>
+        <Select value={market} onValueChange={(v) => setMarket(v as MarketCode)}>
+          <SelectTrigger className={triggerClass}>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {MARKETS.map((code) => (
+              <SelectItem key={code} value={code}>
+                {t(`market.${code}`)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </label>
+
+      <label className="flex items-center gap-2">
+        <span className="whitespace-nowrap">{t("proto.version")}</span>
+        <Select
+          value={version}
+          onValueChange={(v) => {
+            const next = v as AppVersion;
+            setVersion(next);
+            navigate(next === "v2" ? "/v2" : "/");
+          }}
+        >
+          <SelectTrigger className={triggerClass}>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="v1">V1</SelectItem>
+            <SelectItem value="v2">V2</SelectItem>
+          </SelectContent>
+        </Select>
+      </label>
+    </div>
   );
 }

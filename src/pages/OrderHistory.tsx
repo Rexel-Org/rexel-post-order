@@ -79,7 +79,7 @@ const datePresets: DatePreset[] = [
 ];
 
 // --- Helpers ---
-const ONGOING_STATUSES = ["on_track", "being_prepared", "in_transit", "delayed"];
+const ONGOING_STATUSES = ["on_track", "being_prepared", "in_transit", "delayed", "partially_delivered"];
 const NEEDS_ATTENTION_STATUSES = ["delayed", "cancelled"];
 
 function isOngoing(s: string) { return ONGOING_STATUSES.includes(s); }
@@ -163,7 +163,7 @@ function OrderCard({
             <button
               onClick={(e) => { e.stopPropagation(); onToggleJoblist(); }}
               className="inline-flex h-[32px] w-[32px] items-center justify-center rounded-[var(--border-radius-sm)] border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-rexel-primary-10)] transition-colors"
-              title={inJoblist ? "Retirer de la joblist" : "Ajouter à la joblist"}
+              title={inJoblist ? t("orders.joblistRemove") : t("orders.joblistAdd")}
             >
               <Star className={cn("h-4 w-4", inJoblist && "fill-[var(--color-primary)]")} />
             </button>
@@ -216,10 +216,10 @@ export default function OrderHistory() {
   const { data: lineItems = [], isLoading: itemsLoading } = useLineItems();
   const isLoading = ordersLoading || itemsLoading;
 
-  const [activeTab, setActiveTab] = useState<"ongoing" | "backorders" | "completed">("ongoing");
+  const [activeTab, setActiveTab] = useState<"ongoing" | "completed">("ongoing");
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeDatePreset, setActiveDatePreset] = useState<DatePresetId | null>("3m");
-  const [dateFrom, setDateFrom] = useState<Date | undefined>(subMonths(new Date(), 3));
+  const [activeDatePreset, setActiveDatePreset] = useState<DatePresetId | null>(null);
+  const [dateFrom, setDateFrom] = useState<Date | undefined>(undefined);
   const [dateTo, setDateTo] = useState<Date | undefined>(undefined);
   const [projectFilter, setProjectFilter] = useState<string>("all");
   const [visibleCount, setVisibleCount] = useState(10);
@@ -235,8 +235,8 @@ export default function OrderHistory() {
   const toggleJoblist = (orderId: string) => {
     setJoblistIds((prev) => {
       const next = new Set(prev);
-      if (next.has(orderId)) { next.delete(orderId); toast.success("Retiré de la joblist"); }
-      else { next.add(orderId); toast.success("Ajouté à la joblist"); }
+      if (next.has(orderId)) { next.delete(orderId); toast.success(t("orders.joblistRemoved")); }
+      else { next.add(orderId); toast.success(t("orders.joblistAdded")); }
       return next;
     });
   };
@@ -264,7 +264,6 @@ export default function OrderHistory() {
   );
 
   const ongoingCount = orders.filter((o) => isOngoing(o.status)).length;
-  const backorderCount = orders.filter((o) => o.status === "partially_delivered").length;
   const completedCount = orders.filter((o) => isCompleted(o.status)).length;
 
   // Filtering
@@ -274,7 +273,6 @@ export default function OrderHistory() {
       .filter((o) => {
         if (activeTab === "ongoing") return isOngoing(o.status);
         if (activeTab === "completed") return isCompleted(o.status);
-        if (activeTab === "backorders") return o.status === "partially_delivered";
         return true;
       })
       .filter((o) => {
@@ -374,7 +372,6 @@ export default function OrderHistory() {
 
   const tabs = [
     { key: "ongoing" as const, label: `${t("orders.tabOngoing")} (${ongoingCount})` },
-    { key: "backorders" as const, label: `${t("orders.tabBackorders")} (${backorderCount})` },
     { key: "completed" as const, label: `${t("orders.tabCompleted")} (${completedCount})` },
   ];
 
@@ -432,7 +429,7 @@ export default function OrderHistory() {
       </div>
 
       {/* Filter bar — sticky */}
-      <div className="sticky top-[var(--flow-sticky-site-header-height,140px)] z-30 mt-[var(--spacing-3)] space-y-3 border-b border-[var(--color-border-subtle)] bg-[var(--color-bg-page)] pb-[var(--spacing-4)] pt-[var(--spacing-3)] mb-[var(--spacing-4)]">
+      <div className="sticky top-[var(--flow-sticky-site-header-height,140px)] z-30 -mt-2 space-y-2 bg-[var(--color-bg-page)] pb-[var(--spacing-4)] pt-0 mb-[var(--spacing-4)]">
         <div className="flex items-center gap-3">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-text-placeholder)]" />
@@ -487,7 +484,7 @@ export default function OrderHistory() {
         </div>
 
         {/* Date chips + range picker */}
-        <div className="flex items-center gap-1.5 flex-wrap">
+        <div className="flex items-center gap-1 flex-wrap">
           {datePresets.map((p) => (
             <button key={p.id} onClick={() => applyPreset(p.id, p.getFrom)} className={cn(
               "h-8 rounded-full border px-3 text-[12px] font-semibold transition-colors",
@@ -498,7 +495,6 @@ export default function OrderHistory() {
               {t(`datePreset.${p.id}`)}
             </button>
           ))}
-          <div className="h-4 w-px bg-[var(--color-border-subtle)] mx-1" />
 
           {/* Range picker */}
           <Popover open={rangePickerOpen} onOpenChange={setRangePickerOpen}>
@@ -573,7 +569,7 @@ export default function OrderHistory() {
           {/* Clear filters */}
           {hasActiveFilters && (
             <>
-              <div className="h-4 w-px bg-[var(--color-border-subtle)] mx-1" />
+              {/* separator removed */}
               <button
                 onClick={clearAllFilters}
                 className="inline-flex h-8 items-center gap-1 rounded-full border border-[var(--color-border-subtle)] px-3 text-[12px] font-semibold text-[var(--color-text-secondary)] hover:border-[var(--color-error)] hover:text-[var(--color-error)] transition-colors"
@@ -603,7 +599,7 @@ export default function OrderHistory() {
           {(() => {
             const attentionRows = activeTab === "ongoing" ? tableSorted.filter((o) => needsAttention(o.status)) : [];
             const regularRows = activeTab === "ongoing" ? tableSorted.filter((o) => !needsAttention(o.status)) : tableSorted;
-            const attentionPaginated = attentionRows; // show all attention rows (usually few)
+            const attentionPaginated = attentionRows.slice(0, 3);
 
             const renderTableBlock = (rows: typeof tableSorted, title?: string, isAttention?: boolean, paginate?: boolean) => {
               if (rows.length === 0) return null;
@@ -613,29 +609,50 @@ export default function OrderHistory() {
               return (
                 <div className="space-y-3">
                   {title && (
-              <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2">
                       {isAttention && <AlertTriangle className="h-4 w-4 text-[var(--color-text-primary)]" />}
-                      <h2 className="headline-l text-[#161616]">
-                        {title} ({rows.length})
+                      <h2 className="font-heading text-[18px] font-semibold leading-[22px] text-[var(--color-text-primary)]">
+                        {title}{" "}
+                        <span className="text-[var(--color-text-secondary)] font-semibold">({rows.length})</span>
                       </h2>
                     </div>
                   )}
                   <div className="overflow-hidden rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-layer-02)] shadow-[var(--shadow-1)]">
-                    <table className="w-full">
+                    <table className="w-full table-fixed">
+                      <colgroup>
+                        <col className="w-[140px]" />
+                        <col className="w-[140px]" />
+                        <col className="w-[120px]" />
+                        <col className="w-[160px]" />
+                        <col className="w-[140px]" />
+                        <col className="w-[100px]" />
+                        <col className="w-[160px]" />
+                        <col className="w-[120px]" />
+                        <col className="w-[120px]" />
+                      </colgroup>
                       <thead>
                         <tr className="border-b border-[var(--color-border-subtle)] bg-[var(--color-bg-layer-01)]">
-                          <SortableHeader colKey="order_number" label={t("orders.colOrder")} />
+                          <th className="px-4 py-3 text-left text-[12px] font-semibold uppercase tracking-wider text-[var(--color-text-secondary)]">
+                            {t("orders.colOrder")}
+                          </th>
                           <SortableHeader colKey="po_number" label={t("orders.colPO")} />
                           <SortableHeader colKey="order_date" label={t("orders.colDate")} />
                           <SortableHeader colKey="status" label={t("orders.colStatus")} />
-                          <SortableHeader colKey="total_amount" label={t("orders.colTotal")} align="right" />
                           <SortableHeader colKey="expected_delivery" label={t("orders.colExpDelivery")} />
                           <SortableHeader colKey="items_remaining" label={t("orders.colRemaining")} />
-                          <th className="px-4 py-3 w-10" />
+                          <th className="px-4 py-3 text-left text-[12px] font-semibold uppercase tracking-wider text-[var(--color-text-secondary)]">
+                            {t("orders.colPreview")}
+                          </th>
+                          <SortableHeader colKey="total_amount" label={t("orders.colTotal")} align="right" />
+                          <th className="px-4 py-3 w-[120px]" />
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-[var(--color-border-subtle)]">
-                        {displayRows.map((order) => (
+                        {displayRows.map((order) => {
+                          const orderItems = lineItems.filter((li) => li.order_id === order.id);
+                          const thumbs = orderItems.slice(0, 3);
+                          const moreCount = orderItems.length - thumbs.length;
+                          return (
                           <tr
                             key={order.id}
                             className={cn(
@@ -650,29 +667,48 @@ export default function OrderHistory() {
                             <td className="px-4 py-3 text-[13px] text-[var(--color-text-secondary)]">{order.po_number ?? "—"}</td>
                             <td className="px-4 py-3 text-[13px] text-[var(--color-text-secondary)]">{formatDate(order.order_date, "dd/MM/yyyy")}</td>
                             <td className="px-4 py-3"><StatusBadge status={order.status} /></td>
-                            <td className="px-4 py-3 text-[13px] text-right font-heading font-semibold text-[var(--color-text-primary)]">{formatCurrency(order.total_amount)}</td>
                             <td className="px-4 py-3 text-[13px] font-semibold text-[var(--color-primary)]">{formatDate(order.expected_delivery, "dd/MM/yyyy")}</td>
                             <td className="px-4 py-3 text-[13px] text-[var(--color-text-secondary)]">{order.items_remaining}</td>
-                            <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
-                              <div className="flex items-center gap-2">
+                            <td className="px-4 py-3">
+                              <div className="flex items-center gap-1.5">
+                                {thumbs.map((li) => (
+                                  <div
+                                    key={li.id}
+                                    className="h-8 w-8 shrink-0 rounded-[var(--border-radius-sm)] bg-[#F6F8FB] border border-[#E0E4EB] flex items-center justify-center"
+                                    title={li.product_name}
+                                  >
+                                    <Package className="h-3.5 w-3.5 text-[#a8a8a8]" />
+                                  </div>
+                                ))}
+                                {moreCount > 0 && (
+                                  <span className="text-[12px] font-semibold text-[var(--color-text-secondary)]">+{moreCount}</span>
+                                )}
+                              </div>
+                            </td>
+                            <td className="px-4 py-3 text-[13px] text-right font-heading font-semibold text-[var(--color-text-primary)]">{formatCurrency(order.total_amount)}</td>
+                            <td className="pl-2 pr-4 py-3" onClick={(e) => e.stopPropagation()}>
+                              <div className="flex items-center justify-end gap-2">
                                 <button
                                   onClick={() => toggleJoblist(order.id)}
-                                  className="flex h-8 w-8 items-center justify-center rounded-[var(--border-radius-sm)] border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-rexel-primary-10)] transition-colors"
+                                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[var(--border-radius-sm)] border border-[var(--color-primary)] bg-white text-[var(--color-primary)] hover:bg-[var(--color-rexel-primary-10)] transition-colors"
                                   title={joblistIds.has(order.id) ? "Retirer de la joblist" : "Ajouter à la joblist"}
+                                  aria-label={joblistIds.has(order.id) ? "Retirer de la joblist" : "Ajouter à la joblist"}
                                 >
-                                  <Star className={cn("h-3.5 w-3.5", joblistIds.has(order.id) && "fill-[var(--color-primary)]")} />
+                                  <Star className={cn("h-4 w-4", joblistIds.has(order.id) && "fill-[var(--color-primary)]")} />
                                 </button>
                                 <button
                                   onClick={() => handleReorderAll(order)}
-                                  className="flex h-8 w-8 items-center justify-center rounded-[var(--border-radius-sm)] bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-hover)] transition-colors"
+                                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[var(--border-radius-sm)] bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-hover)] transition-colors"
                                   title={t("orders.reorderAllTitle")}
+                                  aria-label={t("orders.reorderAllTitle")}
                                 >
-                                  <ShoppingCart className="h-3.5 w-3.5" />
+                                  <ShoppingCart className="h-4 w-4" />
                                 </button>
                               </div>
                             </td>
                           </tr>
-                        ))}
+                          );
+                        })}
                       </tbody>
                     </table>
                   </div>
@@ -709,10 +745,10 @@ export default function OrderHistory() {
 
             if (activeTab === "ongoing") {
               return (
-                <>
+                <div className="space-y-8">
                   {renderTableBlock(attentionPaginated, t("orders.needsAttention"), true, false)}
                   {renderTableBlock(regularRows, t("orders.ongoing"), false, true)}
-                </>
+                </div>
               );
             }
             // For other tabs, single table with pagination
@@ -720,21 +756,41 @@ export default function OrderHistory() {
             return (
               <>
                 <div className="overflow-hidden rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-layer-02)] shadow-[var(--shadow-1)]">
-                  <table className="w-full">
+                  <table className="w-full table-fixed">
+                    <colgroup>
+                      <col className="w-[140px]" />
+                      <col className="w-[140px]" />
+                      <col className="w-[120px]" />
+                      <col className="w-[160px]" />
+                      <col className="w-[140px]" />
+                      <col className="w-[100px]" />
+                      <col className="w-[160px]" />
+                      <col className="w-[120px]" />
+                      <col className="w-[120px]" />
+                    </colgroup>
                     <thead>
                       <tr className="border-b border-[var(--color-border-subtle)] bg-[var(--color-bg-layer-01)]">
-                        <SortableHeader colKey="order_number" label={t("orders.colOrder")} />
+                        <th className="px-4 py-3 text-left text-[12px] font-semibold uppercase tracking-wider text-[var(--color-text-secondary)]">
+                          {t("orders.colOrder")}
+                        </th>
                         <SortableHeader colKey="po_number" label={t("orders.colPO")} />
                         <SortableHeader colKey="order_date" label={t("orders.colDate")} />
                         <SortableHeader colKey="status" label={t("orders.colStatus")} />
-                        <SortableHeader colKey="total_amount" label={t("orders.colTotal")} align="right" />
                         <SortableHeader colKey="expected_delivery" label={t("orders.colExpDelivery")} />
                         <SortableHeader colKey="items_remaining" label={t("orders.colRemaining")} />
-                        <th className="px-4 py-3 w-10" />
+                        <th className="px-4 py-3 text-left text-[12px] font-semibold uppercase tracking-wider text-[var(--color-text-secondary)]">
+                          {t("orders.colPreview")}
+                        </th>
+                        <SortableHeader colKey="total_amount" label={t("orders.colTotal")} align="right" />
+                        <th className="px-4 py-3 w-[120px]" />
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-[var(--color-border-subtle)]">
-                      {displayRows.map((order) => (
+                      {displayRows.map((order) => {
+                        const orderItems = lineItems.filter((li) => li.order_id === order.id);
+                        const thumbs = orderItems.slice(0, 3);
+                        const moreCount = orderItems.length - thumbs.length;
+                        return (
                         <tr key={order.id}
                           className={cn("group transition-colors cursor-pointer",
                             sidePanelOrder === order.order_number ? "bg-[var(--color-rexel-primary-10)]"
@@ -746,25 +802,48 @@ export default function OrderHistory() {
                           <td className="px-4 py-3 text-[13px] text-[var(--color-text-secondary)]">{order.po_number ?? "—"}</td>
                           <td className="px-4 py-3 text-[13px] text-[var(--color-text-secondary)]">{formatDate(order.order_date, "dd/MM/yyyy")}</td>
                           <td className="px-4 py-3"><StatusBadge status={order.status} /></td>
-                          <td className="px-4 py-3 text-[13px] text-right font-heading font-semibold text-[var(--color-text-primary)]">{formatCurrency(order.total_amount)}</td>
                           <td className="px-4 py-3 text-[13px] font-semibold text-[var(--color-primary)]">{formatDate(order.expected_delivery, "dd/MM/yyyy")}</td>
                           <td className="px-4 py-3 text-[13px] text-[var(--color-text-secondary)]">{order.items_remaining}</td>
-                          <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
-                            <div className="flex items-center gap-2">
-                              <button onClick={() => toggleJoblist(order.id)}
-                                className="flex h-8 w-8 items-center justify-center rounded-[var(--border-radius-sm)] border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-rexel-primary-10)] transition-colors"
-                                title={joblistIds.has(order.id) ? "Retirer de la joblist" : "Ajouter à la joblist"}>
-                                <Star className={cn("h-3.5 w-3.5", joblistIds.has(order.id) && "fill-[var(--color-primary)]")} />
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-1.5">
+                              {thumbs.map((li) => (
+                                <div
+                                  key={li.id}
+                                  className="h-8 w-8 shrink-0 rounded-[var(--border-radius-sm)] bg-[#F6F8FB] border border-[#E0E4EB] flex items-center justify-center"
+                                  title={li.product_name}
+                                >
+                                  <Package className="h-3.5 w-3.5 text-[#a8a8a8]" />
+                                </div>
+                              ))}
+                              {moreCount > 0 && (
+                                <span className="text-[12px] font-semibold text-[var(--color-text-secondary)]">+{moreCount}</span>
+                              )}
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 text-[13px] text-right font-heading font-semibold text-[var(--color-text-primary)]">{formatCurrency(order.total_amount)}</td>
+                          <td className="pl-2 pr-4 py-3" onClick={(e) => e.stopPropagation()}>
+                            <div className="flex items-center justify-end gap-2">
+                              <button
+                                onClick={() => toggleJoblist(order.id)}
+                                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[var(--border-radius-sm)] border border-[var(--color-primary)] bg-white text-[var(--color-primary)] hover:bg-[var(--color-rexel-primary-10)] transition-colors"
+                                title={joblistIds.has(order.id) ? "Retirer de la joblist" : "Ajouter à la joblist"}
+                                aria-label={joblistIds.has(order.id) ? "Retirer de la joblist" : "Ajouter à la joblist"}
+                              >
+                                <Star className={cn("h-4 w-4", joblistIds.has(order.id) && "fill-[var(--color-primary)]")} />
                               </button>
-                              <button onClick={() => handleReorderAll(order)}
-                                className="flex h-8 w-8 items-center justify-center rounded-[var(--border-radius-sm)] bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-hover)] transition-colors"
-                                title={t("orders.reorderAllTitle")}>
-                                <ShoppingCart className="h-3.5 w-3.5" />
+                              <button
+                                onClick={() => handleReorderAll(order)}
+                                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[var(--border-radius-sm)] bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-hover)] transition-colors"
+                                title={t("orders.reorderAllTitle")}
+                                aria-label={t("orders.reorderAllTitle")}
+                              >
+                                <ShoppingCart className="h-4 w-4" />
                               </button>
                             </div>
                           </td>
                         </tr>
-                      ))}
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>
@@ -809,28 +888,32 @@ export default function OrderHistory() {
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <AlertTriangle className="h-5 w-5 text-[var(--color-text-primary)]" />
-                <h2 className="headline-l text-[#161616]">
-                  {t("orders.needsAttention")} ({needsAttentionOrders.length})
+                <h2 className="font-heading text-[18px] font-semibold leading-[22px] text-[var(--color-text-primary)]">
+                  {t("orders.needsAttention")}{" "}
+                  <span className="text-[var(--color-text-secondary)] font-semibold">({needsAttentionOrders.length})</span>
                 </h2>
               </div>
               <div className="grid gap-3 grid-cols-1">
-                {needsAttentionOrders.map((o) => (
+                {needsAttentionOrders.slice(0, 3).map((o) => (
                   <OrderCard key={o.id} order={o} lineItems={lineItems} onClick={() => setSidePanelOrder(o.order_number)} warning onReorder={() => handleReorderAll(o)} inJoblist={joblistIds.has(o.id)} onToggleJoblist={() => toggleJoblist(o.id)} />
                 ))}
               </div>
             </div>
           )}
 
-          {/* Separator between sections */}
+          {/* Spacer between sections */}
           {needsAttentionOrders.length > 0 && ongoingOrders.length > 0 && activeTab === "ongoing" && (
-            <div className="border-t border-[var(--color-border-subtle)]" />
+            <div className="h-8" />
           )}
 
           {activeTab === "ongoing" && ongoingOrders.length > 0 && (
             <div className="space-y-3">
-              <h2 className="headline-l text-[#161616]">
-                {t("orders.ongoing")} ({ongoingOrders.length})
-              </h2>
+              <div className="flex items-center gap-2">
+                <h2 className="font-heading text-[18px] font-semibold leading-[22px] text-[var(--color-text-primary)]">
+                  {t("orders.ongoing")}{" "}
+                  <span className="text-[var(--color-text-secondary)] font-semibold">({ongoingOrders.length})</span>
+                </h2>
+              </div>
               <div className="grid gap-3 grid-cols-1">
                 {ongoingOrders.slice(0, visibleCount).map((o) => (
                   <OrderCard key={o.id} order={o} lineItems={lineItems} onClick={() => setSidePanelOrder(o.order_number)} onReorder={() => handleReorderAll(o)} inJoblist={joblistIds.has(o.id)} onToggleJoblist={() => toggleJoblist(o.id)} />
