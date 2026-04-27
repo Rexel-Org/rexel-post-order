@@ -184,7 +184,7 @@ function OrderCard({
       </div>
 
       {order.status === "delayed" && order.previous_expected_delivery && (
-        <div className="mt-[var(--spacing-2)] flex items-center gap-[8px] rounded-[var(--border-radius-sm)] border border-[var(--color-alert-error-border)] bg-[var(--color-alert-error-bg)] px-[var(--spacing-2)] min-h-[52px] font-[var(--font-body)] text-[14px] leading-[20px] text-[var(--color-alert-error-text)]">
+        <div className="mt-[var(--spacing-2)] flex items-center gap-[8px] rounded-[var(--border-radius-sm)] border border-[var(--color-alert-error-border)] bg-[var(--color-alert-error-bg)] px-[var(--spacing-2)] min-h-[40px] font-[var(--font-body)] text-[14px] leading-[20px] text-[var(--color-alert-error-text)]">
           <AlertTriangle className="h-4 w-4 shrink-0" />
           <span>
             {t("orders.newDeliveryDate")}: <span className="font-semibold">{formatDate(order.expected_delivery, "dd/MM/yyyy")}</span> {t("orders.insteadOf")}{" "}
