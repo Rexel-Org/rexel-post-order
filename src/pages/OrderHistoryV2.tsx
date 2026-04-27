@@ -192,7 +192,7 @@ function OrderCard({
         <div className="mt-[var(--spacing-2)] flex items-center gap-[8px] rounded-[var(--border-radius-sm)] border border-[var(--color-alert-error-border)] bg-[var(--color-alert-error-bg)] px-[var(--spacing-2)] min-h-[52px] font-[var(--font-body)] text-[14px] leading-[20px] text-[var(--color-alert-error-text)]">
           <AlertTriangle className="h-4 w-4 shrink-0" />
           <span>
-            {t("orders.newDeliveryDate")}: {formatDate(order.expected_delivery, "dd/MM/yyyy")} {t("orders.insteadOf")}{" "}
+            {t("orders.newDeliveryDate")}: <span className="font-semibold">{formatDate(order.expected_delivery, "dd/MM/yyyy")}</span> {t("orders.insteadOf")}{" "}
             <span className="line-through">{formatDate(order.previous_expected_delivery, "dd/MM/yyyy")}</span>
             {" — "}
             {t("orders.delayedByCarrier")}
@@ -201,7 +201,7 @@ function OrderCard({
       )}
 
       {order.status === "partially_delivered" && (
-        <div className="mt-[var(--spacing-2)] font-[var(--font-body)] text-[12px] leading-[16px] text-[#525252]">
+        <div className="mt-[var(--spacing-2)] font-[var(--font-body)] text-[14px] leading-[20px] font-semibold text-[#525252]">
           {order.items_remaining} {t("orders.itemsRemaining")} | {t("orders.nextExpected")}:{" "}
           {formatDate(order.expected_delivery, "dd/MM/yyyy")}
         </div>
