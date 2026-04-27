@@ -85,13 +85,30 @@ function ShipmentMini({ shipment, lineItems }: { shipment: ShipmentRow; lineItem
   const LIMIT = 5;
   const visibleItems = showAll ? items : items.slice(0, LIMIT);
   const hiddenCount = items.length - LIMIT;
+  const shipmentDeliveredQty = items.reduce((sum, li) => sum + (li.quantity - li.remaining), 0);
+  const shipmentTotalQty = items.reduce((sum, li) => sum + li.quantity, 0);
+  const isShipmentDelivered = shipment.status === "delivered";
 
   return (
     <div className="rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] p-4">
       <div className="flex items-center justify-between mb-3">
-        <span className="text-[13px] font-semibold text-[var(--color-text-primary)]">
-          {t("delivery.shipmentN")} {shipment.shipment_index}
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="text-[13px] font-semibold text-[var(--color-text-primary)]">
+            {t("delivery.shipmentN")} {shipment.shipment_index}
+          </span>
+          {shipmentTotalQty > 0 && (
+            <span
+              className={cn(
+                "inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold",
+                isShipmentDelivered
+                  ? "bg-[var(--color-alert-success-bg)] text-[var(--color-success)]"
+                  : "bg-[var(--color-bg-layer-01)] text-[var(--color-text-secondary)]"
+              )}
+            >
+              {shipmentDeliveredQty}/{shipmentTotalQty} {isShipmentDelivered ? "delivered" : "in transit"}
+            </span>
+          )}
+        </div>
         <span className="text-[12px] text-[var(--color-text-secondary)]">{shipment.carrier ?? ""}</span>
       </div>
 
@@ -611,14 +628,36 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                     </div>
                   )}
 
-                  {data.shipments.length > 0 && (
-                    <div className="space-y-3">
-                      <h3 className="text-[13px] font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider">{t("side.shipmentsH")}</h3>
-                      {data.shipments.map((s) => (
-                        <ShipmentMini key={s.id} shipment={s} lineItems={data.lineItems} />
-                      ))}
-                    </div>
-                  )}
+                  {data.shipments.length > 0 && (() => {
+                    const totalQty = data.lineItems.reduce((s, li) => s + li.quantity, 0);
+                    const deliveredQty = data.lineItems.reduce((s, li) => s + (li.quantity - li.remaining), 0);
+                    const remainingQty = totalQty - deliveredQty;
+                    const pct = totalQty > 0 ? Math.round((deliveredQty / totalQty) * 100) : 0;
+                    const showRecap = totalQty > 0 && deliveredQty < totalQty && deliveredQty > 0;
+                    return (
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <h3 className="text-[13px] font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider">{t("side.shipmentsH")}</h3>
+                          {showRecap && (
+                            <span className="text-[12px] text-[var(--color-text-secondary)]">
+                              <span className="font-semibold text-[var(--color-text-primary)]">{deliveredQty}</span> of {totalQty} delivered · <span className="font-semibold text-[var(--color-text-primary)]">{remainingQty}</span> remaining
+                            </span>
+                          )}
+                        </div>
+                        {showRecap && (
+                          <div className="rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-layer-01)] px-3 py-2.5">
+                            <div className="flex items-center gap-3">
+                              <Progress value={pct} className="h-1.5 flex-1" />
+                              <span className="text-[12px] font-semibold text-[var(--color-text-primary)] shrink-0">{pct}%</span>
+                            </div>
+                          </div>
+                        )}
+                        {data.shipments.map((s) => (
+                          <ShipmentMini key={s.id} shipment={s} lineItems={data.lineItems} />
+                        ))}
+                      </div>
+                    );
+                  })()}
 
                   {(() => {
                     const unassigned = data.lineItems.filter((li) => !li.shipment_id);
