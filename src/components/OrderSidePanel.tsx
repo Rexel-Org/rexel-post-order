@@ -85,13 +85,30 @@ function ShipmentMini({ shipment, lineItems }: { shipment: ShipmentRow; lineItem
   const LIMIT = 5;
   const visibleItems = showAll ? items : items.slice(0, LIMIT);
   const hiddenCount = items.length - LIMIT;
+  const shipmentDeliveredQty = items.reduce((sum, li) => sum + (li.quantity - li.remaining), 0);
+  const shipmentTotalQty = items.reduce((sum, li) => sum + li.quantity, 0);
+  const isShipmentDelivered = shipment.status === "delivered";
 
   return (
     <div className="rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] p-4">
       <div className="flex items-center justify-between mb-3">
-        <span className="text-[13px] font-semibold text-[var(--color-text-primary)]">
-          {t("delivery.shipmentN")} {shipment.shipment_index}
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="text-[13px] font-semibold text-[var(--color-text-primary)]">
+            {t("delivery.shipmentN")} {shipment.shipment_index}
+          </span>
+          {shipmentTotalQty > 0 && (
+            <span
+              className={cn(
+                "inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold",
+                isShipmentDelivered
+                  ? "bg-[var(--color-alert-success-bg)] text-[var(--color-success)]"
+                  : "bg-[var(--color-bg-layer-01)] text-[var(--color-text-secondary)]"
+              )}
+            >
+              {shipmentDeliveredQty}/{shipmentTotalQty} {isShipmentDelivered ? "delivered" : "in transit"}
+            </span>
+          )}
+        </div>
         <span className="text-[12px] text-[var(--color-text-secondary)]">{shipment.carrier ?? ""}</span>
       </div>
 
