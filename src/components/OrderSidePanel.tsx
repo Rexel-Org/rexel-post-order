@@ -643,14 +643,6 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                             </span>
                           )}
                         </div>
-                        {showRecap && (
-                          <div className="rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-layer-01)] px-3 py-2.5">
-                            <div className="flex items-center gap-3">
-                              <Progress value={pct} className="h-1.5 flex-1" />
-                              <span className="text-[12px] font-semibold text-[var(--color-text-primary)] shrink-0">{pct}%</span>
-                            </div>
-                          </div>
-                        )}
                         {data.shipments.map((s) => (
                           <ShipmentMini key={s.id} shipment={s} lineItems={data.lineItems} />
                         ))}
