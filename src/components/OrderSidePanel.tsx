@@ -93,7 +93,7 @@ function ShipmentMini({ shipment, lineItems }: { shipment: ShipmentRow; lineItem
     <div className="rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] p-4">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <span className="text-[13px] font-semibold text-[var(--color-text-primary)]">
+          <span className="text-[12px] font-semibold text-[var(--color-text-primary)]">
             {t("delivery.shipmentN")} {shipment.shipment_index}
           </span>
           {shipmentTotalQty > 0 && (
@@ -475,11 +475,11 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                   <div className="mt-3 rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-layer-01)] px-3 py-2.5">
                     {/* Primary row */}
                     <div className="grid grid-cols-1 gap-1 sm:grid-cols-2 sm:items-center">
-                      <div className="text-[13px] leading-[18px] text-[var(--color-text-primary)]">
+                      <div className="text-[12px] leading-[18px] text-[var(--color-text-primary)]">
                         <span className="text-[var(--color-text-secondary)]">{t("side.ordered")} </span>
                         <span className="font-semibold">{formatDate(data.order.order_date, "dd/MM/yyyy")}</span>
                       </div>
-                      <div className="text-[13px] leading-[18px] sm:text-right">
+                      <div className="text-[12px] leading-[18px] sm:text-right">
                         <span className="font-heading font-semibold text-[var(--color-text-primary)]">
                           {formatCurrency(data.order.total_amount)}
                         </span>
@@ -560,7 +560,7 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                       disabled={tab.disabled}
                       onClick={() => !tab.disabled && setActiveTab(tab.key)}
                       className={cn(
-                        "flex-1 flex items-center justify-center gap-1.5 py-3 text-[13px] font-semibold border-b-2 -mb-px transition-colors",
+                        "flex-1 flex items-center justify-center gap-1.5 py-3 text-[12px] font-semibold border-b-2 -mb-px transition-colors",
                         tab.disabled
                           ? "border-transparent text-[var(--color-text-placeholder)] cursor-not-allowed opacity-50"
                           : activeTab === tab.key
@@ -637,7 +637,7 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                     return (
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
-                          <h3 className="text-[13px] font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider">{t("side.shipmentsH")}</h3>
+                          <h3 className="text-[12px] font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider">{t("side.shipmentsH")}</h3>
                           {showRecap && (
                             <span className="text-[12px] text-[var(--color-text-secondary)]">
                               <span className="font-semibold text-[var(--color-text-primary)]">{deliveredQty}</span> of {totalQty} delivered · <span className="font-semibold text-[var(--color-text-primary)]">{remainingQty}</span> remaining
@@ -664,9 +664,9 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                     if (unassigned.length === 0) return null;
                     return (
                       <div className="space-y-3">
-                        <h3 className="text-[13px] font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider">{t("side.awaiting")}</h3>
+                        <h3 className="text-[12px] font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider">{t("side.awaiting")}</h3>
                         {(showAllItems ? unassigned : unassigned.slice(0, 5)).map((item) => (
-                          <div key={item.id} className="flex items-start justify-between text-[13px] rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] p-3">
+                          <div key={item.id} className="flex items-start justify-between text-[12px] rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] p-3">
                             <div className="flex items-start gap-3 min-w-0">
                               <div className="h-10 w-10 shrink-0 rounded border border-[#E0E4EB] bg-[#F6F8FB] flex items-center justify-center"><Package className="h-5 w-5 text-[#a8a8a8]" /></div>
                               <div className="min-w-0 space-y-1">
@@ -676,7 +676,7 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                             </div>
                             <div className="flex items-start gap-4 shrink-0 ml-3">
                               <div className="flex flex-col items-end text-right gap-1">
-                                <p className="text-[13px] leading-[16px] text-[var(--color-text-primary)]">×{item.quantity}</p>
+                                <p className="text-[12px] leading-[16px] text-[var(--color-text-primary)]">×{item.quantity}</p>
                                 <p className="text-[12px] leading-[16px] text-[var(--color-text-secondary)] font-heading font-semibold">{formatCurrency(item.unit_price)}</p>
                               </div>
                               <div className="flex items-start gap-[8px]">
@@ -716,9 +716,9 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                     const hiddenCount = totalItems - (showAllItems ? totalItems : Math.min(5, data.lineItems.filter((li) => !li.shipment_id).length) + Math.min(5, assigned.length));
                     return (
                       <div className="space-y-3">
-                        <h3 className="text-[13px] font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider">{t("side.allItems")}</h3>
+                        <h3 className="text-[12px] font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider">{t("side.allItems")}</h3>
                         {visible.map((item) => (
-                          <div key={item.id} className="flex items-start justify-between text-[13px] rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] p-3">
+                          <div key={item.id} className="flex items-start justify-between text-[12px] rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] p-3">
                             <div className="flex items-start gap-3 min-w-0">
                               <div className="h-10 w-10 shrink-0 rounded border border-[#E0E4EB] bg-[#F6F8FB] flex items-center justify-center"><Package className="h-5 w-5 text-[#a8a8a8]" /></div>
                               <div className="min-w-0 space-y-1">
@@ -728,7 +728,7 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                             </div>
                             <div className="flex items-start gap-4 shrink-0 ml-3">
                               <div className="flex flex-col items-end text-right gap-1">
-                                <p className="text-[13px] leading-[16px] text-[var(--color-text-primary)]">×{item.quantity}</p>
+                                <p className="text-[12px] leading-[16px] text-[var(--color-text-primary)]">×{item.quantity}</p>
                                 <p className="text-[12px] leading-[16px] text-[var(--color-text-secondary)] font-heading font-semibold">{formatCurrency(item.unit_price)}</p>
                               </div>
                               <div className="flex items-start gap-[8px]">
@@ -764,7 +764,7 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                     <button
                       type="button"
                       onClick={() => setShowAllItems(true)}
-                      className="w-full inline-flex items-center justify-center h-10 rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] text-[13px] font-semibold text-[var(--color-primary)] hover:bg-[var(--color-bg-layer-01)] transition-colors"
+                      className="w-full inline-flex items-center justify-center h-10 rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] text-[12px] font-semibold text-[var(--color-primary)] hover:bg-[var(--color-bg-layer-01)] transition-colors"
                     >
                       {t("side.showMore")} ({data.lineItems.length - 5})
                     </button>
@@ -773,7 +773,7 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                     <button
                       type="button"
                       onClick={() => setShowAllItems(false)}
-                      className="w-full inline-flex items-center justify-center h-10 rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] text-[13px] font-semibold text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-layer-01)] transition-colors"
+                      className="w-full inline-flex items-center justify-center h-10 rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] text-[12px] font-semibold text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-layer-01)] transition-colors"
                     >
                       {t("side.showLess")}
                     </button>
@@ -781,7 +781,7 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
 
                   <div className="rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] p-4">
                     <p className="text-[12px] font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider mb-2">{t("side.salesRep")}</p>
-                    <p className="text-[13px] font-semibold text-[var(--color-text-primary)]">Gisèle Michu — Agence Paris-Est</p>
+                    <p className="text-[12px] font-semibold text-[var(--color-text-primary)]">Gisèle Michu — Agence Paris-Est</p>
                     <p className="text-[12px] text-[var(--color-text-secondary)] mt-1">
                       <Phone className="inline h-3 w-3 mr-1" />
                       01 23 45 67 89
@@ -801,7 +801,7 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                   {Object.entries(docGroups).map(([type, docs]) => (
                     <div key={type} className="space-y-2">
                       <div className="flex items-center justify-between">
-                        <h3 className="text-[13px] font-semibold text-[var(--color-text-primary)]">
+                        <h3 className="text-[12px] font-semibold text-[var(--color-text-primary)]">
                           {type} ({docs.length})
                         </h3>
                         <button
@@ -820,7 +820,7 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                               <doc.icon className="h-4 w-4" />
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-[13px] font-semibold text-[var(--color-text-primary)] truncate">{doc.name}</p>
+                              <p className="text-[12px] font-semibold text-[var(--color-text-primary)] truncate">{doc.name}</p>
                               <p className="text-[12px] text-[var(--color-text-secondary)]">{formatDate(doc.date, "dd/MM/yyyy")}</p>
                             </div>
 
@@ -979,7 +979,7 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                         <div className="min-w-0">
                           <p
                             className={cn(
-                              "text-[13px] font-semibold text-[var(--color-text-primary)] truncate",
+                              "text-[12px] font-semibold text-[var(--color-text-primary)] truncate",
                               checkedItems[item.id] && "line-through text-[var(--color-text-secondary)]"
                             )}
                           >
@@ -1005,7 +1005,7 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                 <button
                   type="button"
                   onClick={handleRequestReturn}
-                  className="inline-flex items-center justify-center gap-2 h-10 rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] bg-white text-[13px] font-semibold text-[var(--color-text-primary)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-colors"
+                  className="inline-flex items-center justify-center gap-2 h-10 rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] bg-white text-[12px] font-semibold text-[var(--color-text-primary)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-colors"
                 >
                   <FileText className="h-4 w-4" />
                   {t("detail.requestReturn")}
@@ -1013,7 +1013,7 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                 <button
                   type="button"
                   onClick={handleContactSalesRep}
-                  className="inline-flex items-center justify-center gap-2 h-10 rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] bg-white text-[13px] font-semibold text-[var(--color-text-primary)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-colors"
+                  className="inline-flex items-center justify-center gap-2 h-10 rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] bg-white text-[12px] font-semibold text-[var(--color-text-primary)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-colors"
                 >
                   <Mail className="h-4 w-4" />
                   {t("detail.contactRep")}
@@ -1026,7 +1026,7 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                   disabled={!allChecked || isCompletedOrder}
                   onClick={handleValidateReception}
                   className={cn(
-                    "w-full inline-flex items-center justify-center gap-2 h-10 rounded-[var(--border-radius-sm)] text-[13px] font-semibold transition-colors",
+                    "w-full inline-flex items-center justify-center gap-2 h-10 rounded-[var(--border-radius-sm)] text-[12px] font-semibold transition-colors",
                     allChecked && !isCompletedOrder
                       ? "bg-[var(--color-success)] text-white hover:opacity-90"
                       : "bg-[var(--color-bg-layer-01)] text-[var(--color-text-placeholder)] cursor-not-allowed"
@@ -1042,14 +1042,14 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                   <button
                     type="button"
                     onClick={handleReorderAll}
-                    className="w-full inline-flex items-center justify-center gap-2 h-10 rounded-[var(--border-radius-sm)] bg-[var(--color-primary)] text-[var(--color-white)] text-[13px] font-semibold hover:bg-[var(--color-primary-hover)] transition-colors"
+                    className="w-full inline-flex items-center justify-center gap-2 h-10 rounded-[var(--border-radius-sm)] bg-[var(--color-primary)] text-[var(--color-white)] text-[12px] font-semibold hover:bg-[var(--color-primary-hover)] transition-colors"
                   >
                     <ShoppingCart className="h-4 w-4" /> {t("side.reorderAll")}
                   </button>
                   <button
                     type="button"
                     onClick={() => toast.success(t("orders.joblistAdded"))}
-                    className="w-full inline-flex items-center justify-center gap-2 h-10 rounded-[var(--border-radius-sm)] border border-[var(--color-primary)] text-[var(--color-primary)] text-[13px] font-semibold hover:bg-[var(--color-rexel-primary-10)] transition-colors"
+                    className="w-full inline-flex items-center justify-center gap-2 h-10 rounded-[var(--border-radius-sm)] border border-[var(--color-primary)] text-[var(--color-primary)] text-[12px] font-semibold hover:bg-[var(--color-rexel-primary-10)] transition-colors"
                   >
                     <Star className="h-4 w-4" /> {t("side.addToJoblist")}
                   </button>
