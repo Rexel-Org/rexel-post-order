@@ -99,7 +99,7 @@ function ShipmentMini({ shipment, lineItems }: { shipment: ShipmentRow; lineItem
           {shipmentTotalQty > 0 && (
             <span
               className={cn(
-                "inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold",
+                "inline-flex items-center rounded-full px-2 py-0.5 text-[12px] font-semibold",
                 isShipmentDelivered
                   ? "bg-[var(--color-alert-success-bg)] text-[var(--color-success)]"
                   : "bg-[var(--color-bg-layer-01)] text-[var(--color-text-secondary)]"
