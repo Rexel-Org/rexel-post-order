@@ -474,11 +474,11 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                   <div className="mt-3 rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-layer-01)] px-3 py-2.5">
                     {/* Primary row */}
                     <div className="grid grid-cols-1 gap-1 sm:grid-cols-2 sm:items-center">
-                      <div className="text-[12px] leading-[18px] text-[var(--color-text-primary)]">
+                      <div className="text-[14px] leading-[20px] text-[var(--color-text-primary)]">
                         <span className="text-[var(--color-text-secondary)]">{t("side.ordered")} </span>
                         <span className="font-semibold">{formatDate(data.order.order_date, "dd/MM/yyyy")}</span>
                       </div>
-                      <div className="text-[12px] leading-[18px] sm:text-right">
+                      <div className="text-[14px] leading-[20px] sm:text-right">
                         <span className="font-heading font-semibold text-[var(--color-text-primary)]">
                           {formatCurrency(data.order.total_amount)}
                         </span>
