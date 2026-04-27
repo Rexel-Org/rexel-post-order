@@ -8,7 +8,6 @@ import { Progress } from "@/components/ui/progress";
 import { useI18n } from "@/i18n/useI18n";
 
 const statusVisual: Record<string, { icon: typeof CheckCircle; colorClass: string; bgClass: string }> = {
-  on_track: { icon: CheckCircle, colorClass: "text-[var(--color-success)]", bgClass: "bg-[var(--color-alert-success-bg)] border-[var(--color-success)]" },
   being_prepared: { icon: Package, colorClass: "text-[var(--color-info)]", bgClass: "bg-[var(--color-alert-info-bg)] border-[var(--color-info)]" },
   in_transit: { icon: Truck, colorClass: "text-[var(--color-info)]", bgClass: "bg-[var(--color-alert-info-bg)] border-[var(--color-info)]" },
   partially_delivered: { icon: Package, colorClass: "text-[var(--color-warning)]", bgClass: "bg-[var(--color-alert-error-bg)] border-[var(--color-warning)]" },
@@ -19,7 +18,7 @@ const statusVisual: Record<string, { icon: typeof CheckCircle; colorClass: strin
 
 function StatusBadge({ status }: { status: string }) {
   const { t } = useI18n();
-  const meta = statusVisual[status] ?? statusVisual.on_track;
+  const meta = statusVisual[status] ?? statusVisual.in_transit;
   const Icon = meta.icon;
   return (
     <span className={cn("inline-flex h-8 items-center gap-1 rounded-full border px-3 text-[12px] font-semibold", meta.bgClass, meta.colorClass)}>

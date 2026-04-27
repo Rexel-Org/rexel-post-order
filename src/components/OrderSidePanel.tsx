@@ -22,7 +22,6 @@ function productImageUrl(ref: string) {
 }
 
 const statusVisual: Record<string, { icon: typeof CheckCircle; colorClass: string; bgClass: string }> = {
-  on_track: { icon: CheckCircle, colorClass: "text-[var(--color-success)]", bgClass: "bg-[var(--color-alert-success-bg)] border-[var(--color-success)]" },
   being_prepared: { icon: Package, colorClass: "text-[var(--color-info)]", bgClass: "bg-[var(--color-alert-info-bg)] border-[var(--color-info)]" },
   in_transit: { icon: Truck, colorClass: "text-[var(--color-info)]", bgClass: "bg-[var(--color-alert-info-bg)] border-[var(--color-info)]" },
   partially_delivered: {
@@ -316,7 +315,7 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
     }
   };
 
-  const receptionEnabled = !!data && ["on_track", "in_transit", "partially_delivered", "completed"].includes(data.order.status);
+  const receptionEnabled = !!data && ["in_transit", "partially_delivered", "completed"].includes(data.order.status);
 
   const tabs = useMemo(
     () =>
@@ -457,7 +456,7 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                       <div className="flex flex-wrap items-center gap-2">
                       <CopyPill text={data.order.order_number} />
                       {(() => {
-                        const meta = statusVisual[data.order.status] ?? statusVisual.on_track;
+                        const meta = statusVisual[data.order.status] ?? statusVisual.in_transit;
                         const Icon = meta.icon;
                         return (
                           <span className={cn("inline-flex h-8 items-center gap-1 rounded-full border px-3 text-[12px] font-semibold", meta.bgClass, meta.colorClass)}>

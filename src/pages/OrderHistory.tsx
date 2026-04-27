@@ -24,7 +24,6 @@ import {
 
 // --- Status config (labels via i18n) ---
 const statusVisual: Record<string, { icon: typeof CheckCircle; colorClass: string; bgClass: string }> = {
-  on_track: { icon: CheckCircle, colorClass: "text-[var(--color-success)]", bgClass: "bg-[var(--color-alert-success-bg)] border-[var(--color-success)]" },
   being_prepared: { icon: Package, colorClass: "text-[var(--color-info)]", bgClass: "bg-[var(--color-alert-info-bg)] border-[var(--color-info)]" },
   in_transit: { icon: Truck, colorClass: "text-[var(--color-info)]", bgClass: "bg-[var(--color-alert-info-bg)] border-[var(--color-info)]" },
   partially_delivered: {
@@ -43,7 +42,7 @@ const statusVisual: Record<string, { icon: typeof CheckCircle; colorClass: strin
 
 function StatusBadge({ status }: { status: string }) {
   const { t } = useI18n();
-  const meta = statusVisual[status] ?? statusVisual.on_track;
+  const meta = statusVisual[status] ?? statusVisual.in_transit;
   const Icon = meta.icon;
   const label = t(`orderStatus.${status}`);
   return (
@@ -79,7 +78,7 @@ const datePresets: DatePreset[] = [
 ];
 
 // --- Helpers ---
-const ONGOING_STATUSES = ["on_track", "being_prepared", "in_transit", "delayed", "partially_delivered"];
+const ONGOING_STATUSES = ["being_prepared", "in_transit", "delayed", "partially_delivered"];
 const NEEDS_ATTENTION_STATUSES = ["delayed", "cancelled"];
 
 function isOngoing(s: string) { return ONGOING_STATUSES.includes(s); }
@@ -297,7 +296,7 @@ export default function OrderHistory() {
 
   // Table sorted data
   const tableSorted = useMemo(() => {
-    const statusOrder: Record<string, number> = { delayed: 0, cancelled: 1, partially_delivered: 2, in_transit: 3, being_prepared: 4, on_track: 5, completed: 6 };
+    const statusOrder: Record<string, number> = { delayed: 0, cancelled: 1, partially_delivered: 2, in_transit: 3, being_prepared: 4, completed: 5 };
     return [...filtered].sort((a, b) => {
       let cmp = 0;
       switch (sortKey) {
