@@ -551,7 +551,7 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                   </div>
                 </div>
 
-                <div className="flex px-6 border-b border-[var(--color-border-subtle)]">
+                <div className="flex mx-6 border-b border-[var(--color-border-subtle)]">
                   {tabs.map((tab) => (
                     <button
                       key={tab.key}
