@@ -10,7 +10,7 @@ import type { MarketCode } from "@/i18n/messages";
 import { useMarketLocaleStore } from "@/stores/marketLocaleStore";
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useVersionStore, type AppVersion, type AppScenario } from "@/stores/versionStore";
+import { useVersionStore, type AppView } from "@/stores/versionStore";
 
 const MARKETS: MarketCode[] = ["FR", "SE", "DE", "EN"];
 
@@ -18,21 +18,26 @@ export default function ScenarioSwitcher() {
   const { t } = useI18n();
   const market = useMarketLocaleStore((s) => s.market);
   const setMarket = useMarketLocaleStore((s) => s.setMarket);
-  const version = useVersionStore((s) => s.version);
-  const setVersion = useVersionStore((s) => s.setVersion);
-  const scenario = useVersionStore((s) => s.scenario);
-  const setScenario = useVersionStore((s) => s.setScenario);
+  const view = useVersionStore((s) => s.view);
+  const setView = useVersionStore((s) => s.setView);
   const location = useLocation();
   const navigate = useNavigate();
 
   const triggerClass =
-    "h-8 w-[min(200px,70vw)] border-[var(--color-border-subtle)] bg-[var(--color-white)] text-[12px] text-[var(--color-text-primary)] shadow-none";
+    "h-8 w-[min(240px,70vw)] border-[var(--color-border-subtle)] bg-[var(--color-white)] text-[12px] text-[var(--color-text-primary)] shadow-none";
 
+  // Sync view with current route (v1 vs v2 only matters for order history)
   useEffect(() => {
     const isV2 = location.pathname.startsWith("/v2");
-    const inferred: AppVersion = isV2 ? "v2" : "v1";
-    if (inferred !== version) setVersion(inferred);
-  }, [location.pathname, setVersion, version]);
+    if (view === "homepage") return;
+    const inferred: AppView = isV2 ? "order_history_v2" : "order_history_v1";
+    if (inferred !== view) setView(inferred);
+  }, [location.pathname, setView, view]);
+
+  const handleViewChange = (v: AppView) => {
+    setView(v);
+    navigate(v === "order_history_v2" ? "/v2" : "/");
+  };
 
   return (
     <div className="flex flex-col items-start gap-2 font-[var(--font-body)] text-[12px] text-[var(--color-text-secondary)] sm:flex-row sm:items-center">
@@ -53,41 +58,15 @@ export default function ScenarioSwitcher() {
       </label>
 
       <label className="flex items-center gap-2">
-        <span className="whitespace-nowrap">{t("proto.version")}</span>
-        <Select
-          value={version}
-          onValueChange={(v) => {
-            const next = v as AppVersion;
-            setVersion(next);
-            navigate(next === "v2" ? "/v2" : "/");
-          }}
-        >
-          <SelectTrigger className={triggerClass}>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="v1">V1</SelectItem>
-            <SelectItem value="v2">V2</SelectItem>
-          </SelectContent>
-        </Select>
-      </label>
-
-      <label className="flex items-center gap-2">
         <span className="whitespace-nowrap">{t("proto.scenario")}</span>
-        <Select
-          value={scenario}
-          onValueChange={(v) => {
-            const next = v as AppScenario;
-            setScenario(next);
-            navigate("/");
-          }}
-        >
+        <Select value={view} onValueChange={(v) => handleViewChange(v as AppView)}>
           <SelectTrigger className={triggerClass}>
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="order_history">{t("scenario.order_history")}</SelectItem>
             <SelectItem value="homepage">{t("scenario.homepage")}</SelectItem>
+            <SelectItem value="order_history_v1">{t("scenario.order_history")} V1</SelectItem>
+            <SelectItem value="order_history_v2">{t("scenario.order_history")} V2</SelectItem>
           </SelectContent>
         </Select>
       </label>
