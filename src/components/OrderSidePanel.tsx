@@ -454,17 +454,17 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                   <div className="flex items-center justify-between">
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
-                      <CopyPill text={data.order.order_number} />
-                      {(() => {
-                        const meta = statusVisual[data.order.status] ?? statusVisual.in_transit;
-                        const Icon = meta.icon;
-                        return (
-                          <span className={cn("inline-flex h-8 items-center gap-1 rounded-full border px-3 text-[12px] font-semibold", meta.bgClass, meta.colorClass)}>
-                            <Icon className="h-3 w-3 shrink-0" />
-                            {t(`orderStatus.${data.order.status}`)}
-                          </span>
-                        );
-                      })()}
+                        <CopyPill text={data.order.order_number} />
+                        {(() => {
+                          const meta = statusVisual[data.order.status] ?? statusVisual.in_transit;
+                          const Icon = meta.icon;
+                          return (
+                            <span className={cn("inline-flex h-8 items-center gap-1 rounded-full border px-3 text-[14px] font-semibold", meta.bgClass, meta.colorClass)}>
+                              <Icon className="h-3.5 w-3.5 shrink-0" />
+                              {t(`orderStatus.${data.order.status}`)}
+                            </span>
+                          );
+                        })()}
                       </div>
                     </div>
                     <button type="button" onClick={onClose} className="text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]">
@@ -507,7 +507,7 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                     )}
                   </div>
 
-                  <div className="mt-6 overflow-hidden rounded-[var(--border-radius-sm)] bg-white shadow-[var(--shadow-1)] pt-4 pb-4">
+                  <div className="mt-4 overflow-hidden rounded-[var(--border-radius-sm)] bg-white shadow-[var(--shadow-1)] pt-4 pb-4">
                     <div className="grid grid-cols-1 md:grid-cols-2">
                       <div className="px-4 md:pr-5">
                         <p className="text-[14px] font-semibold text-[var(--color-text-primary)]">
@@ -519,8 +519,8 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                               <div className="font-semibold text-[var(--color-text-primary)] break-words text-[14px]">
                                 {fulfillmentAddress.titleLine || "—"}
                               </div>
-                              {fulfillmentAddress.streetLine && <div className="break-words mt-1">{fulfillmentAddress.streetLine}</div>}
-                              {fulfillmentAddress.zipCityLine && <div className="break-words mt-1">{fulfillmentAddress.zipCityLine}</div>}
+                              {fulfillmentAddress.streetLine && <div className="break-words">{fulfillmentAddress.streetLine}</div>}
+                              {fulfillmentAddress.zipCityLine && <div className="break-words">{fulfillmentAddress.zipCityLine}</div>}
                             </>
                           ) : (
                             <div>—</div>
