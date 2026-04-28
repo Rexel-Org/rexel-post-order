@@ -471,14 +471,14 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                       <X className="h-5 w-5" />
                     </button>
                   </div>
-                  <div className="mt-3 rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-layer-01)] px-3 py-2.5">
+                  <div className="mt-4 rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-layer-01)] px-3 py-2.5">
                     {/* Primary row */}
                     <div className="grid grid-cols-1 gap-1 sm:grid-cols-2 sm:items-center">
-                      <div className="text-[14px] leading-[20px] text-[var(--color-text-primary)]">
+                      <div className="text-[16px] leading-[24px] text-[var(--color-text-primary)]">
                         <span className="text-[var(--color-text-secondary)]">{t("side.ordered")} </span>
                         <span className="font-semibold">{formatDate(data.order.order_date, "dd/MM/yyyy")}</span>
                       </div>
-                      <div className="text-[14px] leading-[20px] sm:text-right">
+                      <div className="text-[16px] leading-[24px] sm:text-right">
                         <span className="font-heading font-semibold text-[var(--color-text-primary)]">
                           {formatCurrency(data.order.total_amount)}
                         </span>
@@ -598,7 +598,7 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                         : "text-[var(--color-info)]";
                     const Icon = isDelayed || isBackorder ? AlertTriangle : Truck;
                     return (
-                      <div className={cn("flex items-center gap-2 rounded-[var(--border-radius-sm)] border px-3 min-h-[52px] text-[14px] font-semibold", bgColor, borderColor, textColor)}>
+                      <div className={cn("flex items-center gap-2 rounded-[var(--border-radius-sm)] border px-3 h-[40px] text-[14px] font-semibold", bgColor, borderColor, textColor)}>
                         <Icon className="h-4 w-4 shrink-0" />
                         <span>
                           {isDelayed ? t("side.delayedPrefix") : isBackorder ? `${t("side.expectedDelivery")} ` : `${t("side.expectedDelivery")} `}
@@ -621,7 +621,7 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                   })()}
 
                   {data.order.status === "completed" && (
-                    <div className="flex items-center gap-2 rounded-[var(--border-radius-sm)] border border-[var(--color-success)] bg-[var(--color-alert-success-bg)] px-3 min-h-[52px] text-[14px] font-semibold text-[var(--color-success)]">
+                    <div className="flex items-center gap-2 rounded-[var(--border-radius-sm)] border border-[var(--color-success)] bg-[var(--color-alert-success-bg)] px-3 h-[40px] text-[14px] font-semibold text-[var(--color-success)]">
                       <CheckCircle className="h-4 w-4 shrink-0" />
                       {t("side.deliveredCompleted")}
                     </div>
