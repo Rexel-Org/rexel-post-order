@@ -117,7 +117,14 @@ function ShipmentMini({ shipment, lineItems }: { shipment: ShipmentRow; lineItem
             {[0, 1].map((i) => (
               <div
                 key={i}
-                className={cn("h-0.5 flex-1", i < current ? "bg-[var(--color-primary)]" : "bg-[var(--color-border-subtle)]")}
+                className={cn(
+                  "h-0.5 flex-1",
+                  i < current
+                    ? isShipmentDelivered
+                      ? "bg-[var(--color-success)]"
+                      : "bg-[var(--color-primary)]"
+                    : "bg-[var(--color-border-subtle)]"
+                )}
               />
             ))}
           </div>
@@ -130,7 +137,9 @@ function ShipmentMini({ shipment, lineItems }: { shipment: ShipmentRow; lineItem
                 className={cn(
                   "flex h-7 w-7 items-center justify-center rounded-full",
                   done
-                    ? "bg-[var(--color-primary)] text-[var(--color-white)]"
+                    ? isShipmentDelivered
+                      ? "bg-[var(--color-success)] text-[var(--color-white)]"
+                      : "bg-[var(--color-primary)] text-[var(--color-white)]"
                     : "bg-[var(--color-bg-layer-01)] text-[var(--color-text-placeholder)]"
                 )}
               >
