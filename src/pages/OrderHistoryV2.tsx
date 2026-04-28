@@ -854,7 +854,7 @@ export default function OrderHistory() {
             const goNext = () => setProjectFilter(projects[(currentIdx + 1) % projects.length]);
             return (
               <div className="mb-6 flex items-center justify-between gap-4 border-b border-[var(--color-border-subtle)] pb-4">
-                <h2 className="truncate text-[24px] font-bold text-[var(--color-text-primary)]">
+                <h2 className="truncate text-[20px] font-bold text-[var(--color-text-primary)]">
                   {projectFilter}
                 </h2>
                 <div className="flex shrink-0 items-center gap-2">
