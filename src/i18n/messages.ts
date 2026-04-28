@@ -34,7 +34,7 @@ const en: Record<string, string> = {
   "home.open": "Open",
   "home.feedbackTitle": "Your opinion matters",
   "home.feedbackBody": "How would you rate Rexel?",
-  "widget.lastOrders.title": "My recent orders",
+  "widget.lastOrders.title": "My upcoming deliveries",
   "widget.lastOrders.viewAll": "View all orders",
   "widget.lastOrders.empty": "No recent orders.",
   "proto.scrollTop": "Scroll to top",
