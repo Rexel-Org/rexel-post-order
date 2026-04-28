@@ -577,27 +577,7 @@ export default function OrderHistory() {
             )}
           </div>
 
-          {viewMode === "kanban" ? (
-            <div className="flex items-center gap-1 overflow-x-auto max-w-[60%]">
-              {projects.map((p) => {
-                const active = projectFilter === p;
-                return (
-                  <button
-                    key={p}
-                    onClick={() => setProjectFilter(p)}
-                    className={cn(
-                      "h-8 shrink-0 rounded-full border px-3 text-[12px] font-semibold transition-colors",
-                      active
-                        ? "border-[var(--color-primary)] bg-[var(--color-primary)] text-white"
-                        : "border-[var(--color-border-subtle)] text-[var(--color-text-secondary)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]"
-                    )}
-                  >
-                    {p}
-                  </button>
-                );
-              })}
-            </div>
-          ) : (
+          {viewMode !== "kanban" && (
             <Select value={projectFilter} onValueChange={setProjectFilter}>
               <SelectTrigger className="w-[220px] h-10 border-[var(--color-border-subtle)] text-[12px]">
                 <SelectValue placeholder={t("orders.allProjects")} />
@@ -866,7 +846,67 @@ export default function OrderHistory() {
 
       {/* ===== KANBAN VIEW ===== */}
       {viewMode === "kanban" && filtered.length > 0 && (
-        <div className="grid grid-cols-1 gap-4 pb-4 lg:grid-cols-3">
+        <>
+          {/* Project switcher: prev/next + segmented control */}
+          {projects.length > 0 && (() => {
+            const currentIdx = Math.max(0, projects.indexOf(projectFilter));
+            const goPrev = () => setProjectFilter(projects[(currentIdx - 1 + projects.length) % projects.length]);
+            const goNext = () => setProjectFilter(projects[(currentIdx + 1) % projects.length]);
+            return (
+              <div className="mb-4 flex items-center gap-2 rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-layer-01)] p-2">
+                <span className="px-2 text-[12px] font-semibold uppercase tracking-wide text-[var(--color-text-secondary)]">
+                  {t("orders.project") ?? "Project"}
+                </span>
+                <button
+                  onClick={goPrev}
+                  disabled={projects.length < 2}
+                  className="flex h-8 w-8 items-center justify-center rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-layer-02)] text-[var(--color-text-primary)] transition-colors hover:bg-[var(--color-bg-layer-01)] disabled:opacity-40"
+                  aria-label="Previous project"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </button>
+                <div className="flex flex-1 items-center gap-1 overflow-x-auto rounded-[var(--border-radius-sm)] bg-[var(--color-bg-layer-02)] p-1">
+                  {projects.map((p) => {
+                    const active = projectFilter === p;
+                    const count = orders.filter((o) => o.project_name === p).length;
+                    return (
+                      <button
+                        key={p}
+                        onClick={() => setProjectFilter(p)}
+                        className={cn(
+                          "flex h-8 shrink-0 items-center gap-2 rounded-[var(--border-radius-sm)] px-3 text-[12px] font-semibold transition-all",
+                          active
+                            ? "bg-[var(--color-primary)] text-white shadow-sm"
+                            : "text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-layer-01)] hover:text-[var(--color-text-primary)]"
+                        )}
+                      >
+                        <span>{p}</span>
+                        <span className={cn(
+                          "rounded-full px-1.5 text-[12px] font-bold",
+                          active ? "bg-white/20 text-white" : "bg-[var(--color-bg-layer-01)] text-[var(--color-text-secondary)]"
+                        )}>
+                          {count}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+                <button
+                  onClick={goNext}
+                  disabled={projects.length < 2}
+                  className="flex h-8 w-8 items-center justify-center rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-layer-02)] text-[var(--color-text-primary)] transition-colors hover:bg-[var(--color-bg-layer-01)] disabled:opacity-40"
+                  aria-label="Next project"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+                <span className="px-2 text-[12px] text-[var(--color-text-secondary)]">
+                  {currentIdx + 1} / {projects.length}
+                </span>
+              </div>
+            );
+          })()}
+
+          <div className="grid grid-cols-1 gap-4 pb-4 lg:grid-cols-3">
           {statusGroups
             .filter((group) => statusFilters.size === 0 || group.statuses.some((s) => statusFilters.has(s)))
             .map((group) => {
@@ -953,6 +993,7 @@ export default function OrderHistory() {
               );
             })}
         </div>
+        </>
       )}
 
       {/* Empty state */}
