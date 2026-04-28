@@ -48,6 +48,7 @@ export default function LastOrdersWidget() {
   const goToHistory = () => {
     setScenario("order_history");
     navigate("/");
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
