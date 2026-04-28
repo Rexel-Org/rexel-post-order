@@ -278,6 +278,13 @@ export default function OrderHistory() {
     [orders]
   );
 
+  // In kanban view, ensure a project is always selected (default to first)
+  useEffect(() => {
+    if (viewMode === "kanban" && projectFilter === "all" && projects.length > 0) {
+      setProjectFilter(projects[0]);
+    }
+  }, [viewMode, projectFilter, projects]);
+
   const ongoingCount = orders.filter((o) => isOngoing(o.status)).length;
   const backorderCount = orders.filter((o) => o.status === "partially_delivered").length;
   const completedCount = orders.filter((o) => isCompleted(o.status)).length;
