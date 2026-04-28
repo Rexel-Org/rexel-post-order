@@ -278,6 +278,13 @@ export default function OrderHistory() {
     [orders]
   );
 
+  // In kanban view, ensure a project is always selected (default to first)
+  useEffect(() => {
+    if (viewMode === "kanban" && projectFilter === "all" && projects.length > 0) {
+      setProjectFilter(projects[0]);
+    }
+  }, [viewMode, projectFilter, projects]);
+
   const ongoingCount = orders.filter((o) => isOngoing(o.status)).length;
   const backorderCount = orders.filter((o) => o.status === "partially_delivered").length;
   const completedCount = orders.filter((o) => isCompleted(o.status)).length;
@@ -521,7 +528,8 @@ export default function OrderHistory() {
 
       {/* Sticky filter zone — KPI cards + filter bar grouped together */}
       <div className="sticky top-[var(--flow-sticky-site-header-height,140px)] z-30 -mx-1 space-y-2 bg-[var(--color-bg-page)] px-1 pb-[var(--spacing-3)] pt-[var(--spacing-2)] mb-[var(--spacing-4)]">
-        {/* Status filter cards (3 grouped toggles) — compact when sticky stuck */}
+        {/* Status filter cards (3 grouped toggles) — hidden in kanban view (column headers already show this info) */}
+        {viewMode !== "kanban" && (
         <div className={cn("grid grid-cols-1 transition-all duration-200", isStickyStuck ? "gap-2 sm:grid-cols-3" : "gap-3 sm:grid-cols-3")}>
           {statusGroups.map((group) => {
             const active = group.statuses.some((s) => statusFilters.has(s));
@@ -551,6 +559,7 @@ export default function OrderHistory() {
             );
           })}
         </div>
+        )}
 
         {/* Filter bar */}
         <div className="flex items-center gap-3">
@@ -568,15 +577,37 @@ export default function OrderHistory() {
             )}
           </div>
 
-          <Select value={projectFilter} onValueChange={setProjectFilter}>
-            <SelectTrigger className="w-[220px] h-10 border-[var(--color-border-subtle)] text-[12px]">
-              <SelectValue placeholder={t("orders.allProjects")} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">{t("orders.allProjects")}</SelectItem>
-              {projects.map((p) => (<SelectItem key={p} value={p}>{p}</SelectItem>))}
-            </SelectContent>
-          </Select>
+          {viewMode === "kanban" ? (
+            <div className="flex items-center gap-1 overflow-x-auto max-w-[60%]">
+              {projects.map((p) => {
+                const active = projectFilter === p;
+                return (
+                  <button
+                    key={p}
+                    onClick={() => setProjectFilter(p)}
+                    className={cn(
+                      "h-8 shrink-0 rounded-full border px-3 text-[12px] font-semibold transition-colors",
+                      active
+                        ? "border-[var(--color-primary)] bg-[var(--color-primary)] text-white"
+                        : "border-[var(--color-border-subtle)] text-[var(--color-text-secondary)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]"
+                    )}
+                  >
+                    {p}
+                  </button>
+                );
+              })}
+            </div>
+          ) : (
+            <Select value={projectFilter} onValueChange={setProjectFilter}>
+              <SelectTrigger className="w-[220px] h-10 border-[var(--color-border-subtle)] text-[12px]">
+                <SelectValue placeholder={t("orders.allProjects")} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">{t("orders.allProjects")}</SelectItem>
+                {projects.map((p) => (<SelectItem key={p} value={p}>{p}</SelectItem>))}
+              </SelectContent>
+            </Select>
+          )}
 
           <button onClick={() => exportCSV()} className="inline-flex h-10 items-center gap-1.5 rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-layer-02)] px-4 text-[12px] font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-bg-layer-01)] transition-colors">
             <Download className="h-4 w-4" />
