@@ -854,7 +854,7 @@ export default function OrderHistory() {
             const goNext = () => setProjectFilter(projects[(currentIdx + 1) % projects.length]);
             return (
               <div className="mb-6 flex items-center justify-between gap-4 border-b border-[var(--color-border-subtle)] pb-4">
-                <h2 className="truncate text-[24px] font-bold text-[var(--color-text-primary)]">
+                <h2 className="truncate text-[20px] font-bold text-[var(--color-text-primary)]">
                   {projectFilter}
                 </h2>
                 <div className="flex shrink-0 items-center gap-2">
@@ -900,11 +900,11 @@ export default function OrderHistory() {
                         group.bgClass
                       )}
                     >
-                      <div className={cn("flex items-center gap-1.5 text-[12px] font-semibold", group.colorClass)}>
+                      <div className={cn("flex items-center gap-1.5 text-[14px] font-semibold", group.colorClass)}>
                         <Icon className="h-4 w-4" />
                         {group.label}
                       </div>
-                                <span className={cn("inline-flex h-6 min-w-[24px] items-center justify-center rounded-full bg-white px-2 text-[12px] font-semibold", group.colorClass)}>
+                                <span className={cn("inline-flex h-6 min-w-[24px] items-center justify-center rounded-full bg-white px-2 text-[14px] font-semibold", group.colorClass)}>
                         {colOrders.length}
                       </span>
                     </div>
