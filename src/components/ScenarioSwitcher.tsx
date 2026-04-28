@@ -10,7 +10,7 @@ import type { MarketCode } from "@/i18n/messages";
 import { useMarketLocaleStore } from "@/stores/marketLocaleStore";
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useVersionStore, type AppVersion } from "@/stores/versionStore";
+import { useVersionStore, type AppVersion, type AppScenario } from "@/stores/versionStore";
 
 const MARKETS: MarketCode[] = ["FR", "SE", "DE", "EN"];
 
@@ -20,6 +20,8 @@ export default function ScenarioSwitcher() {
   const setMarket = useMarketLocaleStore((s) => s.setMarket);
   const version = useVersionStore((s) => s.version);
   const setVersion = useVersionStore((s) => s.setVersion);
+  const scenario = useVersionStore((s) => s.scenario);
+  const setScenario = useVersionStore((s) => s.setScenario);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -66,6 +68,26 @@ export default function ScenarioSwitcher() {
           <SelectContent>
             <SelectItem value="v1">V1</SelectItem>
             <SelectItem value="v2">V2</SelectItem>
+          </SelectContent>
+        </Select>
+      </label>
+
+      <label className="flex items-center gap-2">
+        <span className="whitespace-nowrap">{t("proto.scenario")}</span>
+        <Select
+          value={scenario}
+          onValueChange={(v) => {
+            const next = v as AppScenario;
+            setScenario(next);
+            navigate("/");
+          }}
+        >
+          <SelectTrigger className={triggerClass}>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="order_history">{t("scenario.order_history")}</SelectItem>
+            <SelectItem value="homepage">{t("scenario.homepage")}</SelectItem>
           </SelectContent>
         </Select>
       </label>

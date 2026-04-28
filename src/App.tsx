@@ -5,7 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useCartSync } from "@/hooks/useCartSync";
 import LayoutShell from "./components/LayoutShell";
-import OrderHistory from "./pages/OrderHistory";
+import Index from "./pages/Index";
 import OrderHistoryV2 from "./pages/OrderHistoryV2";
 import DeliveryToday from "./pages/DeliveryToday";
 import NotificationPreferences from "./pages/NotificationPreferences";
@@ -19,7 +19,7 @@ function AppContent() {
   return (
     <Routes>
       <Route element={<LayoutShell />}>
-        <Route path="/" element={<OrderHistory />} />
+        <Route path="/" element={<Index />} />
         <Route path="/v2" element={<OrderHistoryV2 />} />
         <Route path="/delivery-today" element={<DeliveryToday />} />
         <Route path="/settings/notifications" element={<NotificationPreferences />} />
