@@ -577,27 +577,7 @@ export default function OrderHistory() {
             )}
           </div>
 
-          {viewMode === "kanban" ? (
-            <div className="flex items-center gap-1 overflow-x-auto max-w-[60%]">
-              {projects.map((p) => {
-                const active = projectFilter === p;
-                return (
-                  <button
-                    key={p}
-                    onClick={() => setProjectFilter(p)}
-                    className={cn(
-                      "h-8 shrink-0 rounded-full border px-3 text-[12px] font-semibold transition-colors",
-                      active
-                        ? "border-[var(--color-primary)] bg-[var(--color-primary)] text-white"
-                        : "border-[var(--color-border-subtle)] text-[var(--color-text-secondary)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]"
-                    )}
-                  >
-                    {p}
-                  </button>
-                );
-              })}
-            </div>
-          ) : (
+          {viewMode !== "kanban" && (
             <Select value={projectFilter} onValueChange={setProjectFilter}>
               <SelectTrigger className="w-[220px] h-10 border-[var(--color-border-subtle)] text-[12px]">
                 <SelectValue placeholder={t("orders.allProjects")} />
