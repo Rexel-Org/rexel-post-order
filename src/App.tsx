@@ -6,7 +6,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { useCartSync } from "@/hooks/useCartSync";
 import LayoutShell from "./components/LayoutShell";
 import Index from "./pages/Index";
-import OrderHistory from "./pages/OrderHistory";
 import OrderHistoryV2 from "./pages/OrderHistoryV2";
 import DeliveryToday from "./pages/DeliveryToday";
 import NotificationPreferences from "./pages/NotificationPreferences";
