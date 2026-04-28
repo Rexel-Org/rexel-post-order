@@ -852,20 +852,11 @@ export default function OrderHistory() {
             const currentIdx = Math.max(0, projects.indexOf(projectFilter));
             const goPrev = () => setProjectFilter(projects[(currentIdx - 1 + projects.length) % projects.length]);
             const goNext = () => setProjectFilter(projects[(currentIdx + 1) % projects.length]);
-            const count = orders.filter((o) => o.project_name === projectFilter).length;
             return (
               <div className="mb-6 flex items-center justify-between gap-4 border-b border-[var(--color-border-subtle)] pb-4">
-                <div className="flex min-w-0 items-baseline gap-3">
-                  <span className="text-[12px] font-semibold uppercase tracking-wide text-[var(--color-text-secondary)]">
-                    {t("orders.project") ?? "Project"}
-                  </span>
-                  <h2 className="truncate text-[24px] font-bold text-[var(--color-text-primary)]">
-                    {projectFilter}
-                  </h2>
-                  <span className="shrink-0 rounded-full bg-[var(--color-bg-layer-02)] px-2 py-0.5 text-[12px] font-semibold text-[var(--color-text-secondary)]">
-                    {count}
-                  </span>
-                </div>
+                <h2 className="truncate text-[24px] font-bold text-[var(--color-text-primary)]">
+                  {projectFilter}
+                </h2>
                 <div className="flex shrink-0 items-center gap-2">
                   <span className="text-[12px] text-[var(--color-text-secondary)]">
                     {currentIdx + 1} / {projects.length}
