@@ -521,7 +521,8 @@ export default function OrderHistory() {
 
       {/* Sticky filter zone — KPI cards + filter bar grouped together */}
       <div className="sticky top-[var(--flow-sticky-site-header-height,140px)] z-30 -mx-1 space-y-2 bg-[var(--color-bg-page)] px-1 pb-[var(--spacing-3)] pt-[var(--spacing-2)] mb-[var(--spacing-4)]">
-        {/* Status filter cards (3 grouped toggles) — compact when sticky stuck */}
+        {/* Status filter cards (3 grouped toggles) — hidden in kanban view (column headers already show this info) */}
+        {viewMode !== "kanban" && (
         <div className={cn("grid grid-cols-1 transition-all duration-200", isStickyStuck ? "gap-2 sm:grid-cols-3" : "gap-3 sm:grid-cols-3")}>
           {statusGroups.map((group) => {
             const active = group.statuses.some((s) => statusFilters.has(s));
