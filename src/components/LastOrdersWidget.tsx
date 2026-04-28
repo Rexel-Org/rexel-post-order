@@ -90,7 +90,7 @@ export default function LastOrdersWidget() {
                     onClick={() => setOpenOrder(o.order_number)}
                     className="cursor-pointer border-t border-[var(--color-border-subtle)] transition-colors hover:bg-[var(--color-bg-layer-01)]"
                   >
-                    <td className="px-3 py-2 text-[var(--color-text-secondary)]">{formatDate(o.order_date)}</td>
+                    <td className="px-3 py-2 text-[var(--color-text-secondary)]">{formatDate(o.order_date, "dd/MM/yyyy")}</td>
                     <td className="px-3 py-2 font-[var(--font-weight-semibold)] text-[var(--color-primary)]">{o.order_number}</td>
                     <td className="px-3 py-2 text-[var(--color-text-secondary)]">{o.po_number ?? "—"}</td>
                     <td className="px-3 py-2"><StatusPill status={o.status} /></td>
