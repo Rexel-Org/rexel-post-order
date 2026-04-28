@@ -552,6 +552,7 @@ export default function OrderHistory() {
             );
           })}
         </div>
+        )}
 
         {/* Filter bar */}
         <div className="flex items-center gap-3">
