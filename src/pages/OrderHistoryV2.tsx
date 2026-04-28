@@ -577,15 +577,37 @@ export default function OrderHistory() {
             )}
           </div>
 
-          <Select value={projectFilter} onValueChange={setProjectFilter}>
-            <SelectTrigger className="w-[220px] h-10 border-[var(--color-border-subtle)] text-[12px]">
-              <SelectValue placeholder={t("orders.allProjects")} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">{t("orders.allProjects")}</SelectItem>
-              {projects.map((p) => (<SelectItem key={p} value={p}>{p}</SelectItem>))}
-            </SelectContent>
-          </Select>
+          {viewMode === "kanban" ? (
+            <div className="flex items-center gap-1 overflow-x-auto max-w-[60%]">
+              {projects.map((p) => {
+                const active = projectFilter === p;
+                return (
+                  <button
+                    key={p}
+                    onClick={() => setProjectFilter(p)}
+                    className={cn(
+                      "h-8 shrink-0 rounded-full border px-3 text-[12px] font-semibold transition-colors",
+                      active
+                        ? "border-[var(--color-primary)] bg-[var(--color-primary)] text-white"
+                        : "border-[var(--color-border-subtle)] text-[var(--color-text-secondary)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]"
+                    )}
+                  >
+                    {p}
+                  </button>
+                );
+              })}
+            </div>
+          ) : (
+            <Select value={projectFilter} onValueChange={setProjectFilter}>
+              <SelectTrigger className="w-[220px] h-10 border-[var(--color-border-subtle)] text-[12px]">
+                <SelectValue placeholder={t("orders.allProjects")} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">{t("orders.allProjects")}</SelectItem>
+                {projects.map((p) => (<SelectItem key={p} value={p}>{p}</SelectItem>))}
+              </SelectContent>
+            </Select>
+          )}
 
           <button onClick={() => exportCSV()} className="inline-flex h-10 items-center gap-1.5 rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-bg-layer-02)] px-4 text-[12px] font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-bg-layer-01)] transition-colors">
             <Download className="h-4 w-4" />
