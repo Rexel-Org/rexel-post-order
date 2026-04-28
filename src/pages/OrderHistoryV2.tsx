@@ -993,6 +993,7 @@ export default function OrderHistory() {
               );
             })}
         </div>
+        </>
       )}
 
       {/* Empty state */}
