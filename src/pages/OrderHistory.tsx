@@ -46,7 +46,7 @@ function StatusBadge({ status }: { status: string }) {
   const Icon = meta.icon;
   const label = t(`orderStatus.${status}`);
   return (
-    <span className={cn("inline-flex h-8 items-center gap-1 rounded-full border px-3 text-[12px] font-semibold", meta.bgClass, meta.colorClass)}>
+    <span className={cn("inline-flex h-8 items-center gap-1 rounded-full border px-3 text-[12px] font-semibold whitespace-nowrap", meta.bgClass, meta.colorClass)}>
       <Icon className="h-3 w-3 shrink-0" />
       {label}
     </span>
@@ -620,12 +620,12 @@ export default function OrderHistory() {
                     <table className="w-full table-fixed">
                       <colgroup>
                         <col className="w-[140px]" />
-                        <col className="w-[140px]" />
+                        <col className="w-[130px]" />
                         <col className="w-[120px]" />
-                        <col className="w-[160px]" />
-                        <col className="w-[140px]" />
+                        <col className="w-[190px]" />
+                        <col className="w-[130px]" />
                         <col className="w-[100px]" />
-                        <col className="w-[160px]" />
+                        <col className="w-[140px]" />
                         <col className="w-[120px]" />
                         <col className="w-[120px]" />
                       </colgroup>
@@ -758,12 +758,12 @@ export default function OrderHistory() {
                   <table className="w-full table-fixed">
                     <colgroup>
                       <col className="w-[140px]" />
-                      <col className="w-[140px]" />
+                      <col className="w-[130px]" />
                       <col className="w-[120px]" />
-                      <col className="w-[160px]" />
-                      <col className="w-[140px]" />
+                      <col className="w-[190px]" />
+                      <col className="w-[130px]" />
                       <col className="w-[100px]" />
-                      <col className="w-[160px]" />
+                      <col className="w-[140px]" />
                       <col className="w-[120px]" />
                       <col className="w-[120px]" />
                     </colgroup>
