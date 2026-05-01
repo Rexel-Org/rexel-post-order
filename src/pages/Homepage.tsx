@@ -5,17 +5,17 @@ import { useOrders } from "@/hooks/useOrders";
 import { useMemo } from "react";
 
 function Stat({ count, label, intent }: { count: number; label: string; intent: "info" | "warning" | "neutral" | "success" }) {
-  const intentMap: Record<string, string> = {
-    info: "bg-[var(--color-alert-info-bg)] text-[var(--color-info)]",
-    warning: "bg-[var(--color-alert-warning-bg)] text-[var(--color-alert-warning-text)]",
-    neutral: "bg-[var(--color-bg-layer-01)] text-[var(--color-text-primary)]",
-    success: "bg-[var(--color-alert-success-bg)] text-[var(--color-success)]",
+  const borderMap: Record<string, string> = {
+    info: "border-l-[var(--color-info)] text-[var(--color-info)]",
+    warning: "border-l-[var(--color-alert-warning-border)] text-[var(--color-alert-warning-text)]",
+    neutral: "border-l-[var(--color-border-subtle)] text-[var(--color-text-primary)]",
+    success: "border-l-[var(--color-success)] text-[var(--color-success)]",
   };
   return (
-    <div className={`flex items-center justify-between gap-3 rounded-[6px] px-4 py-3 ${intentMap[intent]}`}>
+    <div className={`flex items-center justify-between gap-3 border-l-4 px-4 py-3 ${borderMap[intent]}`}>
       <div className="flex items-center gap-3">
         <span className="text-[20px] font-[var(--font-weight-semibold)]">{count}</span>
-        <span className="text-[14px]">{label}</span>
+        <span className="text-[14px] text-[var(--color-text-primary)]">{label}</span>
       </div>
     </div>
   );
