@@ -105,8 +105,8 @@ function OrderCard({
     <div
       onClick={onClick}
       className={cn(
-        "group cursor-pointer rounded-[var(--border-radius-sm)] border border-[#E0E4EB] bg-white p-[var(--spacing-3)] transition-all hover:shadow-[var(--shadow-2)]",
-        warning && "border-l-4 border-l-[var(--color-error)]"
+        "group relative cursor-pointer overflow-hidden rounded-[var(--border-radius-sm)] border border-[#E0E4EB] bg-white p-[var(--spacing-3)] transition-all hover:shadow-[var(--shadow-2)]",
+        warning && "before:absolute before:left-0 before:top-0 before:bottom-0 before:w-[4px] before:bg-[var(--color-error)]"
       )}
     >
       <div className="flex items-start justify-between gap-2 mb-[var(--spacing-2)]">
