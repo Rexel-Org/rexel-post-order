@@ -28,7 +28,7 @@ jobs:
         run: bun install
 
       - name: Build
-        run: bun run build
+        run: bunx vite build --base=/ux-post-order/
         env:
           VITE_SUPABASE_URL: https://jlqnaiqncjdvtuncckny.supabase.co
           VITE_SUPABASE_PUBLISHABLE_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpscW5haXFuY2pkdnR1bmNja255Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2Njg2MzAsImV4cCI6MjA5MTI0NDYzMH0.QMJo60aUSHSaVNtNR1d6eqAwY22eMoR5zNuGVSucfV8
