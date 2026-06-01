@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import {
   CheckCircle, Truck, Package, AlertTriangle, XCircle,
   ClipboardCheck, FileText, ShoppingCart, Star,
-  Phone, Mail, X, Copy, Check, Download,
+  Phone, Mail, X, Copy, Check, Download, ChevronDown, ChevronUp, MapPin,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
@@ -235,6 +235,7 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
   const [showAllItems, setShowAllItems] = useState(false);
   const [expandedDocName, setExpandedDocName] = useState<string | null>(null);
   const [showMoreDeliveryNote, setShowMoreDeliveryNote] = useState(false);
+  const [isAddressExpanded, setIsAddressExpanded] = useState(true);
 
   const open = !!orderNumber;
   const isCompletedOrder = data?.order.status === "completed";
@@ -314,6 +315,10 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
     const href = `mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent(subject)}`;
     window.location.href = href;
   };
+
+  useEffect(() => {
+    if (open) setIsAddressExpanded(true);
+  }, [orderNumber]);
 
   const handleOpenChange = (v: boolean) => {
     if (!v) {
@@ -457,7 +462,10 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
           <div className="p-6 text-center text-[var(--color-text-secondary)]">{t("side.notFound")}</div>
         ) : (
           <>
-            <div className="flex-1 overflow-y-auto">
+            <div
+              className="flex-1 overflow-y-auto"
+              onScroll={(e) => setIsAddressExpanded((e.currentTarget as HTMLDivElement).scrollTop < 8)}
+            >
               <div className="sticky top-0 z-20 bg-[var(--color-bg-page)]">
                 <div className="px-6 py-5">
                   <div className="flex items-center justify-between">
@@ -516,16 +524,21 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                     )}
                   </div>
 
-                  <div className="mt-4 overflow-hidden rounded-[var(--border-radius-sm)] bg-white shadow-[var(--shadow-1)] pt-4 pb-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2">
-                      <div className="px-4 md:pr-5">
-                        <p className="text-[14px] font-semibold text-[var(--color-text-primary)]">
+                  <div
+                    className={cn(
+                      "mt-3 overflow-hidden transition-[max-height,opacity] duration-300 ease-in-out rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] bg-white",
+                      isAddressExpanded ? "max-h-60 opacity-100" : "max-h-0 opacity-0 border-transparent"
+                    )}
+                  >
+                    <div className="grid grid-cols-2 py-2.5">
+                      <div className="px-3 md:pr-4">
+                        <p className="text-[12px] font-semibold text-[var(--color-text-primary)]">
                           {fulfillmentMode === "delivery" ? t("side.deliveryAddressCard") : t("side.pickupAddressCard")}
                         </p>
-                        <div className="mt-2 space-y-1.5 text-[12px] text-[var(--color-text-secondary)]">
+                        <div className="mt-1 space-y-1 text-[12px] text-[var(--color-text-secondary)]">
                           {fulfillmentAddress.titleLine || fulfillmentAddress.streetLine || fulfillmentAddress.zipCityLine ? (
                             <>
-                              <div className="font-semibold text-[var(--color-text-primary)] break-words text-[14px]">
+                              <div className="font-semibold text-[var(--color-text-primary)] break-words">
                                 {fulfillmentAddress.titleLine || "—"}
                               </div>
                               {fulfillmentAddress.streetLine && <div className="break-words">{fulfillmentAddress.streetLine}</div>}
@@ -534,19 +547,17 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                           ) : (
                             <div>—</div>
                           )}
-                          <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1">
-                            <span className="text-[var(--color-text-secondary)]">Contact :</span>
+                          <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5">
                             <span className="font-semibold text-[var(--color-text-primary)]">{contactShort}</span>
                             <span className="text-[#a8a8a8]">·</span>
-                            <span className="font-semibold text-[var(--color-text-primary)]">{receptionContact.phone}</span>
+                            <span>{receptionContact.phone}</span>
                           </div>
                         </div>
                       </div>
-
-                      <div className="mt-4 border-t border-[var(--color-border-subtle)] px-4 md:mt-0 md:border-t-0 md:border-l md:border-[var(--color-border-subtle)] md:pl-5">
-                        <p className="text-[14px] font-semibold text-[var(--color-text-primary)]">{t("side.billingCard")}</p>
-                        <div className="mt-2 space-y-1 text-[12px] text-[var(--color-text-secondary)]">
-                          <div className="font-semibold text-[var(--color-text-primary)]">
+                      <div className="border-l border-[var(--color-border-subtle)] px-3 md:pl-4">
+                        <p className="text-[12px] font-semibold text-[var(--color-text-primary)]">{t("side.billingCard")}</p>
+                        <div className="mt-1 space-y-1 text-[12px] text-[var(--color-text-secondary)]">
+                          <div className="font-semibold text-[var(--color-text-primary)] break-words">
                             {data.order.project_name ?? "SAS Martin Électricité"}
                           </div>
                           <div>
@@ -1000,33 +1011,14 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
               )}
             </div>
 
-            <div className="border-t border-[var(--color-border-subtle)] bg-[var(--color-bg-page)] px-6 py-4 flex flex-col items-stretch gap-3">
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  onClick={handleRequestReturn}
-                  className="inline-flex items-center justify-center gap-2 h-10 rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] bg-white text-[12px] font-semibold text-[var(--color-text-primary)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-colors"
-                >
-                  <FileText className="h-4 w-4" />
-                  {t("detail.requestReturn")}
-                </button>
-                <button
-                  type="button"
-                  onClick={handleContactSalesRep}
-                  className="inline-flex items-center justify-center gap-2 h-10 rounded-[var(--border-radius-sm)] border border-[var(--color-border-subtle)] bg-white text-[12px] font-semibold text-[var(--color-text-primary)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-colors"
-                >
-                  <Mail className="h-4 w-4" />
-                  {t("detail.contactRep")}
-                </button>
-              </div>
-
+            <div className="border-t border-[var(--color-border-subtle)] bg-[var(--color-bg-page)] px-6 py-3 flex flex-col items-stretch gap-2">
               {activeTab === "reception" ? (
                 <button
                   type="button"
                   disabled={!allChecked || isCompletedOrder}
                   onClick={handleValidateReception}
                   className={cn(
-                    "w-full inline-flex items-center justify-center gap-2 h-10 rounded-[var(--border-radius-sm)] text-[12px] font-semibold transition-colors",
+                    "w-full inline-flex items-center justify-center gap-2 h-9 rounded-[var(--border-radius-sm)] text-[12px] font-semibold transition-colors",
                     allChecked && !isCompletedOrder
                       ? "bg-[var(--color-success)] text-white hover:opacity-90"
                       : "bg-[var(--color-bg-layer-01)] text-[var(--color-text-placeholder)] cursor-not-allowed"
@@ -1038,23 +1030,31 @@ export default function OrderSidePanel({ orderNumber, onClose }: OrderSidePanelP
                     : `${t("side.validateReception")} (${checkedCount}/${data.lineItems.length})`}
                 </button>
               ) : (
-                <div className="flex flex-col gap-[8px]">
+                <div className="grid grid-cols-2 gap-2">
                   <button
                     type="button"
                     onClick={handleReorderAll}
-                    className="w-full inline-flex items-center justify-center gap-2 h-10 rounded-[var(--border-radius-sm)] bg-[var(--color-primary)] text-[var(--color-white)] text-[12px] font-semibold hover:bg-[var(--color-primary-hover)] transition-colors"
+                    className="inline-flex items-center justify-center gap-1.5 h-9 rounded-[var(--border-radius-sm)] bg-[var(--color-primary)] text-[var(--color-white)] text-[12px] font-semibold hover:bg-[var(--color-primary-hover)] transition-colors"
                   >
-                    <ShoppingCart className="h-4 w-4" /> {t("side.reorderAll")}
+                    <ShoppingCart className="h-3.5 w-3.5" /> {t("side.reorderAll")}
                   </button>
                   <button
                     type="button"
                     onClick={() => toast.success(t("orders.joblistAdded"))}
-                    className="w-full inline-flex items-center justify-center gap-2 h-10 rounded-[var(--border-radius-sm)] border border-[var(--color-primary)] text-[var(--color-primary)] text-[12px] font-semibold hover:bg-[var(--color-rexel-primary-10)] transition-colors"
+                    className="inline-flex items-center justify-center gap-1.5 h-9 rounded-[var(--border-radius-sm)] border border-[var(--color-primary)] text-[var(--color-primary)] text-[12px] font-semibold hover:bg-[var(--color-rexel-primary-10)] transition-colors"
                   >
-                    <Star className="h-4 w-4" /> {t("side.addToJoblist")}
+                    <Star className="h-3.5 w-3.5" /> {t("side.addToJoblist")}
                   </button>
                 </div>
               )}
+              <button
+                type="button"
+                onClick={handleRequestReturn}
+                className="inline-flex items-center justify-center gap-1 text-[12px] text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] transition-colors"
+              >
+                <FileText className="h-3 w-3" />
+                {t("detail.requestReturn")}
+              </button>
             </div>
           </>
         )}
